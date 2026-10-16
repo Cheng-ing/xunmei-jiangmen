@@ -131,8 +131,6 @@
   color: var(--gold); background: rgba(201,168,106,.12);
   padding: 1px 5px; border-radius: 3px;
 }
-.hero-wall-note b { color: var(--paper); font-weight: 400; }   /* 来源说明里要点重的词 */
-.hero-wall-note a { color: var(--gold); border-bottom: 1px solid rgba(201,168,106,.45); }
 
 /* ---------- 4. 点击后弹出的介绍浮层 ---------- */
 .hero-modal {

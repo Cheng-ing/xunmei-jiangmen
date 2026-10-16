@@ -124,7 +124,7 @@
   .globe-stage { width: min(58vw, 240px); }
   .jm-map figcaption { font-size: 15px; letter-spacing: 2px; margin-bottom: 8px; }
   .jm-map canvas { width: min(74vw, 300px); }
-  .jm-map .map-note { display: none; }        /* 小屏放不下两行小字，创作说明页里有 */
+  .jm-map .map-note { display: none; }        /* 小屏放不下这两行小字，手机上直接不显示 */
   .jm-pin .tag { left: 15px; top: -10px; font-size: 12.5px; letter-spacing: 1px; }
   .jm-pin .tag small { font-size: 9.5px; letter-spacing: .5px; }
   .jm-pin::before { inset: -8px; }

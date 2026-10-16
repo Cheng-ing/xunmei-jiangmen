@@ -11,7 +11,11 @@
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   max-width: 1150px; margin: 0 auto;
   padding-bottom: 90px;   /* 信纸升起后需要额外空间，防止被下一行裁切 */
-  overflow: visible;
+  /* 撕开的"待撕条"往右上飞（translate 36%），飞过容器右边界会撑出一条横向滚动条：
+     拆信后 1280 宽实测文档宽 1398，平板 760 宽实测 819。
+     这里只横向裁一刀，纵向保持可见，信纸照常升起。
+     用 clip 不用 hidden —— hidden 会把纵向也变成滚动区，升起的信纸直接被裁掉。 */
+  overflow-x: clip; overflow-y: visible;
 }
 
 /* ---------- 2. 信封本体 ---------- */
