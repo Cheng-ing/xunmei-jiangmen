@@ -301,7 +301,7 @@ const FENGWU_CFG = {
   maxWish: 24,          // 长图里"心愿"最多几个字
   posterW: 750,         // 分享长图宽
   posterH: 1334,        // 分享长图高（约 9:16，手机上长按保存刚好）
-  siteUrl: "cheng-ing.github.io/xunmei-jiangmen",  // 长图底部地址
+  posterLine: "世界那么大 江门这么美 欢迎常来江门",  // 长图底部那行标语（原来放的是网址）
   storageCheckin: "xunmei-fengwu-checkin",   // localStorage 键：我去过的地方
   storageQuizBest: "xunmei-fengwu-quiz-best" // localStorage 键：小测历史最高分
 };
@@ -567,11 +567,11 @@ function drawPoster() {
   });
   y += 150 + 60;
 
-  /* 7. 底部：地址与日期 */
+  /* 7. 底部：标语与日期 */
   const now = new Date();
   ctx.fillStyle = "rgba(201,168,106,.8)";
-  ctx.font = '28px "Microsoft YaHei", sans-serif';
-  ctx.fillText(FENGWU_CFG.siteUrl, W / 2, H - 118);
+  ctx.font = '700 30px "STZhongsong", "SimSun", serif';
+  ctx.fillText(FENGWU_CFG.posterLine, W / 2, H - 118);
   ctx.fillStyle = "rgba(233,226,211,.5)";
   ctx.font = '24px "Microsoft YaHei", sans-serif';
   ctx.fillText(`寻美江门 · ${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`, W / 2, H - 74);
