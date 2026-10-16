@@ -72,12 +72,7 @@
     <div class="fw-grid" id="fwGrid"></div>
     <p class="fw-foot" id="checkinCount"></p>
 
-    <div class="fw-note">
-      <b>口径说明</b>：这一页的条目是"<b>稳妥概述 + 待核实</b>"的状态 —— 名称、所属区县、大致玩法是通用公开资料，
-      年份、称号、数量、片名这类硬事实在 <code>js/fengwu.js</code> 里逐条标了「待核实」注释，评奖前请对官方资料核一遍再放开。
-      另外 22 个条目目前都<b>没有配图</b>，卡片显示的是占位样式；
-      补图只要把图放进 <code>images/fengwu/</code>，再在数据里填上 <code>img</code> 字段即可，不填也不会破版。
-    </div>
+   
   </section>
 
   <!-- ▼ 第二板块：侨都知多少（8 题，答完就地看解析，全答完给称号） -->
@@ -87,11 +82,6 @@
     <p class="section-sub">八道题 · 一题只有一次机会 · 答完给一个称号</p>
     <div class="quiz-box" id="quizBox"></div>
     <div class="quiz-bar" id="quizBar"></div>
-    <div class="fw-note">
-      <b>改题</b>：题目、选项、正确答案下标和解析都在 <code>js/fengwu.js</code> 的 <code>QUIZ</code> 数组里，
-      加一题就往数组里加一项，页面上的题号和进度会自动跟着变。
-      答对 8 题的称号阈值在同一个文件的 <code>QUIZ_RANKS</code> 里。
-    </div>
   </section>
 
   <!-- ▼ 第三板块：路线推荐（几天 × 什么偏好 → 走哪几站，站点顺序可点进详情） -->
@@ -118,8 +108,6 @@
     <div class="rt-out" id="routeOut"></div>
     <div class="fw-note">
       <b>这些路线只是玩法建议</b>，不构成行程承诺：车程、门票、开放时间和潮汐都要以现场为准。
-      想改某条路线，去 <code>js/fengwu.js</code> 的 <code>ROUTES</code>，键是「天数-偏好」，
-      里面只列图鉴的 id，站名和介绍会自动跟着图鉴那边改。
     </div>
   </section>
 
@@ -143,11 +131,6 @@
       </div>
       <p class="pf-tip" id="posterTip"></p>
     </div>
-    <div class="fw-note">
-      <b>长图在浏览器本地画出来</b>，不经过任何服务器；<code>&lt;canvas&gt;</code> 里只有文字和渐变，
-      没有引用外部图片，所以不会有跨域导致存不下来的问题。
-      图上的落款地址在 <code>js/fengwu.js</code> 的 <code>FENGWU_CFG.siteUrl</code>，尺寸在 <code>posterW / posterH</code>。
-    </div>
   </section>
 
   <!-- ▼ 页间互链：风物是这条动线的最后一站，上一站接模范人物 -->
@@ -167,7 +150,7 @@
     <div class="foot-nav">
       <a href="index.html">首页</a><a href="jiangmen.html">寻美江门</a><a href="qiaobao.html">优秀侨胞</a><a href="feiyi.html">非遗传承人</a><a href="gongjiang.html">能工巧匠</a><a href="mofan.html">模范人物</a>
     </div>
-    "寻美江门"2026 AIGC 创作大赛 · 侨都风物（图文资料待核实，全部交互不依赖后端）
+    "寻美江门"2026 AIGC 创作大赛 · 侨都风物
     <nav> 创作者：庄嘉成、陈俊安</nav>
   </footer>
 
