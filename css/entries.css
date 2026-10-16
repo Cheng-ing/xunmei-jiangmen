@@ -1,0 +1,24 @@
+/* ============================================================
+   entries.css —— 江门页底部的"四大题材入口卡片"
+   卡片文案与链接在 jiangmen.html 里直接修改。
+   ============================================================ */
+.entry-grid {
+  display: grid; gap: 22px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  max-width: 1150px; margin: 0 auto;
+}
+.entry-card {
+  position: relative; padding: 26px 22px; border-radius: var(--radius);
+  background: linear-gradient(165deg, rgba(246,239,226,.08), rgba(246,239,226,.03));
+  border: 1px solid rgba(201,168,106,.35);
+  color: var(--text-light); overflow: hidden;
+  transition: transform .3s, border-color .3s;
+}
+.entry-card:hover { transform: translateY(-6px); border-color: var(--gold); }
+.entry-card .no {
+  font-family: var(--font-title); font-size: 40px; color: rgba(201,168,106,.35);
+  position: absolute; right: 14px; top: 6px;
+}
+.entry-card h3 { font-family: var(--font-title); font-size: 21px; letter-spacing: 3px; color: var(--gold); margin-bottom: 8px; }
+.entry-card p  { font-size: 13px; line-height: 1.9; opacity: .8; }
+.entry-card .go { display: inline-block; margin-top: 14px; font-size: 13px; color: var(--red); background: rgba(246,239,226,.9); padding: 5px 14px; border-radius: 999px; }

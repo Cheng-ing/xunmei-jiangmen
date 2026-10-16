@@ -1,0 +1,111 @@
+/* ============================================================
+   envelope.css —— "可撕开的信封"组件
+   结构：.envelope > [.envelope-back, .letter, .envelope-front, .torn-strip]
+   交互：点击后 .torn-strip 被"撕飞"，.letter 从信封中升起。
+   每封信的文案在 data.js 中修改，无需动本文件。
+   ============================================================ */
+
+/* ---------- 1. 信封网格：一屏摆多封信 ---------- */
+.env-grid {
+  display: grid; gap: 34px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  max-width: 1150px; margin: 0 auto;
+  padding-bottom: 90px;   /* 信纸升起后需要额外空间，防止被下一行裁切 */
+  overflow: visible;
+}
+
+/* ---------- 2. 信封本体 ---------- */
+.envelope {
+  position: relative; width: 100%; aspect-ratio: 1.55 / 1;
+  cursor: pointer; user-select: none;
+}
+/* 信封内壁（深色纸） */
+.envelope-back {
+  position: absolute; inset: 0; border-radius: 8px;
+  background: linear-gradient(160deg, #d8c9ab, #b9a67f);
+  box-shadow: var(--shadow);
+}
+/* 封口翻盖：顶部倒三角形 */
+.envelope-front {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 68%;
+  border-radius: 0 0 8px 8px;
+  background: linear-gradient(170deg, var(--paper), var(--paper-2));
+  box-shadow: 0 -2px 6px rgba(0,0,0,.08);
+}
+.envelope-front::before { /* 翻盖下方的 V 形压痕装饰 */
+  content: ""; position: absolute; left: 8%; right: 8%; top: 6%; height: 46%;
+  background: linear-gradient(135deg, transparent 49.5%, rgba(0,0,0,.08) 50%),
+              linear-gradient(225deg, transparent 49.5%, rgba(0,0,0,.08) 50%);
+}
+/* 火漆印 */
+.wax-seal {
+  position: absolute; left: 50%; top: 46%; transform: translate(-50%,-50%);
+  width: 46px; height: 46px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #c9584a, var(--red) 65%);
+  color: #f6e9d8; font-family: var(--font-title); font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 8px rgba(0,0,0,.35), inset 0 2px 4px rgba(255,255,255,.3);
+  z-index: 3;
+}
+/* 未拆封提示 */
+.env-tip {
+  position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%);
+  font-size: 12px; letter-spacing: 2px; color: rgba(43,43,43,.45); z-index: 3;
+}
+
+/* ---------- 3. 顶部"待撕条"：上边缘是锯齿，撕开后飞走 ---------- */
+.torn-strip {
+  position: absolute; top: 0; left: 0; right: 0; height: 15%;
+  border-radius: 8px 8px 0 0;
+  background: repeating-linear-gradient(175deg, var(--red) 0 14px, #8e3022 14px 28px); /* 侨都红撕拉条 */
+  /* 用遮罩把顶边裁成锯齿（6% 宽 = 一个齿） */
+  -webkit-mask: conic-gradient(from 135deg at 50% 0, #000 90deg, transparent 0) 0 -1px / 6% 100% repeat-x;
+          mask: conic-gradient(from 135deg at 50% 0, #000 90deg, transparent 0) 0 -1px / 6% 100% repeat-x;
+  z-index: 4;
+  transition: transform .7s cubic-bezier(.5,-.3,.7,1), opacity .7s;
+}
+.torn-strip::after { /* 虚线：提示撕开位置 */
+  content: ""; position: absolute; left: 4%; right: 4%; bottom: 4px;
+  border-bottom: 2px dashed rgba(246,239,226,.7);
+}
+/* 撕开动画：向上飞 + 旋转 + 淡出 */
+.envelope.opened .torn-strip {
+  transform: translate(36%, -150%) rotate(16deg);
+  opacity: 0;
+}
+
+/* ---------- 4. 信纸：撕开后从信封里升起 ---------- */
+.letter {
+  position: absolute; left: 5%; width: 90%; z-index: 2;
+  top: 22%;                               /* 未拆时大部分藏在信封内 */
+  max-height: 74%; overflow: hidden;
+  padding: 20px 22px;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 25px, rgba(166,58,43,.12) 25px 26px), /* 信纸横线 */
+    linear-gradient(180deg, #fffaf0, var(--paper));
+  border-radius: 6px; box-shadow: 0 6px 18px rgba(0,0,0,.25);
+  transform: translateY(6%); opacity: 0;
+  transition: transform .9s ease .35s, opacity .6s ease .35s; /* .35s 延迟 = 等撕条飞走 */
+}
+.envelope.opened .letter {
+  z-index: 5;                             /* 升起后盖在信封前面 */
+  transform: translateY(-34%);            /* 升起高度：容器高的 34%，可自行调整 */
+  opacity: 1; max-height: none; overflow: visible;
+}
+.letter h4 {
+  font-family: var(--font-title); font-size: 17px; color: var(--red);
+  letter-spacing: 2px; margin-bottom: 8px;
+}
+.letter p { font-size: 13.5px; line-height: 26px; text-align: justify; }
+.letter .sign { margin-top: 10px; text-align: right; font-size: 12.5px; color: rgba(43,43,43,.6); }
+
+/* ---------- 5. 悬停待拆信封时轻微晃动，提示可点 ---------- */
+.envelope:not(.opened):hover .torn-strip { animation: tease .5s ease; }
+@keyframes tease { 25% { transform: translateY(-3px) rotate(-.6deg); } 75% { transform: translateY(-2px) rotate(.6deg); } }
+
+/* ---------- 6. "全部拆开 / 还原"工具条 ---------- */
+.env-tools { text-align: center; margin: 0 0 34px; }
+.env-tools .btn { padding: 8px 22px; font-size: 13px; }
+
+/* ---------- 7. 页面级留白：给升起的信纸预留空间（放在信封区块标题上） ---------- */
+.section-title.env-space { padding-top: 150px; }

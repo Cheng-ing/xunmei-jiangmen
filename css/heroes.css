@@ -1,0 +1,210 @@
+/* ============================================================
+   heroes.css —— 首页"江门历代名人"：背景照片带 + 英雄墙 + 点击弹介绍
+   数据与文案在 js/heroes.js（改人名/介绍只动那里），本文件只管外观。
+   配色全部沿用 css/base.css 里的 :root 变量。
+   ============================================================ */
+
+/* ---------- 1. 照片组件：有照片显示照片，没照片显示占位 ----------
+   .photo 是一个 3:4 的框；里面的 .photo-ph 永远存在（姓名 + 待补照片），
+   img 盖在它上面。图片文件缺失时 heroes.js 会给 .photo 加 .no-photo，
+   于是隐藏破图、露出下面的占位，页面不会裂。 */
+.photo {
+  position: relative;
+  width: 100%; aspect-ratio: 3 / 4;
+  overflow: hidden; border-radius: 8px;
+  background: #101d2c;
+}
+.photo img {
+  position: absolute; inset: 0; z-index: 1;
+  width: 100%; height: 100%; object-fit: cover;
+}
+.photo.no-photo img { visibility: hidden; }   /* 隐藏浏览器默认的破图图标 */
+.photo-ph {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; text-align: center;
+  background:
+    repeating-linear-gradient(45deg, rgba(201,168,106,.07) 0 8px, transparent 8px 16px),
+    radial-gradient(120% 90% at 50% 20%, #1d2a3d, #101d2c);
+}
+.photo-ph b {
+  font-family: var(--font-title); font-weight: 400;
+  font-size: 22px; letter-spacing: 6px; color: var(--gold);
+}
+.photo-ph span { font-size: 11px; letter-spacing: 3px; color: rgba(233,226,211,.4); }
+
+/* ---------- 2. 背景照片带：虚化的照片横铺在地球后面 ---------- */
+/* 让英雄区成为照片带的定位父级，并把普通内容抬到它上面 */
+.hero { position: relative; }
+.hero > *:not(.hero-montage) { position: relative; z-index: 1; }
+
+.hero-montage {
+  position: absolute; inset: 0; z-index: 0;
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: 26px 0;                /* 上下留白，照片别贴着导航和正文 */
+  overflow: hidden;               /* 自己裁切，不影响 .hero 里的其它内容 */
+  pointer-events: none;           /* 整块不拦截鼠标，只有下面的照片格可点 */
+  filter: blur(1.1px) saturate(.8);
+}
+.montage-row { flex: 0 0 auto; overflow: hidden; }
+.montage-track {
+  display: flex; gap: 14px;
+  width: max-content;             /* 轨道按内容撑开，才能整条平移 */
+  animation: montage-drift 150s linear infinite;
+}
+/* 轨道里放了两份同样的照片，移到 -50% 时正好接回起点 → 无缝循环 */
+@keyframes montage-drift {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.montage-track.reverse { animation-direction: reverse; }  /* 隔行反向 */
+.montage-cell {
+  width: clamp(88px, 12vw, 140px);
+  padding: 0; border: 1px solid rgba(201,168,106,.35); border-radius: 8px;
+  background: none;
+  pointer-events: auto;           /* 背景照片也能点，点了就出介绍 */
+  opacity: .45; transition: opacity .3s, transform .3s;
+}
+/* 三行照片大小不同，看着不像表格；每行速度由 js/heroes.js 的 HERO_CFG.driftSec 决定 */
+.montage-row:nth-child(2) .montage-cell { width: clamp(76px, 10vw, 120px); }
+.montage-row:nth-child(3) .montage-cell { width: clamp(96px, 13vw, 152px); }
+.montage-cell:hover,
+.montage-cell:focus-visible { opacity: .95; transform: translateY(-4px); outline: none; }
+.montage-cell .photo { border-radius: 6px; }
+/* 中间压一层渐暗的纱：地球那一圈最暗，往边上逐渐放开，避免照片和地球抢视线 */
+.hero-montage::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 46%,
+    rgba(22,32,46,.95) 0%, rgba(22,32,46,.66) 34%, rgba(22,32,46,.32) 68%, rgba(22,32,46,.34) 100%);
+}
+
+/* ---------- 3. 英雄墙：首页下方的人物卡片区 ---------- */
+.hero-wall-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
+  gap: clamp(14px, 2vw, 22px);
+  max-width: 1180px; margin: 0 auto;
+}
+.hero-card {
+  position: relative;                /* 给右上角的序号做定位父级 */
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 12px; text-align: left; color: var(--text-light);
+  background: rgba(246,239,226,.05);
+  border: 1px solid rgba(201,168,106,.26);
+  border-radius: var(--radius);
+  transition: transform .3s, border-color .3s, background .3s, box-shadow .3s;
+}
+.hero-card:hover,
+.hero-card:focus-visible {
+  transform: translateY(-6px);
+  border-color: var(--gold);
+  background: rgba(201,168,106,.1);
+  box-shadow: var(--shadow);
+  outline: none;
+}
+.hero-card h3 {
+  font-family: var(--font-title); font-size: 20px; font-weight: 400;
+  letter-spacing: 3px; color: var(--paper);
+}
+.hero-card .meta { font-size: 12px; letter-spacing: 1px; color: rgba(201,168,106,.8); }
+.hero-card .role { font-size: 13px; line-height: 1.5; color: rgba(233,226,211,.66); }
+/* 序号做成照片右上角的小牌，像展签 */
+.hero-card .idx {
+  position: absolute; top: 20px; right: 20px; z-index: 2;
+  padding: 2px 7px; border-radius: 3px;
+  font-family: ui-monospace, Consolas, monospace; font-size: 11px;
+  letter-spacing: 1px; color: var(--gold);
+  background: rgba(9, 14, 21, .72);
+  text-shadow: 0 1px 2px rgba(0,0,0,.8);
+}
+
+.hero-wall-note {
+  max-width: 760px; margin: 34px auto 0;
+  padding: 14px 18px;
+  font-size: 12.5px; line-height: 1.8; letter-spacing: .5px;
+  color: rgba(233,226,211,.55);
+  border-left: 2px solid rgba(201,168,106,.5);
+  background: rgba(246,239,226,.04);
+}
+.hero-wall-note code {
+  font-family: ui-monospace, Consolas, monospace;
+  color: var(--gold); background: rgba(201,168,106,.12);
+  padding: 1px 5px; border-radius: 3px;
+}
+
+/* ---------- 4. 点击后弹出的介绍浮层 ---------- */
+.hero-modal {
+  position: fixed; inset: 0; z-index: 80;
+  display: flex; align-items: center; justify-content: center;
+  padding: 5vh 5vw;
+  background: rgba(9, 14, 21, .8);
+  backdrop-filter: blur(6px);
+}
+/* flex 会盖掉 hidden 属性，必须显式关掉，否则初始就显示 */
+.hero-modal[hidden] { display: none; }
+.modal-body {
+  width: min(660px, 100%);
+  max-height: 86vh; overflow-y: auto;
+  scrollbar-width: thin; scrollbar-color: rgba(201,168,106,.6) transparent;
+  padding: clamp(20px, 3.4vw, 34px);
+  text-align: center;
+  background: linear-gradient(180deg, rgba(246,239,226,.07), rgba(22,32,46,.9));
+  border: 1px solid rgba(201,168,106,.45);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow), 0 0 60px rgba(201,168,106,.12);
+}
+.modal-body h2 {
+  font-family: var(--font-title); font-weight: 400;
+  font-size: clamp(26px, 4vw, 34px); letter-spacing: 5px; color: var(--paper);
+}
+.modal-body h2 small {
+  display: block; margin-top: 6px;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 12px; letter-spacing: 2px; color: rgba(201,168,106,.75);
+}
+.modal-body .m-role {
+  margin-top: 8px; font-size: 13px; letter-spacing: 2px;
+  color: rgba(233,226,211,.65);
+}
+.modal-body .m-photo { width: min(230px, 62vw); margin: 18px auto; }
+.modal-body blockquote {
+  margin: 0 auto 16px; max-width: 460px;
+  font-family: var(--font-title); font-size: 17px; letter-spacing: 2px;
+  line-height: 1.8; color: var(--gold);
+}
+.modal-body .m-intro {
+  text-align: justify; text-indent: 2em;
+  font-size: 15px; line-height: 2; color: var(--text-light);
+}
+.modal-close {
+  position: absolute; top: max(14px, 3vh); right: max(14px, 4vw);
+  width: 42px; height: 42px; border-radius: 50%;
+  font-size: 22px; line-height: 1; color: var(--gold);
+  background: rgba(22,32,46,.8); border: 1px solid rgba(201,168,106,.5);
+}
+.modal-close:hover { background: var(--gold); color: var(--ink); }
+body.modal-open { overflow: hidden; }   /* 弹出时锁住页面滚动 */
+
+/* ---------- 5. 移动端：背景照片少铺、卡片变窄 ---------- */
+@media (max-width: 720px) {
+  .hero-montage { filter: blur(1.2px) saturate(.6); }
+  .montage-cell { opacity: .28; }               /* 小屏更淡，别压住地球 */
+  .hero-wall-grid { grid-template-columns: repeat(auto-fill, minmax(142px, 1fr)); }
+  .modal-body .m-photo { width: min(190px, 54vw); }
+}
+
+/* ---------- 6. 无障碍：系统设置了"减少动效"时，背景不再横移 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .montage-track { animation: none; }
+  .hero-card, .montage-cell { transition: none; }
+}
+
+/* ---------- 7. 常用调整 ----------
+   · 人物数量 / 姓名 / 介绍文案 / 照片文件名 → js/heroes.js 顶部 HEROES 数组
+   · 背景铺几行、每行多快、隔行是否反向 → js/heroes.js 里 HERO_CFG.montageRows / driftSec
+   · 背景清晰度     → .hero-montage 的 filter: blur()；浓淡 → .montage-cell 的 opacity
+   · 每行照片大小   → .montage-row:nth-child(n) .montage-cell 的 width
+   · 中间那层纱的深浅 → .hero-montage::after 的 rgba 数值
+   · 每行卡片多窄   → .hero-wall-grid 的 minmax() 第一个值
+   · 弹层宽度/最高  → .modal-body 的 width 与 max-height
+   ==================================================== */

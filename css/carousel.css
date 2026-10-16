@@ -1,0 +1,68 @@
+/* ============================================================
+   carousel.css —— 轮播图组件（江门页使用，5 张）
+   图片路径在 jiangmen.html 的 .slide img 里改；
+   每张幻灯片自带渐变兜底背景，没放图时也有画面。
+   ============================================================ */
+
+.carousel {
+  position: relative; max-width: 1080px; margin: 0 auto;
+  border-radius: var(--radius); overflow: hidden;
+  box-shadow: var(--shadow);
+  background: var(--ink-2);
+}
+/* 轨道：所有幻灯片横向排一排，靠 translateX 切换 */
+.carousel-track {
+  display: flex; height: clamp(300px, 46vw, 500px);
+  transition: transform .7s cubic-bezier(.65, .05, .25, 1); /* 切换速度可改 */
+}
+.slide { position: relative; flex: 0 0 100%; }
+.slide img { width: 100%; height: 100%; object-fit: cover; }
+
+/* 无图片时的渐变兜底画面（5 张各不相同，纯装饰） */
+.slide.ph0 { background: linear-gradient(135deg, #2b4a6f, #7fa8c9); }
+.slide.ph1 { background: linear-gradient(135deg, #6e3b2e, #c98a5b); }
+.slide.ph2 { background: linear-gradient(135deg, #38503f, #8fae72); }
+.slide.ph3 { background: linear-gradient(135deg, #4a3b6e, #9a86c4); }
+.slide.ph4 { background: linear-gradient(135deg, #6e2b3a, #c96a72); }
+/* 兜底画面中央的大字装饰 */
+.slide .ph-word {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-title); font-size: clamp(48px, 9vw, 110px);
+  color: rgba(246, 239, 226, .22); letter-spacing: 14px;
+}
+
+/* 底部渐变遮罩 + 字幕 */
+.slide .caption {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 44px 30px 22px;
+  background: linear-gradient(transparent, rgba(10, 15, 22, .82));
+  color: var(--text-light);
+}
+.slide .caption b { font-family: var(--font-title); font-size: 20px; letter-spacing: 3px; color: var(--gold); display: block; margin-bottom: 4px; }
+.slide .caption span { font-size: 14px; opacity: .85; }
+
+/* 左右箭头 */
+.carousel .arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid rgba(201,168,106,.6); background: rgba(22,32,46,.5);
+  color: var(--gold); font-size: 20px; line-height: 1; z-index: 3;
+  transition: background .25s;
+}
+.carousel .arrow:hover { background: var(--gold); color: var(--ink); }
+.carousel .arrow.prev { left: 16px; }
+.carousel .arrow.next { right: 16px; }
+
+/* 底部圆点 */
+.carousel .dots { position: absolute; bottom: 12px; left: 0; right: 0;
+  display: flex; justify-content: center; gap: 10px; z-index: 3; }
+.carousel .dots i {
+  width: 10px; height: 10px; border-radius: 50%; cursor: pointer;
+  background: rgba(246,239,226,.4); transition: all .3s;
+}
+.carousel .dots i.on { background: var(--gold); transform: scale(1.25); }
+
+/* 进度条（自动轮播时间可视化，去掉也很简单：删 .progress 即可） */
+.carousel .progress { position: absolute; left: 0; bottom: 0; height: 3px;
+  width: 0; background: var(--gold); z-index: 4; }
+.carousel .progress.run { animation: prog var(--dur, 5s) linear forwards; }
+@keyframes prog { from { width: 0; } to { width: 100%; } }

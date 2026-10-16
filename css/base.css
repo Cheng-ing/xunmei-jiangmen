@@ -1,0 +1,100 @@
+/* ============================================================
+   base.css —— 全站共享基础样式（配色 / 字体 / 导航 / 页脚 / 通用块）
+   修改站点整体风格时，只需要改本文件。
+   ============================================================ */
+
+/* ---------- 1. 主题变量：想换配色只改这里 ---------- */
+:root {
+  --ink: #16202e;          /* 深色底（夜空蓝） */
+  --ink-2: #1d2a3d;        /* 深色底渐变末端 */
+  --paper: #f6efe2;        /* 信纸米色 */
+  --paper-2: #ecdfc8;      /* 信纸深色（阴影用） */
+  --gold: #c9a86a;         /* 描金主色 */
+  --red: #a63a2b;          /* 侨都红（强调色） */
+  --text: #2b2b2b;         /* 正文色 */
+  --text-light: #e9e2d3;   /* 深色底上的文字 */
+  --radius: 14px;          /* 通用圆角 */
+  --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+  --font-title: "STZhongsong", "SimSun", "Songti SC", serif; /* 标题：宋体系，突出人文感 */
+  --font-body: "Microsoft YaHei", "PingFang SC", sans-serif;  /* 正文：黑体系 */
+}
+
+/* ---------- 2. 基础重置 ---------- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  color: var(--text);
+  background: radial-gradient(1200px 700px at 70% -10%, var(--ink-2), var(--ink));
+  min-height: 100vh;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+
+/* ---------- 3. 顶部导航（所有页面共用同一份 HTML 结构） ---------- */
+.site-nav {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 14px 5vw;
+  background: rgba(22, 32, 46, .82);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(201, 168, 106, .35);
+}
+.site-nav .brand {
+  font-family: var(--font-title);
+  font-size: 20px; letter-spacing: 2px; color: var(--gold);
+  white-space: nowrap;
+}
+.site-nav .brand small { font-size: 12px; color: var(--text-light); letter-spacing: 4px; margin-left: 8px; }
+.site-nav ul { display: flex; gap: 6px; list-style: none; flex-wrap: wrap; }
+.site-nav a.nav-link {
+  padding: 8px 14px; border-radius: 999px;
+  color: var(--text-light); font-size: 14px;
+  transition: background .25s, color .25s;
+}
+.site-nav a.nav-link:hover { background: rgba(201, 168, 106, .18); }
+/* 当前页高亮：给对应 <a> 加 .active 即可 */
+.site-nav a.nav-link.active { background: var(--gold); color: var(--ink); font-weight: 700; }
+
+/* ---------- 4. 页脚 ---------- */
+.site-footer {
+  margin-top: 60px; padding: 26px 5vw 40px;
+  text-align: center; color: rgba(233, 226, 211, .65); font-size: 13px;
+  border-top: 1px solid rgba(201, 168, 106, .25);
+}
+.site-footer .foot-nav { margin-bottom: 10px; }
+.site-footer .foot-nav a { margin: 0 10px; color: var(--gold); }
+
+/* ---------- 5. 通用内容容器与标题 ---------- */
+.section { padding: 56px 5vw; }
+.section-title {
+  font-family: var(--font-title);
+  font-size: clamp(24px, 3.4vw, 36px);
+  color: var(--gold); letter-spacing: 3px;
+  text-align: center; margin-bottom: 10px;
+}
+.section-sub {
+  text-align: center; color: rgba(233, 226, 211, .7);
+  font-size: 15px; margin-bottom: 40px; letter-spacing: 1px;
+}
+/* 章节标题下的装饰线 */
+.title-ornament { width: 72px; height: 2px; margin: 0 auto 14px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+
+/* ---------- 6. 入场动画：元素进入视口时淡入上移（由 common.js 触发） ---------- */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.in { opacity: 1; transform: none; }
+
+/* ---------- 7. 通用按钮 ---------- */
+.btn {
+  display: inline-block; padding: 12px 30px; border: 1px solid var(--gold);
+  border-radius: 999px; color: var(--gold); background: transparent;
+  font-size: 15px; letter-spacing: 2px; transition: all .3s;
+}
+.btn:hover { background: var(--gold); color: var(--ink); }
+
+/* ---------- 8. 移动端适配 ---------- */
+@media (max-width: 720px) {
+  .site-nav { flex-direction: column; }
+  .site-nav ul { justify-content: center; }
+}
