@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     qiaobao.html —— 题材一：优秀侨胞（人物故事 · 精神传承）
+     ★ 文案修改：只改页面底部 QIAOBAO_LETTERS 数组 ★
+     （信中三位均为真实人物，事迹已逐条核到官方来源，出处写在数组上方的注释与落款里）
+     ============================================================ -->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>优秀侨胞 · 寻美江门</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/envelope.css">
+  <link rel="stylesheet" href="css/carousel.css">
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="brand">寻美江门<small>侨都薪火</small></div>
+    <ul>
+      <li><a class="nav-link" href="index.html">首页</a></li>
+      <li><a class="nav-link" href="jiangmen.html">寻美江门</a></li>
+      <li><a class="nav-link active" href="qiaobao.html">优秀侨胞</a></li>
+      <li><a class="nav-link" href="feiyi.html">非遗传承人</a></li>
+      <li><a class="nav-link" href="gongjiang.html">能工巧匠</a></li>
+      <li><a class="nav-link" href="mofan.html">模范人物</a></li>
+    </ul>
+  </nav>
+
+  <!-- ▼ 页头引言 -->
+  <section class="section" style="text-align:center;">
+    <h2 class="section-title env-space">优秀侨胞 · 三封跨海的信</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">他们把异乡站成了故乡，又把故乡写进了世界</p>
+    <div class="env-tools">
+      <button class="btn" data-action="open-all">全部拆开</button>
+      <button class="btn" data-action="close-all">一键还原</button>
+    </div>
+    <div class="env-grid" id="envGrid"></div>
+  </section>
+
+  <!-- ▼ 轮播图（与 jiangmen.html 同款组件，改图改这里） -->
+  <section class="section">
+    <h2 class="section-title">侨影流光</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">五帧画面 · 自动轮播 · 可拖动</p>
+    <div class="carousel" data-interval="5000">
+      <div class="carousel-track">
+        <div class="slide ph0"><img src="images/q1.jpg" alt="墟街启航：少年登船远行"><div class="caption"><b>墟街启航</b><span>三十三墟街，多少少年从这里走向世界</span></div></div>
+        <div class="slide ph1"><img src="images/q2.jpg" alt="侨批万里：泛黄家书与算盘"><div class="caption"><b>侨批万里</b><span>银信合封，一句"平安"抵万金</span></div></div>
+        <div class="slide ph2"><img src="images/q3.jpg" alt="碉楼守望：自力村碉楼群"><div class="caption"><b>碉楼守望</b><span>自力村碉楼群，是家书也是界碑</span></div></div>
+        <div class="slide ph3"><img src="images/q4.jpg" alt="侨兴学堂：老侨校教室"><div class="caption"><b>侨兴学堂</b><span>侨胞出资兴学，重教成为侨都底色</span></div></div>
+        <div class="slide ph4"><img src="images/q5.jpg" alt="归来仍是少年：新一代侨胞回到江门"><div class="caption"><b>归来仍是少年</b><span>新一代侨胞回到大湾区，续写新侨批</span></div></div>
+      </div>
+      <button class="arrow prev" aria-label="上一张">‹</button>
+      <button class="arrow next" aria-label="下一张">›</button>
+      <div class="dots"></div><div class="progress"></div>
+    </div>
+  </section>
+
+  <!-- ▼ 页间互链：上一题材 / 下一题材 -->
+  <section class="section" style="text-align:center;">
+    <a class="btn" href="jiangmen.html">← 返回江门</a>
+    <a class="btn" href="feiyi.html" style="margin-left:12px;">下一站 · 非遗传承人 →</a>
+  </section>
+
+  <footer class="site-footer">
+    <div class="foot-nav">
+      <a href="index.html">首页</a><a href="jiangmen.html">寻美江门</a><a href="feiyi.html">非遗传承人</a><a href="gongjiang.html">能工巧匠</a><a href="mofan.html">模范人物</a>
+    </div>
+    "寻美江门"2026 AIGC 创作大赛 · 优秀侨胞
+  </footer>
+
+  <!-- ▼ 本页信封文案：三位真实人物，改文字只动这个数组。
+       资料出处（2026 年 10 月逐条核对）：
+       陈宜禧 —— 台山斗山镇政府文史稿 http://www.cnts.gov.cn/zjzc/dszrmzf/zjgk/lswh/content/post_3428423.html
+                  江门市人民政府网 http://www.jiangmen.gov.cn/newzjqx/qdqq/hwqq/content/post_3116230.html
+       李月美 —— 江门市政府"滇缅公路上的五邑籍南侨机工" http://www.jiangmen.gov.cn/newzjqx/qdqq/hwqq/content/post_3157108.html
+                  台山都斛镇政府 http://www.cnts.gov.cn/zjzc/dzzrmzf/zjgk/lswh/content/post_2479383.html
+                  人民日报海外版 https://paper.people.com.cn/rmrb/pc/content/202511/19/content_30115585.html
+       陈经纶 —— 新会区人民政府表彰决定 http://www.xinhui.gov.cn/gkmlpt/content/2/2725/post_2725806.html
+                  南方+ https://pc.nfnews.com/10119/6147036.html
+       注：陈宜禧生卒年有 1850—1927 与 1844—1929 两说，正文里刻意不写年份，避免与首页英雄墙打架。 -->
+  <script>
+    const QIAOBAO_LETTERS = [
+      {
+        seal: "路",
+        title: "陈宜禧：一条中国人自办的铁路",
+        body: "台山斗山人，16 岁赴美做华工，后在西雅图经商。1904 年回到家乡，立下‘不用洋人、不借外债、不招洋股’的规矩，主持修建新宁铁路：1906 年破土，1909 年斗山至公益段先行通车，1920 年全线贯通 133 公里。‘以中国人之资本，筑中国人之铁路。’",
+        sign: "—— 事迹据台山斗山镇政府文史稿、江门市人民政府网"
+      },
+      {
+        seal: "心",
+        title: "李月美：女扮男装上滇缅公路",
+        body: "祖籍台山都斛，生于马来亚槟城。1939 年她瞒着家人响应南侨总会招募回国，加入南洋华侨机工回国服务团，在滇缅公路上抢运军需；1940 年一次翻车重伤，身份才被揭开，此后转做战地护士。何香凝称她‘巾帼英雄’，战后她留在了昆明。",
+        sign: "—— 事迹据江门市政府‘滇缅公路上的五邑籍南侨机工’、人民日报海外版"
+      },
+      {
+        seal: "根",
+        title: "陈经纶：家乡是树根",
+        body: "新会罗坑人，香港实业家。1984 年捐资扩建新会华侨中学，1987 年捐建以名字命名的新会陈经纶中学，又在罗坑捐建幼儿园、小学，内地捐资逾亿元，支持教育机构 20 余所。‘我们虽已是大树，但家乡是树根，不好好养护树根，再大的树也会倒下。’",
+        sign: "—— 事迹据新会区人民政府表彰决定、南方+（引语为媒体转述）"
+      }
+    ];
+  </script>
+  <script src="js/common.js"></script>
+  <script src="js/carousel.js"></script>
+  <script>renderEnvelopes("#envGrid", QIAOBAO_LETTERS);</script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     jiangmen.html —— 江门总览页：5 张轮播图 + 可撕开的寄语信封
+     + 四大题材入口（优秀侨胞 / 非遗传承人 / 能工巧匠 / 模范人物）
+     ============================================================ -->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>寻美江门 · 五邑侨都</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/carousel.css">
+  <link rel="stylesheet" href="css/envelope.css">
+  <link rel="stylesheet" href="css/entries.css">
+</head>
+<body>
+
+  <!-- ▼ 顶部导航（全站同一份，当前页加 .active） -->
+  <nav class="site-nav">
+    <div class="brand">寻美江门<small>侨都薪火</small></div>
+    <ul>
+      <li><a class="nav-link" href="index.html">首页</a></li>
+      <li><a class="nav-link active" href="jiangmen.html">寻美江门</a></li>
+      <li><a class="nav-link" href="qiaobao.html">优秀侨胞</a></li>
+      <li><a class="nav-link" href="feiyi.html">非遗传承人</a></li>
+      <li><a class="nav-link" href="gongjiang.html">能工巧匠</a></li>
+      <li><a class="nav-link" href="mofan.html">模范人物</a></li>
+    </ul>
+  </nav>
+
+  <!-- ▼ 第一部分：轮播图（5 张）
+       · 换图：把每张 .slide 里注释掉的 <img> 放开，图片放 images/ 目录
+       · 改停留时长：data-interval="5000"（毫秒） -->
+  <section class="section">
+    <h2 class="section-title">侨都画卷</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">五帧画面，读一座"中国侨都"的山海与人间</p>
+
+    <div class="carousel" data-interval="5000">
+      <div class="carousel-track">
+
+        <!-- 幻灯片 1（图片已就位；换图只需替换 images/slide1.jpg） -->
+        <div class="slide ph0">
+          <img src="images/slide1.jpg" alt="侨都印记：赤坎骑楼老街黄昏">
+          <div class="caption"><b>侨都印记</b><span>450 万五邑籍华侨华人分布在全球 140 多个国家和地区</span></div>
+        </div>
+
+        <!-- 幻灯片 2 -->
+        <div class="slide ph1">
+          <img src="images/slide2.jpg" alt="帆樯三岛：潭江晨雾中的帆船与碉楼">
+          <div class="caption"><b>帆樯三岛</b><span>赤坎、潭江与崖门，把离别与归来都写进了碉楼与骑楼</span></div>
+        </div>
+
+        <!-- 幻灯片 3 -->
+        <div class="slide ph2">
+          <img src="images/slide3.jpg" alt="非遗薪火：葵艺匠人绘制葵扇">
+          <div class="caption"><b>非遗薪火</b><span>新会葵艺、台山浮石飘色、荷塘纱龙……手艺在指尖一代代相传</span></div>
+        </div>
+
+        <!-- 幻灯片 4 -->
+        <div class="slide ph3">
+          <img src="images/slide4.jpg" alt="匠心如琢：新会陈皮晒场">
+          <div class="caption"><b>匠心如琢</b><span>从一把蒲扇到一座侨校，能工巧匠把日子打磨成作品</span></div>
+        </div>
+
+        <!-- 幻灯片 5 -->
+        <div class="slide ph4">
+          <img src="images/slide5.jpg" alt="精神长河：侨批化作飞鸟掠过侨都夜色">
+          <div class="caption"><b>精神长河</b><span>爱国、开放、勤劳、重教——侨都精神在新一代身上继续生长</span></div>
+        </div>
+
+      </div>
+      <button class="arrow prev" aria-label="上一张">‹</button>
+      <button class="arrow next" aria-label="下一张">›</button>
+      <div class="dots"></div>
+      <div class="progress"></div>
+    </div>
+  </section>
+
+  <!-- ▼ 第二部分：寄语信封（点击撕开）
+       文案在页面底部 page-data 脚本里的 JIANGMEN_LETTERS 数组修改 -->
+  <section class="section">
+    <h2 class="section-title env-space">三封寄往侨都的信</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">每一封信都藏着一段话 · 点击撕开</p>
+    <div class="env-tools">
+      <button class="btn" data-action="open-all">全部拆开</button>
+      <button class="btn" data-action="close-all">一键还原</button>
+    </div>
+    <div class="env-grid" id="envGrid"></div>
+  </section>
+
+  <!-- ▼ 第三部分：四大题材入口（点击前往独立页面） -->
+  <section class="section">
+    <h2 class="section-title">人物故事 · 精神传承</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">四类题材，四条独立的寻美路线</p>
+    <div class="entry-grid">
+      <a class="entry-card reveal" href="qiaobao.html">
+        <span class="no">壹</span><h3>优秀侨胞</h3><p>漂洋过海，把异乡活成故乡，把故乡记了一辈子。</p><span class="btn" style="margin-top:14px">拆信阅读 →</span>
+      </a>
+      <a class="entry-card reveal" href="feiyi.html">
+        <span class="no">贰</span><h3>非遗传承人</h3><p>一门手艺，一生坚守，薪火在指缝间越烧越旺。</p><span class="btn" style="margin-top:14px">拆信阅读 →</span>
+      </a>
+      <a class="entry-card reveal" href="gongjiang.html">
+        <span class="no">叁</span><h3>能工巧匠</h3><p>于细微处见功夫，把平凡的日子打磨成作品。</p><span class="btn" style="margin-top:14px">拆信阅读 →</span>
+      </a>
+      <a class="entry-card reveal" href="mofan.html">
+        <span class="no">肆</span><h3>模范人物</h3><p>一盏灯点亮另一盏灯，精神就这样传了下去。</p><span class="btn" style="margin-top:14px">拆信阅读 →</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="foot-nav">
+      <a href="index.html">首页</a><a href="qiaobao.html">优秀侨胞</a><a href="feiyi.html">非遗传承人</a><a href="gongjiang.html">能工巧匠</a><a href="mofan.html">模范人物</a>
+    </div>
+    "寻美江门"2026 AIGC 创作大赛主题网页 · 人物故事 / 精神传承
+  </footer>
+
+  <!-- ▼ page-data：本页信封文案（改字实只改这里，结构不动） -->
+  <script>
+    const JIANGMEN_LETTERS = [
+      {
+        seal: "僑",
+        title: "第一封 · 家书抵万金",
+        body: "一百年前，五邑先民从三十三墟街出发，下南洋、赴北美。侨批里最重的一句，永远是'平安，勿念'。今天再读这些泛黄的信纸，仍能听见那座港口的心跳。",
+        sign: "—— 致每一位出走的少年与归来的老人"
+      },
+      {
+        seal: "薪",
+        title: "第二封 · 灯火可亲",
+        body: "碉楼顶上的探照灯早就不亮了，可开平每一所乡村学校夜晚都亮着灯；葵扇厂的机器停了，新会学堂里的孩子还在学扎葵。侨都的光，从来不是电，是重教与传承。",
+        sign: "—— 写在潭江夜航的船头"
+      },
+      {
+        seal: "傳",
+        title: "第三封 · 下一程",
+        body: "把先辈的故事讲给 AI 听，让算法学会乡音，让作品带着温度上路。寻美江门，寻的不只是风景，是那股'走得再远，也要把根留住'的精气神。",
+        sign: "—— 寻美江门 2026"
+      }
+    ];
+  </script>
+  <script src="js/common.js"></script>
+  <script src="js/carousel.js"></script>
+  <script>renderEnvelopes("#envGrid", JIANGMEN_LETTERS);</script> <!-- 把文案渲染成信封 -->
+</body>
+</html>

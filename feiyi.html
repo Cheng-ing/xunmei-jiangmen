@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     feiyi.html —— 题材二：非遗传承人（人物故事 · 精神传承）
+     ★ 文案修改：只改页面底部 FEIYI_LETTERS 数组 ★
+     （信中三位均为真实传承人，事迹已逐条核到官方来源，出处写在数组上方的注释与落款里）
+     ============================================================ -->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>非遗传承人 · 寻美江门</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/envelope.css">
+  <link rel="stylesheet" href="css/carousel.css">
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="brand">寻美江门<small>侨都薪火</small></div>
+    <ul>
+      <li><a class="nav-link" href="index.html">首页</a></li>
+      <li><a class="nav-link" href="jiangmen.html">寻美江门</a></li>
+      <li><a class="nav-link" href="qiaobao.html">优秀侨胞</a></li>
+      <li><a class="nav-link active" href="feiyi.html">非遗传承人</a></li>
+      <li><a class="nav-link" href="gongjiang.html">能工巧匠</a></li>
+      <li><a class="nav-link" href="mofan.html">模范人物</a></li>
+    </ul>
+  </nav>
+
+  <!-- ▼ 页头引言 + 信封区 -->
+  <section class="section" style="text-align:center;">
+    <h2 class="section-title env-space">非遗传承人 · 三封手写的信</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">一门手艺，一生坚守；信纸很薄，功夫很深</p>
+    <div class="env-tools">
+      <button class="btn" data-action="open-all">全部拆开</button>
+      <button class="btn" data-action="close-all">一键还原</button>
+    </div>
+    <div class="env-grid" id="envGrid"></div>
+  </section>
+
+  <!-- ▼ 轮播图（同款组件，换图放开 <img> 即可） -->
+  <section class="section">
+    <h2 class="section-title">手艺流光</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">五帧画面 · 自动轮播 · 可拖动</p>
+    <div class="carousel" data-interval="5000">
+      <div class="carousel-track">
+        <div class="slide ph0"><img src="images/f1.jpg" alt="葵扇生风：葵艺工坊挂满蒲扇"><div class="caption"><b>葵扇生风</b><span>新会葵艺：火画、焙花，一把蒲扇摇出百年商埠</span></div></div>
+        <div class="slide ph1"><img src="images/f2.jpg" alt="纱龙腾夜：夜色中的红色纱龙"><div class="caption"><b>纱龙腾夜</b><span>荷塘纱龙，四十余节龙身在夜色里翻涌</span></div></div>
+        <div class="slide ph2"><img src="images/f3.jpg" alt="飘色凌空：幼童凌虚立于色柜"><div class="caption"><b>飘色凌空</b><span>台山浮石飘色，幼童凌虚而立，力学与美学的暗语</span></div></div>
+        <div class="slide ph3"><img src="images/f4.jpg" alt="茅龙走笔：茅草为锋的毛笔与墨迹"><div class="caption"><b>茅龙走笔</b><span>白沙茅龙笔，以茅草为锋，写出岭南书脉</span></div></div>
+        <div class="slide ph4"><img src="images/f5.jpg" alt="醒狮叩堂：红金狮头特写"><div class="caption"><b>醒狮叩堂</b><span>岭南醒狮，狮头一抬，侨村的年就到了</span></div></div>
+      </div>
+      <button class="arrow prev" aria-label="上一张">‹</button>
+      <button class="arrow next" aria-label="下一张">›</button>
+      <div class="dots"></div><div class="progress"></div>
+    </div>
+  </section>
+
+  <!-- ▼ 页间互链 -->
+  <section class="section" style="text-align:center;">
+    <a class="btn" href="qiaobao.html">← 上一站 · 优秀侨胞</a>
+    <a class="btn" href="gongjiang.html" style="margin-left:12px;">下一站 · 能工巧匠 →</a>
+  </section>
+
+  <footer class="site-footer">
+    <div class="foot-nav">
+      <a href="index.html">首页</a><a href="jiangmen.html">寻美江门</a><a href="qiaobao.html">优秀侨胞</a><a href="gongjiang.html">能工巧匠</a><a href="mofan.html">模范人物</a>
+    </div>
+    "寻美江门"2026 AIGC 创作大赛 · 非遗传承人
+  </footer>
+
+  <!-- ▼ 本页信封文案：三位真实传承人，改文字只动这个数组。
+       资料出处（2026 年 10 月逐条核对）：
+       廖惠林 —— 中国非物质文化遗产网 国家级传承人档案 https://www.ihchina.cn/ccr_detail/2747/
+                  新会葵艺项目页 https://www.ihchina.cn/project_details/14217/ ；光明网 https://news.gmw.cn/2026-09/20/content_39009247.htm
+       张瑞亨 —— 中国非物质文化遗产网 https://www.ihchina.cn/ccr_detail/30553.html
+                  新会区人民政府 http://www.xinhui.gov.cn/jmxhqwgj/gkmlpt/content/3/3386/post_3386189.html
+       邝活发 —— 开平市水口镇政府 http://www.kaiping.gov.cn/jmkpsskz/gkmlpt/content/3/3248/post_3248702.html
+                  江门市文化广电旅游体育局 http://www.jiangmen.gov.cn/bmpd/jmswhgdlytyj/zwgk/gzdt/content/post_3264504.html
+       注：荷塘纱龙目前只查到市级传承人（蓬江区政府网：李伯浩），国家级名录未见具名个人，
+           所以这一页没有写纱龙；想补的话请以蓬江区政府的公示为准。 -->
+  <script>
+    const FEIYI_LETTERS = [
+      {
+        seal: "葵",
+        title: "廖惠林：把葵艺接回手里",
+        body: "新会人，1956 年生，16 岁拜老工艺师赵文达学葵扇烙画。新会葵艺 2009 年列入国家级非物质文化遗产名录（编号 Ⅶ-92），他是这一项目的国家级代表性传承人；行业最冷的时候，他自筹资金重开葵艺作坊，创出竹箨画扇、三脊烙画扇，作品进了广东民间工艺博物馆。‘上千年的技艺，不能断在我手里。’",
+        sign: "—— 事迹据中国非物质文化遗产网、光明网"
+      },
+      {
+        seal: "笔",
+        title: "张瑞亨：十八道工序扎一支茅龙笔",
+        body: "新会人，1962 年生，制笔四十余年。茅龙笔是明代白沙先生陈献章用圭峰山茅草扎成的笔，‘白沙茅龙笔制作技艺’2008 年列入国家级名录，张瑞亨 2025 年成为这一项目的国家级代表性传承人；他把制笔拆成 18 道工序编成图解，2010 年带着作品去了上海世博会。",
+        sign: "—— 事迹据中国非物质文化遗产网、新会区人民政府"
+      },
+      {
+        seal: "灯",
+        title: "邝活发：泮村灯会的扎灯人",
+        body: "开平水口镇泮村人。泮村灯会始于明英宗天顺八年（1464 年），到今年已五百六十多年：一天半的巡游走过 42 条村，每届约 70 盏花灯，单盏重约 35 公斤。他从小跟着父亲学扎灯，是家里的第三代，2025 年成为国家级代表性传承人。‘泮村灯会不仅是我的爱好，更是我生活的一部分。’",
+        sign: "—— 事迹据开平市水口镇政府网、中国非物质文化遗产网"
+      }
+    ];
+  </script>
+  <script src="js/common.js"></script>
+  <script src="js/carousel.js"></script>
+  <script>renderEnvelopes("#envGrid", FEIYI_LETTERS);</script>
+</body>
+</html>

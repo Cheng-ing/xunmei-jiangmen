@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     gongjiang.html —— 题材三：能工巧匠（人物故事 · 精神传承）
+     ★ 文案修改：只改页面底部 GONGJIANG_LETTERS 数组 ★
+     （信中三位均为真实人物，事迹已逐条核到官方来源，出处写在数组上方的注释与落款里）
+     ============================================================ -->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>能工巧匠 · 寻美江门</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/envelope.css">
+  <link rel="stylesheet" href="css/carousel.css">
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="brand">寻美江门<small>侨都薪火</small></div>
+    <ul>
+      <li><a class="nav-link" href="index.html">首页</a></li>
+      <li><a class="nav-link" href="jiangmen.html">寻美江门</a></li>
+      <li><a class="nav-link" href="qiaobao.html">优秀侨胞</a></li>
+      <li><a class="nav-link" href="feiyi.html">非遗传承人</a></li>
+      <li><a class="nav-link active" href="gongjiang.html">能工巧匠</a></li>
+      <li><a class="nav-link" href="mofan.html">模范人物</a></li>
+    </ul>
+  </nav>
+
+  <!-- ▼ 页头引言 + 信封区 -->
+  <section class="section" style="text-align:center;">
+    <h2 class="section-title env-space">能工巧匠 · 三封带木屑的信</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">于细微处见功夫，把平凡日子打磨成作品</p>
+    <div class="env-tools">
+      <button class="btn" data-action="open-all">全部拆开</button>
+      <button class="btn" data-action="close-all">一键还原</button>
+    </div>
+    <div class="env-grid" id="envGrid"></div>
+  </section>
+
+  <!-- ▼ 轮播图 -->
+  <section class="section">
+    <h2 class="section-title">百工图谱</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">五帧画面 · 自动轮播 · 可拖动</p>
+    <div class="carousel" data-interval="5000">
+      <div class="carousel-track">
+        <div class="slide ph0"><img src="images/g1.jpg" alt="陈皮晒场：三瓣开皮的刀工"><div class="caption"><b>开皮刀工</b><span>新会柑农的刀工：三瓣开皮，刀走皮不伤肉</span></div></div>
+        <div class="slide ph1"><img src="images/g2.jpg" alt="碉楼营造：竹脚手架上砌拱的泥水匠"><div class="caption"><b>碉楼营造</b><span>泥水匠一砖一拱，把西洋式样砌进乡土尺度</span></div></div>
+        <div class="slide ph2"><img src="images/g3.jpg" alt="五金星火：车间里的车床与技师"><div class="caption"><b>五金星火</b><span>从自行车配件到摩托车王国，车间里的技改人生</span></div></div>
+        <div class="slide ph3"><img src="images/g4.jpg" alt="船舶焊花：船坞中的立焊作业"><div class="caption"><b>船舶焊花</b><span>船厂焊工，一条焊缝走满八米不熄火</span></div></div>
+        <div class="slide ph4"><img src="images/g5.jpg" alt="制香巧手：晒场如金色帘幕的竹签香"><div class="caption"><b>制香巧手</b><span>新会小冈，一缕香背后是精度到克的配比</span></div></div>
+      </div>
+      <button class="arrow prev" aria-label="上一张">‹</button>
+      <button class="arrow next" aria-label="下一张">›</button>
+      <div class="dots"></div><div class="progress"></div>
+    </div>
+  </section>
+
+  <!-- ▼ 页间互链 -->
+  <section class="section" style="text-align:center;">
+    <a class="btn" href="feiyi.html">← 上一站 · 非遗传承人</a>
+    <a class="btn" href="mofan.html" style="margin-left:12px;">下一站 · 模范人物 →</a>
+  </section>
+
+  <footer class="site-footer">
+    <div class="foot-nav">
+      <a href="index.html">首页</a><a href="jiangmen.html">寻美江门</a><a href="qiaobao.html">优秀侨胞</a><a href="feiyi.html">非遗传承人</a><a href="mofan.html">模范人物</a>
+    </div>
+    "寻美江门"2026 AIGC 创作大赛 · 能工巧匠
+  </footer>
+
+  <!-- ▼ 本页信封文案：三位真实工匠，改文字只动这个数组。
+       资料出处（2026 年 10 月逐条核对）：
+       黄小红 —— 江门市人民政府网 http://www.jiangmen.gov.cn/home/bmdt/content/post_3291626.html
+                  人民网 全国劳动模范表彰名单 http://politics.people.com.cn/n1/2025/0429/c1001-40470358.html
+       伍炳亮 —— 台山市人社局 http://www.cnts.gov.cn/zfgzbm/srlzyhshbzj/zwgk/zfxxgkml/gzdt/content/post_2678299.html
+                  江门市人民政府网 http://www.jiangmen.gov.cn/bmpd/jmswhgdlytyj/zwgk/gzdt/content/post_3055043.html
+       李柏文 —— 鹤山市人民政府网 https://www.heshan.gov.cn/jmhsrsj/gkmlpt/content/3/3156/post_3156467.html
+                  江门市人社局'侨都十大工匠'公示 https://www.jiangmen.gov.cn/bmpd/jmsrlzyhshbzj/sylm/jggs/content/post_2586001.html
+       注：黄小红的性别与籍贯在公开报道里没有明确记载，正文一律不写人称代词；
+           想换人可用陈孟锦（新会中集·钳工，广东省首席技师）、何先勇（大冶摩托·维修电工，省五一劳动奖章）。 -->
+  <script>
+    const GONGJIANG_LETTERS = [
+      {
+        seal: "焊",
+        title: "黄小红：动车组车体上的焊缝",
+        body: "2012 年从广州铁路职业技术学院毕业，进了新会的中车广东，一直守在车体焊接一线。2015 年，车体‘青年先锋队’完成 25 项难题攻关，把产线节拍压到‘3 天 5 辆车’；2021 年‘黄小红劳模创新工作室’挂牌，拿下 3 项国家专利，带出 2 名高级技师、10 名技师。2025 年 4 月，黄小红获评全国劳动模范。",
+        sign: "—— 事迹据江门市人民政府网、人民网全国劳动模范名单"
+      },
+      {
+        seal: "木",
+        title: "伍炳亮：一千三百款明式家具",
+        body: "台山人，1953 年生，做硬木家具四十余年，把门道总结成‘型、艺、材、韵’四个字，累计设计 1300 多款家具。2022 年获第八届中国工艺美术大师称号；2024 年 3 月，5 套作品入藏中国国家博物馆。‘我对黄花梨可谓 40 多年高烧不退。’",
+        sign: "—— 事迹据台山市人社局、江门市人民政府网、人民日报海外版"
+      },
+      {
+        seal: "色",
+        title: "李柏文：给汽车调一身漆",
+        body: "在鹤山的雅图高新做汽车涂料调色与研发，从一线调色员干到项目组主管。2018 年评上鹤山工匠，2019 年获广东省五一劳动奖章，2021 年 4 月获全国五一劳动奖章，先后取得 16 项专利；广汽传祺的定制涂料曾卡在‘罩高温清漆易缩孔、银粉漆失光’上，被一次次试验磨到了按期交付。",
+        sign: "—— 事迹据鹤山市人民政府网、中华全国总工会表彰名单"
+      }
+    ];
+  </script>
+  <script src="js/common.js"></script>
+  <script src="js/carousel.js"></script>
+  <script>renderEnvelopes("#envGrid", GONGJIANG_LETTERS);</script>
+</body>
+</html>

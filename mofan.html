@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     mofan.html —— 题材四：模范人物（人物故事 · 精神传承）
+     ★ 文案修改：只改页面底部 MOFAN_LETTERS 数组 ★
+     （信中三位均为真实人物，事迹已逐条核到官方来源，出处写在数组上方的注释与落款里）
+     ============================================================ -->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>模范人物 · 寻美江门</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/envelope.css">
+  <link rel="stylesheet" href="css/carousel.css">
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="brand">寻美江门<small>侨都薪火</small></div>
+    <ul>
+      <li><a class="nav-link" href="index.html">首页</a></li>
+      <li><a class="nav-link" href="jiangmen.html">寻美江门</a></li>
+      <li><a class="nav-link" href="qiaobao.html">优秀侨胞</a></li>
+      <li><a class="nav-link" href="feiyi.html">非遗传承人</a></li>
+      <li><a class="nav-link" href="gongjiang.html">能工巧匠</a></li>
+      <li><a class="nav-link active" href="mofan.html">模范人物</a></li>
+    </ul>
+  </nav>
+
+  <!-- ▼ 页头引言 + 信封区 -->
+  <section class="section" style="text-align:center;">
+    <h2 class="section-title env-space">模范人物 · 三封点灯人的信</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">一盏灯点亮另一盏灯，精神就这样传了下去</p>
+    <div class="env-tools">
+      <button class="btn" data-action="open-all">全部拆开</button>
+      <button class="btn" data-action="close-all">一键还原</button>
+    </div>
+    <div class="env-grid" id="envGrid"></div>
+  </section>
+
+  <!-- ▼ 轮播图 -->
+  <section class="section">
+    <h2 class="section-title">城与光</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">五帧画面 · 自动轮播 · 可拖动</p>
+    <div class="carousel" data-interval="5000">
+      <div class="carousel-track">
+        <div class="slide ph0"><img src="images/m1.jpg" alt="巡堤：暴雨夜堤围上的手电光"><div class="caption"><b>堤长巡夜</b><span>潭江堤围上的老支书，年年汛期走在最前面</span></div></div>
+        <div class="slide ph1"><img src="images/m2.jpg" alt="乡村教师：侨乡村小的午后课堂"><div class="caption"><b>乡村教师</b><span>侨乡村小三尺讲台，一站就是三十年</span></div></div>
+        <div class="slide ph2"><img src="images/m3.jpg" alt="归雁兴村：老祠堂里的乡村直播间"><div class="caption"><b>归雁兴村</b><span>返乡青年把旧祠堂改成直播间，土特产飞向全国</span></div></div>
+        <div class="slide ph3"><img src="images/m4.jpg" alt="志愿服务：老街巷口的红马甲"><div class="caption"><b>志愿红马甲</b><span>侨都社区的志愿者队伍，把邻里缝得密密实实</span></div></div>
+        <div class="slide ph4"><img src="images/m5.jpg" alt="少年传薪：非遗研学课堂上的孩子"><div class="caption"><b>少年传薪</b><span>非遗研学课堂上的孩子，是精神的下一棒</span></div></div>
+      </div>
+      <button class="arrow prev" aria-label="上一张">‹</button>
+      <button class="arrow next" aria-label="下一张">›</button>
+      <div class="dots"></div><div class="progress"></div>
+    </div>
+  </section>
+
+  <!-- ▼ 页间互链：闭环回江门总览 / 首页 -->
+  <section class="section" style="text-align:center;">
+    <a class="btn" href="gongjiang.html">← 上一站 · 能工巧匠</a>
+    <a class="btn" href="jiangmen.html" style="margin-left:12px;">回到江门总览</a>
+    <a class="btn" href="index.html" style="margin-left:12px;">重新出发 →</a>
+  </section>
+
+  <footer class="site-footer">
+    <div class="foot-nav">
+      <a href="index.html">首页</a><a href="jiangmen.html">寻美江门</a><a href="qiaobao.html">优秀侨胞</a><a href="feiyi.html">非遗传承人</a><a href="gongjiang.html">能工巧匠</a>
+    </div>
+    "寻美江门"2026 AIGC 创作大赛 · 模范人物
+  </footer>
+
+  <!-- ▼ 本页信封文案：三位真实模范人物，改文字只动这个数组。
+       资料出处（2026 年 10 月逐条核对）：
+       梁伟忠 —— 江门市人民政府网 http://www.jiangmen.gov.cn/home/bmdt/content/post_3251256.html
+                  台山市人民政府网 http://www.cnts.gov.cn/tssrmzf/tsyw/tskx/content/post_3232946.html ；羊城晚报 https://ycpai.ycwb.com/ycppad/content/2019-09/10/content_497055.html
+       李  建 —— 人民网 中央文明办'中国好人榜' https://cpc.people.com.cn/n1/2026/0611/c64387-40738683.html
+                  江门市政府网 http://www.jiangmen.gov.cn/ztbd/cwxxd/content/post_3452472.html ；南方+ https://static.nfnews.com/content/202606/17/c12538067.html
+       谭爱玲 —— 江门市中心医院 https://www.jmszxyy.com.cn/byjs/bydt/202510/t1044423.html
+                  南方日报 https://epaper.nfnews.com/m/ipaper/nfrb/html/202511/13/content_10153170.html
+       注：想换人还有谢英珠（助人为乐·广东好人）、钟景贤（敬业奉献·基层医护）、
+           郭子江（见义勇为·徒手掰开车门救人）、李建昀（省道德模范提名·打私负伤后重返一线）。 -->
+  <script>
+    const MOFAN_LETTERS = [
+      {
+        seal: "岛",
+        title: "梁伟忠：把讲台搬上川岛的人",
+        body: "1987 年从台山师范毕业，回到上川岛教书，连续担任班主任 18 年，发动乡贤捐资 650 多万元改善海岛办学条件。2019 年获评‘全国模范教师’，2025 年入选‘广东好人’。他说：‘近 38 年的海岛教育生涯，虽然艰辛寡淡，但我坚定无悔。’",
+        sign: "—— 事迹据江门市人民政府网、台山市人民政府网、羊城晚报"
+      },
+      {
+        seal: "火",
+        title: "李建：高速上那辆冒烟的客车",
+        body: "江门市江海区消防救援大队副大队长。2025 年 8 月 25 日中午，休假途中的他在汕湛高速茂名段遇到一辆大客车自燃，拦车、灭火、组织撤离，四十多名乘客全部安全，无一人伤亡。2026 年 6 月登上‘中国好人榜’，他只说：‘我不是英雄，只是做了消防员该做的事。’",
+        sign: "—— 事迹据中央文明办‘中国好人榜’、人民网、南方+"
+      },
+      {
+        seal: "亲",
+        title: "谭爱玲：一个人的照护，八千小时",
+        body: "江门市中心医院退休职工、江门市红十字会志愿者。她照顾九旬母亲、残疾的妹妹和重伤的外甥，前后照护四年，积蓄花光，还抵押了房子；又在启明里侨批馆做志愿讲解，志愿服务累计超过 8000 小时。2023 年获‘广东好人’，2025 年入选中央文明办‘中国好人榜’。",
+        sign: "—— 事迹据江门市中心医院、南方日报"
+      }
+    ];
+  </script>
+  <script src="js/common.js"></script>
+  <script src="js/carousel.js"></script>
+  <script>renderEnvelopes("#envGrid", MOFAN_LETTERS);</script>
+</body>
+</html>

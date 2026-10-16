@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+    <!-- 
+     index.html —— 入口页：随时间自转的真实地球，点击跳转"江门"
+     样式：css/base.css + css/globe.css + css/heroes.css
+     逻辑：js/jiangmen-boundary.js（边界数据）+ js/globe3d.js（渲染）
+           js/heroes.js（历代名人：背景照片墙 + 点击出介绍）
+     -->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>寻美江门 · 侨都薪火 | 首页</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/globe.css">
+  <link rel="stylesheet" href="css/heroes.css">
+</head>
+<body>
+
+<!-- 星空背景装饰（可删） -->
+  <div class="starfield"></div>
+
+  <!-- ▼ 顶部导航：全站每个页面都放同一份，当前页链接加 .active -->
+  <nav class="site-nav">
+    <div class="brand">寻美江门<small>侨都薪火</small></div>
+    <ul>
+      <li><a class="nav-link active" href="index.html">首页</a></li>
+      <li><a class="nav-link" href="jiangmen.html">寻美江门</a></li>
+      <li><a class="nav-link" href="qiaobao.html">优秀侨胞</a></li>
+      <li><a class="nav-link" href="feiyi.html">非遗传承人</a></li>
+      <li><a class="nav-link" href="gongjiang.html">能工巧匠</a></li>
+      <li><a class="nav-link" href="mofan.html">模范人物</a></li>
+    </ul>
+  </nav>
+
+  <!-- ▼ 英雄区：真实经纬度投影的地球，随时间自转，江门按真实坐标打点 -->
+  <section class="hero">
+    <!-- 历代名人照片：虚化横铺在地球后面做背景，每张都能点开介绍（照片在 images/heroes/） -->
+    <div class="hero-montage" id="heroMontage"></div>
+
+    <h1>从世界，<em>看见江门</em></h1>
+
+    <!-- 左：旋转地球　右：江门真实行政边界详图（两块画布由 globe3d.js 同步绘制） -->
+    <div class="stage-row">
+      <div class="globe-stage">
+        <canvas id="globeCanvas" aria-label="真实地球，已标注江门市行政边界，点击进入江门页"></canvas>
+        <!-- 江门标记：位置每帧由 JS 按经纬度算出，不要手写 left/top -->
+        <div class="jm-pin">
+          <span class="tag">五邑侨都 · 江门<small>22.60°N&nbsp;&nbsp;113.08°E</small></span>
+        </div>
+      </div>
+
+      <figure class="jm-map">
+        <figcaption>江门市域 · 真实行政边界</figcaption>
+        <canvas id="jmMapCanvas" aria-label="江门市真实行政边界图，含七个区县"></canvas>
+        <p class="map-note">轮廓取自国家行政区划数据（440700），与地球上的打点同一套坐标</p>
+      </figure>
+    </div>
+
+    <p class="hint">点击地球，开启寻美之旅 ✈　·　点击背景照片，看人物介绍</p>
+    <!-- 实时读数：当前中央经线 / 江门是否正对镜头 -->
+    <p class="readout" id="readout">正在载入地球影像…</p>
+    <a class="btn" href="jiangmen.html">直接进入</a>
+  </section>
+
+  <!-- ▼ 英雄墙：江门历代名人，卡片由 js/heroes.js 的 HEROES 数组生成，点一下弹出介绍 -->
+  <section class="section" id="heroes">
+    <h2 class="section-title">侨都人物志</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">从明代大儒到革命英烈 —— 点一个人物，看他的故事</p>
+    <div class="hero-wall-grid" id="heroWall"></div>
+
+    <p class="hero-wall-note">
+      照片位：把真实照片按 <code>js/heroes.js</code> 里每个人的 <code>file</code> 文件名放进
+      <code>images/heroes/</code>（建议竖构图 3:4，如 900×1200），对上名字就自动显示；
+      没放照片时卡片会显示"姓名 + 待补照片"的占位，不会破版。<br>
+      生卒年、籍贯与事迹摘自公开资料，参赛前请再核对一遍，并按作品的真实素材补充。
+    </p>
+  </section>
+
+  <!-- ▼ 介绍浮层：内容由 heroes.js 注入，这里只放骨架（默认 hidden） -->
+  <div class="hero-modal" id="heroModal" role="dialog" aria-modal="true" aria-label="人物介绍" hidden>
+    <div class="modal-body"></div>
+    <button class="modal-close" type="button" aria-label="关闭介绍">×</button>
+  </div>
+
+  <footer class="site-footer">
+    "寻美江门"2026 AIGC 创作大赛主题网页 · 人物故事 / 精神传承
+    <nav> 创作者：庄嘉成、陈俊安</nav>
+  </footer>
+
+  <!-- 顺序不能换：先加载边界数据，再加载渲染脚本 -->
+  <script src="js/jiangmen-boundary.js"></script>
+  <script src="js/globe3d.js"></script>
+  <!-- 历代名人：照片墙与弹层（改人名/介绍只动这个文件顶部的 HEROES 数组） -->
+  <script src="js/heroes.js"></script>
+</body>
+</html>
