@@ -71,7 +71,7 @@ document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 /* ---------- 窄屏导航：一排链接横向滑动，把当前页那颗先滑到看得见的位置 ----------
    用 scrollLeft 而不是 scrollIntoView，后者会顺手把整张页面也往下滚。
    不判断屏幕宽度，只看这排链接是不是真的放不下（scrollWidth > clientWidth）——
-   放得下时它本来就不需要滚。导航的断点在 css/base.css 第 8 节（860px）。 */
+   放得下时它本来就不需要滚。导航的断点在 css/base.css 第 8 节（900px）。 */
 const activeLink = document.querySelector(".site-nav a.nav-link.active");
 if (activeLink) {
   const row = activeLink.closest("ul");

@@ -1,0 +1,322 @@
+/* ============================================================
+   fengwu.css —— 「侨都风物」页外观（图鉴 / 小测 / 路线 / 分享长图）
+   数据与文案在 js/fengwu.js，本文件只管长相；配色全部沿用 css/base.css 的 :root 变量。
+   想改的东西集中在三处：第 1 节的局部变量、第 3 节卡片宽度、第 9 节移动端。
+   ============================================================ */
+
+/* ---------- 1. 本页局部变量（只在这一页生效，不动全站配色） ---------- */
+.fw-wrap {
+  --jade: #4f7a5b;                 /* 小测答对的颜色：和侨都红区分开，又不跳出配色 */
+  --line-soft: rgba(201, 168, 106, .26);
+  --card-bg: rgba(246, 239, 226, .05);
+  --card-bg-hover: rgba(201, 168, 106, .1);
+}
+
+/* ---------- 2. 工具条：美食/美景切换 + 区县筛选 + 关键词搜索 ---------- */
+.fw-toolbar {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 10px 14px; margin: 0 auto 26px; max-width: 1100px;
+}
+.fw-tabs { display: flex; gap: 8px; }
+.fw-tab {
+  padding: 9px 22px; border-radius: 999px; font-size: 15px; letter-spacing: 2px;
+  color: var(--text-light); background: transparent;
+  border: 1px solid var(--line-soft); transition: all .25s;
+}
+.fw-tab:hover { border-color: var(--gold); }
+.fw-tab.on { background: var(--gold); color: var(--ink); border-color: var(--gold); font-weight: 700; }
+
+.fw-town-chip, .fw-day-chip, .fw-pref-chip {
+  padding: 6px 14px; border-radius: 999px; font-size: 13px; letter-spacing: 1px;
+  color: rgba(233, 226, 211, .78); background: transparent;
+  border: 1px solid var(--line-soft); transition: all .2s;
+}
+.fw-town-chip:hover, .fw-day-chip:hover, .fw-pref-chip:hover { border-color: var(--gold); color: var(--paper); }
+.fw-town-chip.on, .fw-day-chip.on, .fw-pref-chip.on {
+  background: rgba(201, 168, 106, .22); border-color: var(--gold); color: var(--paper);
+}
+.fw-towns { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; }
+
+/* 搜索框：深色底 + 描金焦点环，去掉浏览器默认的原生样式 */
+#fwSearch {
+  min-width: 180px; flex: 0 1 240px;
+  padding: 8px 14px; border-radius: 999px; font-size: 14px;
+  color: var(--paper); background: rgba(9, 14, 21, .5);
+  border: 1px solid var(--line-soft); outline: none;
+}
+#fwSearch::placeholder { color: rgba(233, 226, 211, .4); }
+#fwSearch:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201, 168, 106, .18); }
+.fw-count { font-size: 12.5px; letter-spacing: 1px; color: rgba(201, 168, 106, .75); }
+
+/* ---------- 3. 图鉴卡片网格 ----------
+   一屏放几列由 minmax(236px) 决定：屏宽 1180 时正好 4 列。
+   想每行更多/更少，只改这个 236px（手机上在第 9 节单独改）。 */
+.fw-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(236px, 1fr));
+  gap: clamp(14px, 1.8vw, 20px); max-width: 1180px; margin: 0 auto;
+}
+.fw-card {
+  position: relative; display: flex; flex-direction: column; gap: 10px;
+  padding: 12px; text-align: left; color: var(--text-light);
+  background: var(--card-bg); border: 1px solid var(--line-soft);
+  border-radius: var(--radius); transition: transform .3s, border-color .3s, background .3s, box-shadow .3s;
+}
+.fw-card:hover, .fw-card:focus-visible {
+  transform: translateY(-6px); border-color: var(--gold);
+  background: var(--card-bg-hover); box-shadow: var(--shadow); outline: none;
+}
+.fw-name {
+  font-family: var(--font-title); font-weight: 400; font-size: 20px;
+  letter-spacing: 2px; color: var(--paper);
+}
+.fw-town { font-size: 11.5px; letter-spacing: 2px; color: rgba(201, 168, 106, .8); }
+.fw-line {
+  font-size: 13px; line-height: 1.65; color: rgba(233, 226, 211, .66);
+  /* 卡片上的"一句话"最多两行，超出裁掉，保证每格等高不破版 */
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+}
+
+/* 4:3 图槽：没配图时露出占位（首字 + 斜纹），配了图就盖在上面 */
+.fw-media {
+  position: relative; width: 100%; aspect-ratio: 4 / 3;
+  overflow: hidden; border-radius: 8px; background: #101d2c;
+}
+.fw-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.fw-media:not(.has-img) {
+  background:
+    repeating-linear-gradient(45deg, rgba(201, 168, 106, .07) 0 9px, transparent 9px 18px),
+    radial-gradient(120% 90% at 50% 18%, #1d2a3d, #101d2c);
+}
+.fw-ph {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-title); font-size: 54px; color: rgba(201, 168, 106, .5);
+}
+.fw-tag {
+  position: absolute; left: 8px; top: 8px; z-index: 2;
+  width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--paper); background: rgba(166, 58, 43, .85);
+  border: 1px solid rgba(246, 239, 226, .35);
+}
+/* 打卡角标：只有点过"我去过"的卡片才有 */
+.fw-checked {
+  position: absolute; right: 10px; top: 10px; z-index: 2;
+  padding: 3px 9px; border-radius: 3px; font-size: 11px; letter-spacing: 1px;
+  color: var(--ink); background: var(--gold);
+}
+.fw-empty {
+  grid-column: 1 / -1; padding: 26px 16px; text-align: center;
+  font-size: 14px; line-height: 1.9; color: rgba(233, 226, 211, .6);
+  border: 1px dashed var(--line-soft); border-radius: var(--radius);
+}
+.fw-empty code {
+  font-family: ui-monospace, Consolas, monospace; color: var(--gold);
+  background: rgba(201, 168, 106, .12); padding: 1px 6px; border-radius: 3px;
+}
+.fw-foot {
+  max-width: 1100px; margin: 22px auto 0; text-align: center;
+  font-size: 12.5px; letter-spacing: 1px; color: rgba(233, 226, 211, .55);
+}
+
+/* ---------- 4. 详情弹层（观感和首页名人介绍一致，类名各自独立） ---------- */
+.fw-modal {
+  position: fixed; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center;
+  padding: 5vh 5vw; background: rgba(9, 14, 21, .8); backdrop-filter: blur(6px);
+}
+.fw-modal[hidden] { display: none; }   /* flex 会盖掉 hidden，必须显式关掉 */
+.fw-modal-body {
+  width: min(620px, 100%); max-height: 86vh; overflow-y: auto;
+  scrollbar-width: thin; scrollbar-color: rgba(201, 168, 106, .6) transparent;
+  padding: clamp(20px, 3.4vw, 34px); text-align: center;
+  background: linear-gradient(180deg, rgba(246, 239, 226, .07), rgba(22, 32, 46, .9));
+  border: 1px solid rgba(201, 168, 106, .45); border-radius: var(--radius);
+  box-shadow: var(--shadow), 0 0 60px rgba(201, 168, 106, .12);
+}
+.fw-modal-body h2 {
+  font-family: var(--font-title); font-weight: 400;
+  font-size: clamp(26px, 4vw, 34px); letter-spacing: 4px; color: var(--paper);
+}
+.fw-m-town { margin-top: 6px; font-size: 13px; letter-spacing: 2px; color: rgba(233, 226, 211, .6); }
+.fw-m-media {
+  position: relative; width: min(420px, 100%); aspect-ratio: 4 / 3; margin: 18px auto;
+  border-radius: 8px; overflow: hidden;
+  background:
+    repeating-linear-gradient(45deg, rgba(201, 168, 106, .07) 0 9px, transparent 9px 18px),
+    radial-gradient(120% 90% at 50% 18%, #1d2a3d, #101d2c);
+}
+.fw-m-media img { width: 100%; height: 100%; object-fit: cover; }
+.fw-ph.big { font-size: 76px; }
+.fw-m-detail { text-align: justify; text-indent: 2em; font-size: 15px; line-height: 2; color: var(--text-light); }
+.fw-m-tip {
+  margin: 16px 0 4px; padding: 12px 14px; text-align: left;
+  font-size: 13.5px; line-height: 1.85; color: rgba(233, 226, 211, .8);
+  border-left: 2px solid rgba(201, 168, 106, .55); background: rgba(246, 239, 226, .05);
+}
+.fw-m-tip b { display: block; margin-bottom: 4px; font-size: 12px; letter-spacing: 2px; color: var(--gold); }
+.fw-checkin { margin-top: 18px; }
+.fw-checkin.on { background: var(--gold); color: var(--ink); font-weight: 700; }
+.fw-modal .modal-close {
+  position: absolute; top: max(14px, 3vh); right: max(14px, 4vw);
+  width: 42px; height: 42px; border-radius: 50%; font-size: 22px; line-height: 1;
+  color: var(--gold); background: rgba(22, 32, 46, .8); border: 1px solid rgba(201, 168, 106, .5);
+}
+.fw-modal .modal-close:hover { background: var(--gold); color: var(--ink); }
+
+/* ---------- 5. 小测：一题一张卡，答完就地显示对错和解析 ---------- */
+.quiz-box { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+.q-item {
+  padding: 18px clamp(14px, 2.4vw, 26px);
+  background: var(--card-bg); border: 1px solid var(--line-soft); border-radius: var(--radius);
+}
+.q-text { font-size: 16px; line-height: 1.7; color: var(--paper); letter-spacing: .5px; }
+.q-no {
+  display: inline-block; margin-right: 10px; font-family: ui-monospace, Consolas, monospace;
+  font-size: 12px; color: var(--gold); vertical-align: 2px;
+}
+.q-opts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 14px; }
+.q-opt {
+  padding: 11px 14px; text-align: left; font-size: 14.5px; color: var(--text-light);
+  background: rgba(9, 14, 21, .35); border: 1px solid var(--line-soft); border-radius: 9px;
+  transition: all .2s;
+}
+.q-opt:hover:not(:disabled) { border-color: var(--gold); color: var(--paper); }
+.q-opt:disabled { cursor: default; }
+.q-opt.right { background: rgba(79, 122, 91, .3); border-color: var(--jade); color: #dff0e4; }
+.q-opt.wrong { background: rgba(166, 58, 43, .28); border-color: var(--red); color: #f5ded9; }
+.q-why {
+  margin-top: 12px; padding: 10px 12px; font-size: 13px; line-height: 1.8;
+  color: rgba(233, 226, 211, .78); background: rgba(201, 168, 106, .08);
+  border-left: 2px solid rgba(201, 168, 106, .5); border-radius: 0 6px 6px 0;
+}
+.quiz-bar {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 10px 18px; margin: 24px auto 0; font-size: 14px; letter-spacing: 1px;
+  color: rgba(233, 226, 211, .75);
+}
+.quiz-score { color: var(--gold); }
+.quiz-best { color: rgba(233, 226, 211, .5); font-size: 12.5px; }
+.quiz-final { font-family: var(--font-title); font-size: 22px; letter-spacing: 2px; color: var(--paper); }
+.quiz-rankline { color: rgba(233, 226, 211, .7); }
+
+/* ---------- 6. 路线推荐 ---------- */
+.rt-picker { display: flex; flex-wrap: wrap; gap: 18px 26px; justify-content: center; margin-bottom: 20px; }
+.rt-group { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.rt-group > span { font-size: 13px; letter-spacing: 2px; color: rgba(201, 168, 106, .8); margin-right: 4px; }
+.rt-out { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+.rt-line {
+  text-align: center; font-size: 15px; line-height: 1.9; color: rgba(233, 226, 211, .8); margin-bottom: 6px;
+}
+.rt-line b { display: inline-block; margin-right: 10px; font-family: var(--font-title); font-size: 18px; letter-spacing: 2px; color: var(--gold); }
+.rt-stop {
+  display: flex; align-items: center; gap: 14px; padding: 12px 16px; text-align: left;
+  background: var(--card-bg); border: 1px solid var(--line-soft); border-radius: 999px;
+  color: var(--text-light); transition: all .25s;
+}
+.rt-stop:hover { border-color: var(--gold); background: var(--card-bg-hover); transform: translateX(4px); }
+.rt-no {
+  flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: ui-monospace, Consolas, monospace; font-size: 14px;
+  color: var(--ink); background: var(--gold);
+}
+.rt-body { display: flex; flex-direction: column; gap: 3px; }
+.rt-body b { font-family: var(--font-title); font-weight: 400; font-size: 18px; letter-spacing: 2px; color: var(--paper); }
+.rt-body span { font-size: 13px; line-height: 1.6; color: rgba(233, 226, 211, .65); }
+.rt-note { margin-top: 10px; text-align: center; font-size: 12.5px; line-height: 1.8; color: rgba(233, 226, 211, .5); }
+
+/* ---------- 7. 分享长图 ---------- */
+.pf-form { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 22px; }
+.pf-form select, .pf-form input {
+  padding: 9px 14px; border-radius: 999px; font-size: 14px; color: var(--paper);
+  background: rgba(9, 14, 21, .5); border: 1px solid var(--line-soft); outline: none;
+}
+.pf-form select:focus, .pf-form input:focus { border-color: var(--gold); }
+.pf-form select { flex: 0 1 260px; }
+.pf-form input { flex: 0 1 240px; }
+.pf-form option { background: var(--ink); }   /* 下拉列表在 Windows 上默认是白底黑字，跟着深色页走更协调 */
+.pf-out { text-align: center; }
+#posterCanvas {
+  width: min(320px, 74vw); display: block; margin: 0 auto 16px;
+  border: 1px solid rgba(201, 168, 106, .45); border-radius: 6px;
+  box-shadow: var(--shadow);
+}
+.pf-tip { margin-top: 10px; font-size: 12.5px; line-height: 1.8; color: rgba(233, 226, 211, .55); }
+.pf-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+
+/* ---------- 8. 说明小字（口径、来源、待核实都写在这里） ---------- */
+.fw-note {
+  max-width: 860px; margin: 26px auto 0; padding: 14px 18px; text-align: left;
+  font-size: 12.5px; line-height: 1.85; color: rgba(233, 226, 211, .55);
+  border-left: 2px solid rgba(201, 168, 106, .5); background: rgba(246, 239, 226, .04);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.fw-note b { color: var(--gold); font-weight: 400; letter-spacing: 1px; }
+.fw-note code {
+  font-family: ui-monospace, Consolas, monospace; color: var(--gold);
+  background: rgba(201, 168, 106, .12); padding: 1px 5px; border-radius: 3px;
+}
+
+/* ---------- 9. 移动端（≤720px）：另一套用法，不是把桌面缩小 ----------
+   这一套的实测依据和量法见 README 第三节；断点 720 与 base.css、envelope.css、common.js 一致，改要一起改。
+   关键差别：
+   · 筛选 chips 桌面是换行铺开的，手机上换行会把首屏吃掉 → 改成一行横滑；
+   · 卡片桌面 4 列 → 手机 2 列（每格约 168px，一句话仍显示两行）；
+   · 选项桌面两列 → 手机一列（两列时"2007 年"这种短选项会让手指误点）；
+   · 弹层改成整屏抽屉，长图预览放到 78vw 才看得清字。 */
+@media (max-width: 720px) {
+  .fw-toolbar { gap: 8px 10px; margin-bottom: 18px; }
+  .fw-towns {
+    flex: 1 1 100%; flex-wrap: nowrap; overflow-x: auto;
+    overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch;
+    justify-content: flex-start; padding-bottom: 6px; scrollbar-width: none;
+  }
+  .fw-towns::-webkit-scrollbar { display: none; }
+  .fw-towns .fw-town-chip { flex: 0 0 auto; }
+  #fwSearch { flex: 1 1 140px; min-width: 0; }
+
+  .fw-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .fw-card { padding: 9px; gap: 7px; }
+  .fw-name { font-size: 16.5px; letter-spacing: 1px; }
+  .fw-line { font-size: 12px; line-height: 1.55; }
+  .fw-town { font-size: 10.5px; letter-spacing: 1px; }
+  .fw-ph { font-size: 38px; }
+  .fw-checked { font-size: 10px; padding: 2px 7px; right: 8px; top: 8px; }
+
+  .fw-modal { padding: 0; }
+  .fw-modal-body {
+    width: 100%; max-height: 100vh; max-height: 100svh;
+    border-radius: 0; border-left: 0; border-right: 0; padding: 54px 18px 26px;
+  }
+  .fw-m-media { width: 100%; }
+  .fw-m-detail { font-size: 14px; line-height: 1.95; }
+  .fw-modal .modal-close { top: 10px; right: 10px; width: 38px; height: 38px; font-size: 20px; }
+
+  .q-opts { grid-template-columns: 1fr; }
+  .q-text { font-size: 15px; }
+  .quiz-bar { gap: 8px 12px; font-size: 13px; }
+  .quiz-final { font-size: 19px; }
+
+  .rt-picker { gap: 12px; }
+  .rt-group { width: 100%; justify-content: flex-start; }
+  .rt-stop { padding: 10px 12px; gap: 10px; }
+  .rt-body b { font-size: 16px; letter-spacing: 1px; }
+  .rt-body span { font-size: 12px; }
+
+  .pf-form select, .pf-form input { flex: 1 1 100%; }
+  #posterCanvas { width: 78vw; }
+}
+
+/* ---------- 10. 无障碍：系统"减少动效"时卡片不再上浮 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .fw-card, .rt-stop, .q-opt, .fw-town-chip, .fw-tab { transition: none; }
+  .reveal { transition: none; }
+}
+
+/* ---------- 11. 常用调整 ----------
+   · 条目文字、区县、提示、题目、路线站点 → js/fengwu.js 顶部四个数组
+   · 每行几张卡片     → 第 3 节 .fw-grid 的 minmax(236px)（手机在第 9 节 150px）
+   · 卡片上显示几行话 → .fw-line 的 -webkit-line-clamp
+   · 没配图时那个大字 → .fw-ph 的 font-size
+   · 答对/答错的颜色 → 第 1 节 --jade 与全站 --red
+   · 长图尺寸/底部落款地址 → js/fengwu.js 的 FENGWU_CFG.posterW / posterH / siteUrl
+   ==================================================== */

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     fengwu.html —— 侨都风物：美食美景图鉴 + 侨都知多少小测 + 路线推荐 + 分享长图
+     ★ 这一页的所有文字（条目、题目、选项、路线站点）都在 js/fengwu.js 顶部四个数组里改 ★
+     ★ 外观在 css/fengwu.css（卡片每行几张、颜色、移动端那一套）★
+     本页全部交互都不需要后端：打卡记录只存在访问者自己的浏览器里。
+     ============================================================ -->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>侨都风物 · 寻美江门</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/fengwu.css">
+</head>
+<body class="fw-wrap">
+
+  <nav class="site-nav">
+    <div class="brand">寻美江门<small>侨都薪火</small></div>
+    <ul>
+      <li><a class="nav-link" href="index.html">首页</a></li>
+      <li><a class="nav-link" href="jiangmen.html">寻美江门</a></li>
+      <li><a class="nav-link active" href="fengwu.html">侨都风物</a></li>
+      <li><a class="nav-link" href="qiaobao.html">优秀侨胞</a></li>
+      <li><a class="nav-link" href="feiyi.html">非遗传承人</a></li>
+      <li><a class="nav-link" href="gongjiang.html">能工巧匠</a></li>
+      <li><a class="nav-link" href="mofan.html">模范人物</a></li>
+    </ul>
+  </nav>
+
+  <!-- ▼ 导语 + 四个板块的跳转（点一下平滑滚到对应小节） -->
+  <section class="section" style="text-align:center;">
+    <h2 class="section-title">侨都风物</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">五邑十味的来处，山水楼台的去处 —— 这一页不讲人物，讲江门这块地方本身</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
+      <a class="btn" href="#listing">看图鉴</a>
+      <a class="btn" href="#quiz">测一测</a>
+      <a class="btn" href="#routes">排路线</a>
+      <a class="btn" href="#poster">做长图</a>
+    </div>
+  </section>
+
+  <!-- ▼ 第一板块：美食 / 美景图鉴（可筛选、可搜索、点开看详情、可打卡） -->
+  <section class="section" id="listing">
+    <h2 class="section-title">五邑风物图鉴</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">先挑一类，再按区县筛 · 点卡片看详情 · 去过的地方可以打卡</p>
+
+    <div class="fw-toolbar">
+      <div class="fw-tabs">
+        <button type="button" class="fw-tab on" data-kind="food">美食</button>
+        <button type="button" class="fw-tab" data-kind="scenery">美景</button>
+      </div>
+      <input id="fwSearch" type="search" placeholder="搜名称或一句话…" aria-label="在图鉴里搜索">
+      <span class="fw-count" id="fwCount"></span>
+    </div>
+    <div class="fw-toolbar" style="margin-bottom:20px;">
+      <!-- 区县按钮由 js/fengwu.js 的 FENGWU_TOWNS 决定顺序，这里手写一份是为了没有 JS 也能看见结构 -->
+      <div class="fw-towns">
+        <button type="button" class="fw-town-chip on" data-town="全部">全部</button>
+        <button type="button" class="fw-town-chip" data-town="蓬江">蓬江</button>
+        <button type="button" class="fw-town-chip" data-town="江海">江海</button>
+        <button type="button" class="fw-town-chip" data-town="新会">新会</button>
+        <button type="button" class="fw-town-chip" data-town="台山">台山</button>
+        <button type="button" class="fw-town-chip" data-town="开平">开平</button>
+        <button type="button" class="fw-town-chip" data-town="鹤山">鹤山</button>
+        <button type="button" class="fw-town-chip" data-town="恩平">恩平</button>
+      </div>
+    </div>
+
+    <div class="fw-grid" id="fwGrid"></div>
+    <p class="fw-foot" id="checkinCount"></p>
+
+    <div class="fw-note">
+      <b>口径说明</b>：这一页的条目是"<b>稳妥概述 + 待核实</b>"的状态 —— 名称、所属区县、大致玩法是通用公开资料，
+      年份、称号、数量、片名这类硬事实在 <code>js/fengwu.js</code> 里逐条标了「待核实」注释，评奖前请对官方资料核一遍再放开。
+      另外 22 个条目目前都<b>没有配图</b>，卡片显示的是占位样式；
+      补图只要把图放进 <code>images/fengwu/</code>，再在数据里填上 <code>img</code> 字段即可，不填也不会破版。
+    </div>
+  </section>
+
+  <!-- ▼ 第二板块：侨都知多少（8 题，答完就地看解析，全答完给称号） -->
+  <section class="section" id="quiz">
+    <h2 class="section-title">侨都知多少</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">八道题 · 一题只有一次机会 · 答完给一个称号</p>
+    <div class="quiz-box" id="quizBox"></div>
+    <div class="quiz-bar" id="quizBar"></div>
+    <div class="fw-note">
+      <b>改题</b>：题目、选项、正确答案下标和解析都在 <code>js/fengwu.js</code> 的 <code>QUIZ</code> 数组里，
+      加一题就往数组里加一项，页面上的题号和进度会自动跟着变。
+      答对 8 题的称号阈值在同一个文件的 <code>QUIZ_RANKS</code> 里。
+    </div>
+  </section>
+
+  <!-- ▼ 第三板块：路线推荐（几天 × 什么偏好 → 走哪几站，站点顺序可点进详情） -->
+  <section class="section" id="routes">
+    <h2 class="section-title">这样走</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">选天数和偏好，下面立刻换一条 · 点任意一站可以看详细介绍</p>
+
+    <div class="rt-picker">
+      <div class="rt-group" id="routeDays">
+        <span>几天</span>
+        <button type="button" class="fw-day-chip on" data-days="1">1 天</button>
+        <button type="button" class="fw-day-chip" data-days="2">2 天</button>
+        <button type="button" class="fw-day-chip" data-days="3">3 天</button>
+      </div>
+      <div class="rt-group" id="routePrefs">
+        <span>想怎么玩</span>
+        <button type="button" class="fw-pref-chip on" data-pref="eat">吃得地道</button>
+        <button type="button" class="fw-pref-chip" data-pref="sea">看海吹风</button>
+        <button type="button" class="fw-pref-chip" data-pref="cul">世遗与侨乡</button>
+        <button type="button" class="fw-pref-chip" data-pref="rest">山水温泉</button>
+      </div>
+    </div>
+    <div class="rt-out" id="routeOut"></div>
+    <div class="fw-note">
+      <b>这些路线只是玩法建议</b>，不构成行程承诺：车程、门票、开放时间和潮汐都要以现场为准。
+      想改某条路线，去 <code>js/fengwu.js</code> 的 <code>ROUTES</code>，键是「天数-偏好」，
+      里面只列图鉴的 id，站名和介绍会自动跟着图鉴那边改。
+    </div>
+  </section>
+
+  <!-- ▼ 第四板块：分享长图（本地 canvas 画图，不联网、不上传） -->
+  <section class="section" id="poster">
+    <h2 class="section-title">带一张侨都的照片回去</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">挑一个最想去的地方，写一句话，生成一张竖版长图</p>
+
+    <div class="pf-form">
+      <select id="posterPick" aria-label="选择地点"></select>
+      <input id="posterWish" type="text" maxlength="24" placeholder="写一句你的心愿（24 字内）" aria-label="心愿">
+      <button type="button" class="btn" id="posterGo">生成长图</button>
+    </div>
+
+    <div class="pf-out" id="posterOut" hidden>
+      <canvas id="posterCanvas" width="750" height="1334" aria-label="侨都风物分享长图"></canvas>
+      <div class="pf-actions">
+        <a class="btn" id="posterDl" href="#" download="侨都风物.png">保存长图</a>
+        <a class="btn" href="#listing">换一个地方</a>
+      </div>
+      <p class="pf-tip" id="posterTip"></p>
+    </div>
+    <div class="fw-note">
+      <b>长图在浏览器本地画出来</b>，不经过任何服务器；<code>&lt;canvas&gt;</code> 里只有文字和渐变，
+      没有引用外部图片，所以不会有跨域导致存不下来的问题。
+      图上的落款地址在 <code>js/fengwu.js</code> 的 <code>FENGWU_CFG.siteUrl</code>，尺寸在 <code>posterW / posterH</code>。
+    </div>
+  </section>
+
+  <!-- ▼ 页间互链 -->
+  <section class="section page-links" style="text-align:center;">
+    <a class="btn" href="jiangmen.html">← 上一站 · 寻美江门</a>
+    <a class="btn" href="qiaobao.html" style="margin-left:12px;">去看人物故事</a>
+    <a class="btn" href="index.html" style="margin-left:12px;">回到首页 →</a>
+  </section>
+
+  <!-- ▼ 详情弹层：内容由 js/fengwu.js 的 openDetail() 填进去 -->
+  <div class="fw-modal" id="fwModal" role="dialog" aria-modal="true" aria-label="风物详情" hidden>
+    <button type="button" class="modal-close" aria-label="关闭">×</button>
+    <div class="fw-modal-body"></div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="foot-nav">
+      <a href="index.html">首页</a><a href="jiangmen.html">寻美江门</a><a href="qiaobao.html">优秀侨胞</a><a href="feiyi.html">非遗传承人</a><a href="gongjiang.html">能工巧匠</a><a href="mofan.html">模范人物</a>
+    </div>
+    "寻美江门"2026 AIGC 创作大赛 · 侨都风物（图文资料待核实，全部交互不依赖后端）
+    <nav> 创作者：庄嘉成、陈俊安</nav>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <!-- common.js 负责窄屏导航的横滑与"当前页那颗先滑到看得见"；本页没有信封，其它函数不会触发 -->
+  <script src="js/fengwu.js"></script>
+</body>
+</html>
