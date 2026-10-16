@@ -109,7 +109,28 @@
   color: rgba(233,226,211,.45); font-family: ui-monospace, Consolas, monospace;
 }
 
-/* ---------- 6. 常用调整 ----------
+/* ---------- 6. 移动端（≤720px）----------
+   实测依据（390×844）：原来 .hero 写死 min-height: calc(100vh - 64px)，
+   按导航 64px 估的，手机上导航实际 116px，于是英雄区被撑到 990px 高，
+   首屏只看得到标题和半个地球，详图、提示、按钮全被推到第二屏。
+   这里不再强行撑满一屏，改为按内容自然排布，并把两块画布按竖屏重新给尺寸
+   （详图相对放大一点，因为它在手机上是真正要看的那张图）。 */
+@media (max-width: 720px) {
+  .hero { min-height: 0; gap: 16px; padding: 20px 14px 34px; }
+  .hero h1 { font-size: 26px; letter-spacing: 3px; }
+  .hero .hint { font-size: 12.5px; letter-spacing: 1px; }
+  .hero .readout { font-size: 11px; }
+  .stage-row { gap: 20px; }
+  .globe-stage { width: min(58vw, 240px); }
+  .jm-map figcaption { font-size: 15px; letter-spacing: 2px; margin-bottom: 8px; }
+  .jm-map canvas { width: min(74vw, 300px); }
+  .jm-map .map-note { display: none; }        /* 小屏放不下两行小字，创作说明页里有 */
+  .jm-pin .tag { left: 15px; top: -10px; font-size: 12.5px; letter-spacing: 1px; }
+  .jm-pin .tag small { font-size: 9.5px; letter-spacing: .5px; }
+  .jm-pin::before { inset: -8px; }
+}
+
+/* ---------- 7. 常用调整 ----------
    · 自转周期 / 停留时长 / 视角纬度 / 提亮 → js/globe3d.js 顶部的 GLOBE 配置
    · 江门坐标 → 同上 GLOBE.lat / GLOBE.lon
    · 详图大小 → 上面 .jm-map canvas 的 width；清晰度 → globe3d.js 里 MAP.res

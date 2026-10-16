@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     shuoming.html —— 创作说明 · 素材来源
+     这一页回答评委一定会问的一句话：这些东西是谁做的、从哪来的。
+     ★ 内容全部写在本文件的 HTML 里，改文字不用碰 css（样式在 css/shuoming.css）★
+     口径要与 README.md 第六、七节保持一致，改了这里记得也改 README。
+     ============================================================ -->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>创作说明 · 素材来源 | 寻美江门</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/shuoming.css">
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="brand">寻美江门<small>侨都薪火</small></div>
+    <ul>
+      <li><a class="nav-link" href="index.html">首页</a></li>
+      <li><a class="nav-link" href="jiangmen.html">寻美江门</a></li>
+      <li><a class="nav-link" href="qiaobao.html">优秀侨胞</a></li>
+      <li><a class="nav-link" href="feiyi.html">非遗传承人</a></li>
+      <li><a class="nav-link" href="gongjiang.html">能工巧匠</a></li>
+      <li><a class="nav-link" href="mofan.html">模范人物</a></li>
+      <li><a class="nav-link active" href="shuoming.html">创作说明</a></li>
+    </ul>
+  </nav>
+
+  <!-- ▼ 页头 -->
+  <section class="section doc-head">
+    <h2 class="section-title">创作说明 · 素材来源</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">哪些是 AI 生成的插画，哪些是真人真事的照片与数据，一条条分开写清楚</p>
+  </section>
+
+  <!-- ▼ 一、三类素材各占多少 -->
+  <section class="section">
+    <h2 class="section-title">一、三类素材，各占多少</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">36 张图片 + 一套行政区划数据 + 全部文字</p>
+    <div class="src-cards">
+      <div class="src-card reveal">
+        <span class="n">25 张</span>
+        <b>AIGC 生成插画</b>
+        <p>五个页面里的轮播画面（江门 5 帧 + 四个题材各 5 帧），全部是文生图模型按题材主题生成的水彩风插画，再由作者逐张筛选、配标题与说明文字。</p>
+      </div>
+      <div class="src-card reveal">
+        <span class="n">11 张</span>
+        <b>网络公开人物照片</b>
+        <p>首页"侨都人物志"的历代名人肖像，全部是真实人物的公开照片，从网络上截图取得后统一裁成竖构图。<b>不是 AI 生成</b>，也不做 AI 生成。</p>
+      </div>
+      <div class="src-card reveal">
+        <span class="n">1 + 1 套</span>
+        <b>真实影像与官方数据</b>
+        <p>首页地球的贴图是 NASA Blue Marble 公开卫星影像；江门市与七个区县的轮廓来自国家公开行政区划数据（adcode 440700）。</p>
+      </div>
+    </div>
+    <div class="doc-note">
+      如实说明：11 张人物照片是从公开网页截图得到的，截图时没有逐张记下原始页面地址，
+      所以"原始出处"这一栏仍在补录中。照片本身的真实性没有问题（都是真人影像），
+      缺的是来源标注，这也是本项目目前唯一没做完的一项。
+    </div>
+  </section>
+
+  <!-- ▼ 二、逐项清单 -->
+  <section class="section">
+    <h2 class="section-title">二、素材来源逐项清单</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">手机上看，下面每一行会拆成一张小卡</p>
+    <table class="src-table">
+      <thead>
+        <tr><th>素材</th><th>在哪里</th><th>类型</th><th>来源与处理</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-label="素材">历代名人照片 11 张</td>
+          <td data-label="位置"><code>images/heroes/</code> · 首页英雄墙与背景照片带</td>
+          <td data-label="类型"><span class="tag tag-photo">网络公开照片</span></td>
+          <td data-label="来源">真实人物的公开肖像照，从网络页面截图取得；统一裁成 3:4 竖构图、转 JPEG 后使用，未做任何 AI 重绘或人脸生成。原始页面地址补录中。</td>
+        </tr>
+        <tr>
+          <td data-label="素材">轮播插画 25 张</td>
+          <td data-label="位置"><code>images/slide1-5</code> · <code>q/f/g/m1-5</code></td>
+          <td data-label="类型"><span class="tag tag-aigc">AIGC 生成</span></td>
+          <td data-label="来源">文生图模型按题材生成的水彩风插画：骑楼老街、潭江帆船与碉楼、葵艺匠人、陈皮晒场、侨批、荷塘纱龙、浮石飘色、茅龙笔、醒狮、柑皮刀工、碉楼砌拱、五金车间、船厂焊花、小冈制香、堤夜巡、乡村课堂、祠堂直播、社区志愿、少年学手艺等。生成后由作者逐张筛选，画面内容与配文一一对应。</td>
+        </tr>
+        <tr>
+          <td data-label="素材">地球贴图 1 张</td>
+          <td data-label="位置"><code>images/earth.jpg</code> · 首页自转地球</td>
+          <td data-label="类型"><span class="tag tag-data">真实影像</span></td>
+          <td data-label="来源">NASA Blue Marble 公开卫星影像，等距柱状投影（2:1）。用真实影像而不是画一个"像地球的圆"，是为了让江门按真实经纬度落在真实地表上。</td>
+        </tr>
+        <tr>
+          <td data-label="素材">市与区县边界</td>
+          <td data-label="位置"><code>js/jiangmen-boundary.js</code> · 首页两块画布</td>
+          <td data-label="类型"><span class="tag tag-data">官方数据</span></td>
+          <td data-label="来源">阿里云 DataV.GeoAtlas 公开行政区划接口（adcode 440700）抓取后做 Douglas-Peucker 抽稀。只用于绘制轮廓，不作为测量或划界依据。</td>
+        </tr>
+        <tr>
+          <td data-label="素材">11 位名人的生卒、籍贯、事迹</td>
+          <td data-label="位置"><code>js/heroes.js</code> 顶部 <code>HEROES</code> 数组</td>
+          <td data-label="类型"><span class="tag tag-text">公开资料整理</span></td>
+          <td data-label="来源">根据公开资料整理，一人一条，含姓名/生卒/籍贯/身份/一句话/介绍正文；有分歧的不写（详见 README）。AI 只参与过文字初稿的润色，史实以公开资料为准。</td>
+        </tr>
+        <tr>
+          <td data-label="素材">四个题材页的 12 封信</td>
+          <td data-label="位置">各题材页底部的内联数组（如 <code>QIAOBAO_LETTERS</code>）</td>
+          <td data-label="类型"><span class="tag tag-text">官方来源</span></td>
+          <td data-label="来源">陈宜禧、李月美、陈经纶、廖惠林、张瑞亨、邝活发、黄小红、伍炳亮、李柏文、梁伟忠、李建、谭爱玲——事迹与引语取自各级政府网、中国非物质文化遗产网、人民网、南方日报等公开报道，每页源码注释里都留有完整 URL，落款写了来源名，方便回查。</td>
+        </tr>
+        <tr>
+          <td data-label="素材">页面版式与代码</td>
+          <td data-label="位置"><code>*.html</code> · <code>css/</code> · <code>js/</code></td>
+          <td data-label="类型"><span class="tag tag-aigc">AI 辅助编写</span></td>
+          <td data-label="来源">纯静态 HTML + CSS + 原生 JavaScript，没有框架、没有构建工具、没有后端。地球与区划图是两块自己写的 canvas；AI 参与代码起草，交互与视觉效果由作者逐项验收，改动点都收在注释标出的入口里。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ▼ 三、AIGC 用在哪、人工把关在哪 -->
+  <section class="section">
+    <h2 class="section-title">三、AIGC 用在哪，人工把关在哪</h2>
+    <div class="title-ornament"></div>
+    <div class="doc-body">
+      <h3>交给 AI 做的</h3>
+      <ul>
+        <li>25 张轮播插画的图像生成，以及同一主题下多张候选的批量出图。</li>
+        <li>页面骨架、样式与 canvas 绘图代码的初稿。</li>
+        <li>介绍文字的初稿润色与排版建议。</li>
+      </ul>
+      <h3>作者自己把关的</h3>
+      <ul>
+        <li><b>历史人物一律用真实照片，不用 AI 生成。</b>AI 画"某位历史人物"只会画出一个陌生人，这类内容必须来自真影像。</li>
+        <li>生卒年、籍贯、职务、年代、里程等硬事实逐条回查公开来源；查不到、有两说的就不写进正文。</li>
+        <li>插画只作为氛围画面使用，不冒充实景：画面配文写的是主题（如"葵艺匠人"），不声称是某处某年。</li>
+        <li>边界数据只用来画轮廓，页面上注明了它不能作为划界依据。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ▼ 四、桌面端与手机端是两套用法 -->
+  <section class="section">
+    <h2 class="section-title">四、桌面端与手机端的两套用法</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">同一条链接，两种屏幕上有不同的排法（断点：各组件 720px，顶部导航提前到 860px）</p>
+    <div class="doc-body">
+      <table class="src-table">
+        <thead>
+          <tr><th>位置</th><th>电脑端</th><th>手机端</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="位置">顶部导航</td>
+            <td data-label="电脑端">宽于 860px：品牌与链接同一行，鼠标悬停变色</td>
+            <td data-label="手机端">860px 以下（手机、平板竖屏）：品牌一行 + 链接一行横滑，进页面自动把当前页滑到中间</td>
+          </tr>
+          <tr>
+            <td data-label="位置">可撕开的信封</td>
+            <td data-label="电脑端">三封横排，信纸从信封里升起、压在信封上方</td>
+            <td data-label="手机端">一列竖排，信纸在信封下方原位展开，把后面的内容往下顶；展开后自动滚到这一封信</td>
+          </tr>
+          <tr>
+            <td data-label="位置">轮播插画</td>
+            <td data-label="电脑端">16:9 大幅面，箭头在两侧，悬停暂停</td>
+            <td data-label="手机端">按屏宽收窄高度，箭头缩小，手指左右滑动切换</td>
+          </tr>
+          <tr>
+            <td data-label="位置">首页地球区</td>
+            <td data-label="电脑端">地球与江门详图左右并排，撑满首屏</td>
+            <td data-label="手机端">上下堆叠，详图相对放大（它在手机上更该看清），去掉说明小字</td>
+          </tr>
+          <tr>
+            <td data-label="位置">人物墙与介绍</td>
+            <td data-label="电脑端">卡片较宽，含姓名/生卒/身份；介绍是居中浮层</td>
+            <td data-label="手机端">三列小卡只留照片与姓名；介绍改成整屏抽屉，向下滑着读</td>
+          </tr>
+          <tr>
+            <td data-label="位置">本清单页</td>
+            <td data-label="电脑端">四列表格</td>
+            <td data-label="手机端">每行拆成一张小卡，表头变成左侧标签</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>另外还有一条对所有屏幕都生效的无障碍设置：系统开了"减少动效"时，背景照片带不再横移；键盘 Tab 可以走到信封与人物卡片，回车或空格即可拆开、展开。</p>
+    </div>
+  </section>
+
+  <!-- ▼ 五、制作流程 -->
+  <section class="section">
+    <h2 class="section-title">五、制作流程</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">从主题到两条可访问的链接</p>
+    <ol class="flow">
+      <li class="reveal"><b>定题材</b>优秀侨胞、非遗传承人、能工巧匠、模范人物四类，主线是"人物故事 · 精神传承"。</li>
+      <li class="reveal"><b>核资料</b>先到政府网、中国非物质文化遗产网、人民网等回查人名、生卒、事迹，把出处 URL 抄进源码注释；有两说的一律回避。</li>
+      <li class="reveal"><b>找影像</b>11 位名人逐一取公开照片，裁成统一竖构图；25 张插画按题材用文生图生成并筛选。</li>
+      <li class="reveal"><b>搭页面</b>7 个页面共用一套配色与导航；信封、轮播、人物弹层各做成一个组件，改文案只改一个数组。</li>
+      <li class="reveal"><b>适配与验收</b>按 1920×1080 与手机两种屏幕分别走一遍，发现问题改到对应断点里，再用真实浏览器复核。</li>
+      <li class="reveal"><b>发布</b>两个脚本把同一份内容同步到两条公网链接，逐张比对文件指纹确认线上与本地一致。</li>
+    </ol>
+  </section>
+
+  <!-- ▼ 页间互链 -->
+  <section class="section page-links" style="text-align:center;">
+    <a class="btn" href="index.html">← 回到首页</a>
+    <a class="btn" href="mofan.html" style="margin-left:12px;">上一站 · 模范人物</a>
+    <a class="btn" href="jiangmen.html" style="margin-left:12px;">江门总览 →</a>
+  </section>
+
+  <footer class="site-footer">
+    <div class="foot-nav">
+      <a href="index.html">首页</a><a href="jiangmen.html">寻美江门</a><a href="qiaobao.html">优秀侨胞</a><a href="feiyi.html">非遗传承人</a><a href="gongjiang.html">能工巧匠</a><a href="mofan.html">模范人物</a>
+    </div>
+    "寻美江门"2026 AIGC 创作大赛 · 创作说明与素材来源
+    <nav> 创作者：庄嘉成、陈俊安</nav>
+  </footer>
+
+  <script src="js/common.js"></script>
+</body>
+</html>

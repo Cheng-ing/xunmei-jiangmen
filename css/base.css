@@ -93,8 +93,44 @@ button { font-family: inherit; cursor: pointer; }
 }
 .btn:hover { background: var(--gold); color: var(--ink); }
 
-/* ---------- 8. 移动端适配 ---------- */
+/* ---------- 8. 移动端适配（≤720px 是另一套用法，不是把桌面版缩小） ----------
+   实测依据（390×844）：原来的竖排导航高 116px，吃掉首屏 14%；
+   这里改成"品牌一行 + 链接一行横滑"，高度压到 80px 左右。
+   信封、轮播、地球各自的移动端改法写在它们自己的 css 文件末尾，同一断点。 */
+
+/* 导航的断点比其它部分宽一档（860 而不是 720）：七个链接并排要 ~846px 才放得下，
+   721~860 这段（平板竖屏、折叠屏展开）桌面导航会把链接挤成上下两行、药丸互相压住。
+   与其让它压，不如早点换成横滑一行。量到 390 宽时这套导航高 83px。 */
+@media (max-width: 860px) {
+  .site-nav {
+    flex-direction: row; flex-wrap: wrap; align-items: center;
+    gap: 4px 10px; padding: 8px 14px 6px;
+  }
+  .site-nav .brand { font-size: 17px; letter-spacing: 1px; }
+  .site-nav .brand small { font-size: 11px; letter-spacing: 2px; margin-left: 6px; }
+  .site-nav ul {
+    order: 2; flex: 1 1 100%;
+    flex-wrap: nowrap;              /* 不换行：一排到底，横向滑动 */
+    gap: 8px; justify-content: flex-start;
+    overflow-x: auto; overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: 2px 2px 8px;
+    scrollbar-width: none;          /* Firefox */
+  }
+  .site-nav ul::-webkit-scrollbar { display: none; }
+  /* 真正会被压缩的是 <li>（它才是 flex 子项），不锁住的话每个链接会被挤成竖排一字，
+     导航反而变高 —— 链接本身也加 nowrap 兜一层。 */
+  .site-nav ul li { flex: 0 0 auto; }
+  .site-nav a.nav-link { flex: 0 0 auto; display: block; white-space: nowrap; padding: 7px 13px; font-size: 13px; }
+}
+
 @media (max-width: 720px) {
-  .site-nav { flex-direction: column; }
-  .site-nav ul { justify-content: center; }
+  .section { padding: 34px 16px; }
+  .section-title { letter-spacing: 2px; }
+  .section-sub { font-size: 13.5px; letter-spacing: .5px; margin-bottom: 24px; }
+  .btn { padding: 10px 20px; font-size: 14px; letter-spacing: 1px; }
+  .site-footer { margin-top: 30px; padding: 20px 16px 30px; font-size: 12px; }
+  .site-footer .foot-nav a { margin: 0 7px; }
+  /* 桌面端才用的左右方向性按钮，手机上排不下，改成竖排 */
+  .page-links .btn { display: block; margin: 0 auto 10px !important; max-width: 260px; }
 }

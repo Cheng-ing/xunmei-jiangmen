@@ -66,3 +66,23 @@
   width: 0; background: var(--gold); z-index: 4; }
 .carousel .progress.run { animation: prog var(--dur, 5s) linear forwards; }
 @keyframes prog { from { width: 0; } to { width: 100%; } }
+
+/* ============================================================
+   移动端（≤720px）
+   实测依据：原来轨道高度 clamp() 的下限是 300px，而手机上宽度只有 351px，
+   等于把 16:9 的插画硬裁成接近正方形，画面两头全丢了；
+   两个 44px 箭头在 351px 宽里合计吃掉 120px。
+   这里按竖屏重定高度、缩箭头、压字幕，并让整块可以左右滑（JS 里本来就有触摸滑动）。
+   ============================================================ */
+@media (max-width: 720px) {
+  .carousel-track { height: clamp(180px, 52vw, 250px); }
+  .slide .caption { padding: 26px 16px 32px; }
+  .slide .caption b { font-size: 17px; letter-spacing: 2px; margin-bottom: 2px; }
+  .slide .caption span { font-size: 12.5px; }
+  .slide .ph-word { font-size: clamp(40px, 13vw, 64px); letter-spacing: 8px; }
+  .carousel .arrow { width: 34px; height: 34px; font-size: 17px; }
+  .carousel .arrow.prev { left: 8px; }
+  .carousel .arrow.next { right: 8px; }
+  .carousel .dots { bottom: 9px; gap: 8px; }
+  .carousel .dots i { width: 8px; height: 8px; }
+}

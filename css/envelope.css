@@ -109,3 +109,40 @@
 
 /* ---------- 7. 页面级留白：给升起的信纸预留空间（放在信封区块标题上） ---------- */
 .section-title.env-space { padding-top: 150px; }
+
+/* ---------- 8. 移动端：信纸改成"在信封下方原位展开" ----------
+   实测依据（390×844）：窄屏放不下横排三封信，只能一列竖排，而桌面那套
+   「信纸绝对定位升起 34%」会让第一封信的信纸压到第二封信头上 134px，
+   几行字叠在一起 —— 这就是手机上最刺眼的不协调。
+   这里让信纸回到文档流，展开时把后面的内容往下顶，永远不可能重叠。
+   代价：信封壳子从"按比例撑高"改成定高 190px，所以壳子里用百分比定位的
+   火漆印、撕拉条、提示语必须同步换成定值，否则容器随信纸变高时它们会跑到信纸上。 */
+@media (max-width: 720px) {
+  .section-title.env-space { padding-top: 0; }   /* 那 150px 是留给桌面升起效果的 */
+  .env-grid { grid-template-columns: 1fr; gap: 16px; padding-bottom: 0; }
+  .env-tools { margin-bottom: 22px; }
+
+  .envelope { aspect-ratio: auto; padding-top: 190px; }
+  .envelope-back, .envelope-front { top: 0; bottom: auto; height: 190px; }
+  .torn-strip { height: 26px; }
+  .wax-seal { top: 88px; }
+  .env-tip { top: 158px; bottom: auto; }
+  .envelope.opened .torn-strip { transform: translate(26%, -130%) rotate(14deg); }
+
+  /* 收起：零高度、不占位；展开：max-height 放开，把下方内容顶走 */
+  .letter,
+  .envelope.opened .letter {
+    position: relative; left: auto; width: auto; top: auto; z-index: auto;
+    transform: none; margin: 0; padding: 0 16px;
+    max-height: 0; opacity: 0; overflow: hidden;
+    box-shadow: none; border-radius: 0 0 8px 8px;
+    transition: max-height .6s ease .1s, opacity .45s ease .15s,
+                padding .6s ease .1s, margin .6s ease .1s;
+  }
+  .envelope.opened .letter {
+    max-height: 2200px; opacity: 1; padding: 16px; margin-top: 12px;
+    user-select: text; -webkit-user-select: text;   /* 手机上要能选中抄资料 */
+  }
+  .letter h4 { font-size: 16px; margin-bottom: 6px; }
+  .letter p { font-size: 14px; line-height: 1.95; }
+}
