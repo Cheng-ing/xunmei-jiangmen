@@ -88,7 +88,7 @@
   <section class="section" id="routes">
     <h2 class="section-title">这样走</h2>
     <div class="title-ornament"></div>
-    <p class="section-sub">选天数和偏好，下面立刻换一条 · 点任意一站可以看详细介绍</p>
+    <p class="section-sub">选天数和偏好 · 没有现成路线（或用了自定义天数）时，页面按规则自动凑一条，并写明每站的排序理由</p>
 
     <div class="rt-picker">
       <div class="rt-group" id="routeDays">
@@ -96,6 +96,16 @@
         <button type="button" class="fw-day-chip on" data-days="1">1 天</button>
         <button type="button" class="fw-day-chip" data-days="2">2 天</button>
         <button type="button" class="fw-day-chip" data-days="3">3 天</button>
+        <button type="button" class="fw-day-chip" data-days="x">自定义</button>
+      </div>
+      <div class="rt-group rt-custom" id="routeCustom" hidden>
+        <label class="rt-num">天数
+          <input type="number" id="rtDays" min="0.5" max="7" step="0.5" value="2" inputmode="decimal" aria-label="自定义天数">
+        </label>
+        <label class="rt-num">每天几站
+          <input type="number" id="rtPace" min="2" max="5" step="1" value="3" inputmode="numeric" aria-label="每天安排几站">
+        </label>
+        <span class="rt-hint">半天到 7 天 · 2～5 站</span>
       </div>
       <div class="rt-group" id="routePrefs">
         <span>想怎么玩</span>
@@ -103,6 +113,11 @@
         <button type="button" class="fw-pref-chip" data-pref="sea">看海吹风</button>
         <button type="button" class="fw-pref-chip" data-pref="cul">世遗与侨乡</button>
         <button type="button" class="fw-pref-chip" data-pref="rest">山水温泉</button>
+      </div>
+      <div class="rt-group" id="routeMode">
+        <span>怎么给</span>
+        <button type="button" class="fw-mode-chip on" data-mode="hand">编者路线</button>
+        <button type="button" class="fw-mode-chip" data-mode="auto">自动规划</button>
       </div>
     </div>
     <div class="rt-out" id="routeOut"></div>

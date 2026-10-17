@@ -2,7 +2,7 @@
    fengwu.js —— 「侨都风物」页的全部数据与交互
    ┌─ 1. FOOD / SCENERY：美食与美景图鉴的数据（★ 想加条目、改文案只动这两个数组 ★）
    ├─ 2. QUIZ：侨都知多少小测的题目与答案
-   ├─ 3. ROUTES：路线推荐器的规则（几天 × 什么偏好 → 走哪几站）
+   ├─ 3. ROUTES / ROUTE_RULES：路线推荐器（编者写的几天 × 偏好，加上自动规划的分组规则）
    ├─ 4. 渲染：筛选、卡片、详情弹层、"我去过"打卡（存浏览器本地，不需要后端）
    ├─ 5. 小测：即时判分、解析、按分数给称号
    ├─ 6. 长图：canvas 画一张竖版海报，可以下载或在手机上长按保存
@@ -14,7 +14,8 @@
    1. 图鉴数据
    字段含义：
      id     —— 唯一编号，别改（打卡记录和小测解析都靠它）
-     name   —— 名称
+     name   —— 名称。下面 3.2「自动规划的规则」按名字里的关键词分组，
+               所以改条目名字之前扫一眼 ROUTE_RULES，别让某条玩法突然凑不出站。
      town   —— 区县，必须从下面 FENGWU_TOWNS 里选，筛选才分得开
      line   —— 卡片上的一句话（20 字上下最好）
      detail —— 弹层里的详情，两三句
@@ -665,7 +666,7 @@ const QUIZ = [
    键的格式是 "天数-偏好id"，偏好 id 在 ROUTE_PREFS 里定义。
    stops 里只写图鉴的 id，名字、区县、一句话都从 FOOD / SCENERY 取，
    所以改一处文案，路线里跟着变，不会出现两处不一致。
-   增删路线 = 增删这里的键；缺某个组合时页面会提示"这条还没配"。
+   增删路线 = 增删下面 ROUTES 里的键；缺某个组合时页面改用自动规划补一条，不会空着。
    ------------------------------------------------------------ */
 const ROUTE_PREFS = [
   { id: "eat",  name: "吃得地道", line: "按早点、午市、晚市排，一天三顿都不重样。" },
@@ -702,6 +703,41 @@ const ROUTES = {
               stops: ["xinhui-guifeng", "enping-lecai", "enping-wenquan"] },
   "3-rest": { line: "三天慢慢走：山、水、泉各一天。",
               stops: ["xinhui-guifeng", "xinhui-xiaoniaotiantang", "heshan-gulao", "enping-wenquan", "xinhui-gudou"] }
+};
+
+/* ------------------------------------------------------------
+   3.2 自动规划的规则（自定义天数、或者上面没写的组合，都靠这段凑）
+   想改口味只看这里，不用碰下面的渲染代码：
+     kinds —— 收美食（food）还是美景（scenery）
+     any   —— 条目【名字】里出现任意一个词就收进来，命中几个词就是几分
+     not   —— 名字里带这些词的一律不收（用来踢掉"看着像海其实不是海"的）
+     add   —— 规则漏掉、但你想要进来的条目 id（add 会盖过 not）
+     drop  —— 规则误收、一定要踢掉的条目 id
+   为什么只看名字不看简介：简介句子长，"海""园"这种字到处都是，一匹配就误收。
+   新加的条目名字里带关键词就自动进池子，不用改代码；进错了往 not / drop 里加一项。
+   ------------------------------------------------------------ */
+const ROUTE_RULES = {
+  eat:  { kinds: ["food"], any: [], not: [], add: [], drop: [] },
+  sea:  { kinds: ["scenery"],
+          any: ["海岸", "半岛", "川岛", "岛", "沙滩", "礁", "湾", "渔", "埠"],
+          not: [], add: ["xinhui-yinhuwan"], drop: [] },
+  cul:  { kinds: ["scenery"],
+          any: ["碉楼", "侨", "古镇", "洋楼", "大院", "村", "里", "寺", "观", "遗址", "旧址", "纪念馆", "故居", "园", "老街", "堤"],
+          not: ["公园", "生态园"], add: ["pjiang-baisha"], drop: ["kaiping-dashali"] },
+  rest: { kinds: ["scenery"],
+          any: ["山", "温泉", "湿地", "森林", "公园", "绿廊", "云道", "湖", "水乡", "谷", "潭", "带", "天堂", "风景区", "长廊"],
+          not: ["洋楼", "古镇", "川岛"], add: [], drop: [] }   /* 川岛名字里有"山"，但不是爬山的那种 */
+};
+
+/* 自动规划的口味参数 */
+const ROUTE_PLAN_CFG = {
+  daysMin: 0.5,          // 自定义天数最少填半天
+  daysMax: 7,            // 最多七天，再多这站的图鉴就不够排了
+  paceMin: 2,            // 每天最少几站
+  paceMax: 5,            // 每天最多几站
+  pace: 3,               // 默认每天三站：吃一顿、看两处，不算赶
+  maxStops: 12,          // 一条自动路线最多几站
+  startTowns: ["蓬江", "江海"]   // 第一站优先市区的站，到了就能开走
 };
 
 /* 称号：按答对题数给，从高到低匹配 */
@@ -882,32 +918,213 @@ function updateQuizBar() {
     `<button type="button" class="btn" data-action="quiz-reset">重新作答</button>`;
 }
 
-/* ---------- 路线推荐 ---------- */
+/* ---------- 路线推荐：编者固定路线 + 自动规划 ---------- */
+
+/* 界面上的三个临时状态：用哪种给法（hand 编者 / auto 自动）、"换一条"换了几次、
+   哪些站的详细介绍是展开着的。不写 localStorage —— 刷新就回默认，
+   免得下次进来看到一条自己没选过的计划。 */
+const rtState = { mode: "hand", offset: 0, open: [] };
+
+/* 编者在固定路线里选过的站。自动规划给它们加一档权重，
+   这样默认的自动路线至少和手写路线口味一致，而不是按 id 排序瞎选。 */
+const CURATED_IDS = {};
+Object.keys(ROUTES).forEach((k) => {
+  ROUTES[k].stops.forEach((id) => { CURATED_IDS[id] = (CURATED_IDS[id] || 0) + 1; });
+});
+
+/* 图鉴里的条目算不算这条玩法：命中几个关键词就是几分，命中 not 直接出局 */
+function ruleScore(item, rule) {
+  const kind = FOOD.indexOf(item) >= 0 ? "food" : "scenery";
+  if (rule.kinds.indexOf(kind) < 0) return 0;
+  if ((rule.not || []).some((w) => item.name.indexOf(w) >= 0)) return 0;
+  if (!rule.any || !rule.any.length) return 1;          // 像"吃得地道"这种整类都收
+  return rule.any.reduce((s, w) => s + (item.name.indexOf(w) >= 0 ? 1 : 0), 0);
+}
+
+/* 把某条玩法能收的条目全捞出来，add / drop 在这一步修正，最后按分数排好。
+   同分时按图鉴里的先后（蓬江→江海→新会→台山→开平→鹤山→恩平）排，
+   不按 id 字母序 —— 那样会让"恩平"这种拼音靠前的区县白插队。 */
+function candidatesFor(prefId) {
+  const rule = ROUTE_RULES[prefId];
+  const all = FOOD.concat(SCENERY);
+  const out = [];
+  if (!rule) return out;
+  all.forEach((item, ix) => {
+    const s = ruleScore(item, rule);
+    if (s > 0) out.push({ item, score: s, ix, viaKind: !(rule.any || []).length, bonus: CURATED_IDS[item.id] ? 1 : 0 });
+  });
+  (rule.add || []).forEach((id) => {
+    const ix = all.findIndex((x) => x.id === id);
+    const it = ix >= 0 ? all[ix] : null;
+    if (it && !out.some((c) => c.item.id === id)) out.push({ item: it, ix, score: 1, viaKind: false, bonus: CURATED_IDS[id] ? 1 : 0 });
+  });
+  (rule.drop || []).forEach((id) => {
+    const i = out.findIndex((c) => c.item.id === id);
+    if (i >= 0) out.splice(i, 1);
+  });
+  return out.sort((a, b) => (b.score + b.bonus) - (a.score + a.bonus) || a.ix - b.ix);
+}
+
+/* 同一区县尽量连着走：第一站优先市区的站，之后留在当前区县直到走完，
+   再换到"剩下的站最多"的那个区县。纯排序规则，不涉及车程数字。 */
+function clusterOrder(picked) {
+  const rest = picked.slice();
+  const out = [];
+  const head = rest.findIndex((c) => ROUTE_PLAN_CFG.startTowns.indexOf(c.item.town) >= 0);
+  out.push(rest.splice(head >= 0 ? head : 0, 1)[0]);
+  while (rest.length) {
+    const town = out[out.length - 1].item.town;
+    let j = rest.findIndex((c) => c.item.town === town);
+    if (j < 0) {
+      const left = {};
+      rest.forEach((c) => { left[c.item.town] = (left[c.item.town] || 0) + 1; });
+      const busiest = rest.reduce((m, c) => (left[c.item.town] > left[m.item.town] ? c : m), rest[0]);
+      j = rest.findIndex((c) => c.item.town === busiest.item.town);
+    }
+    out.push(rest.splice(j, 1)[0]);
+  }
+  return out;
+}
+
+/* 天数 × 每天几站 = 要排几站，再从捞好的池子里取；offset 每加一次，往后挪一站重来 */
+function planStops(prefId, days, pace, offset) {
+  const cands = candidatesFor(prefId);
+  const want = Math.max(2, Math.min(ROUTE_PLAN_CFG.maxStops, Math.round(days * pace)));
+  const take = Math.min(want, cands.length);
+  if (!take) return { list: [], want, got: 0 };
+  const rot = (((offset || 0) * take) % cands.length + cands.length) % cands.length;
+  const picked = [];
+  for (let i = 0; i < take; i++) picked.push(cands[(rot + i) % cands.length]);
+  return { list: clusterOrder(picked), want, got: take };
+}
+
+/* 一行"为什么"：先说为什么排在这个位置，再说凭什么是它。
+   只讲路线逻辑，不编车程时间和门票价格 —— 那些以现场为准。 */
+function stopWhy(c, i, list, pref, isAuto) {
+  const cur = c.item;
+  const prev = i ? list[i - 1].item : null;
+  let where;
+  if (!prev) {
+    where = ROUTE_PLAN_CFG.startTowns.indexOf(cur.town) >= 0
+      ? `${cur.town}在市区，到了就能开走，不用一早就赶路`
+      : `这一段从${cur.town}起头`;
+  } else if (prev.town === cur.town) {
+    where = `和上一站同在${cur.town}，连着走省一段车程`;
+  } else {
+    where = `从${prev.town}换到${cur.town}，这一带的站排在一起`;
+  }
+  const why = [];
+  if (c.bonus && !c.viaKind) why.push("编者在固定路线里也选了它");
+  if (c.viaKind) why.push(`${FOOD.indexOf(cur) >= 0 ? "美食" : "美景"}这一整类都算「${pref.name}」`);
+  else if (c.score > 1) why.push(`名字里带这条玩法的 ${c.score} 个关键词`);
+  else if (c.score === 1 && isAuto) why.push(`名字对得上「${pref.name}」`);
+  const head = isAuto ? "自动排在第" : "编者排在第";
+  return `${head}${i + 1}站：${where}${why.length ? "；选它：" + why.join("、") : ""}。`;
+}
+
+/* 一站 = 编号 + 站名（点开弹层）+ 一句话 + 推荐理由 + 就地展开的详细介绍 */
+function rtStopHTML(c, i, list, pref, isAuto) {
+  const it = c.item;
+  const opened = rtState.open.indexOf(it.id) >= 0;
+  return `<div class="rt-stop${opened ? " open" : ""}">
+            <span class="rt-no">${i + 1}</span>
+            <div class="rt-body">
+              <button type="button" class="rt-name" data-fwid="${it.id}">${it.name}</button>
+              <p class="rt-meta">${it.town} · ${FOOD.indexOf(it) >= 0 ? "吃这一站" : "看这一站"} · ${it.line}</p>
+              <p class="rt-why">${stopWhy(c, i, list, pref, isAuto)}</p>
+              <button type="button" class="rt-more" data-rtmore="${it.id}">${opened ? "收起介绍" : "看详细介绍"}</button>
+              <div class="rt-detail"${opened ? "" : " hidden"}>
+                <p>${it.detail}</p>
+                <p class="rt-tip"><b>怎么去 / 怎么玩</b>${it.tip}</p>
+              </div>
+            </div>
+          </div>`;
+}
+
+/* 按"一天几站"切段，每段给一行天头。
+   自动规划用输入框里的每天几站；编者路线按总站数平摊到那几天，
+   免得一条一天的路线被切成"第 1 天 / 第 2 天"。 */
+function rtDaysHTML(list, pref, perDay, isAuto) {
+  const groups = [];
+  list.forEach((c, i) => {
+    const d = Math.floor(i / perDay);
+    if (!groups[d]) groups[d] = [];
+    groups[d].push(c);
+  });
+  return groups.map((g, gi) => {
+    const towns = [];
+    g.forEach((c) => { if (towns.indexOf(c.item.town) < 0) towns.push(c.item.town); });
+    return `<p class="rt-day">第 ${gi + 1} 天<span>${towns.join("、")} · ${g.length} 站</span></p>` +
+      g.map((c) => rtStopHTML(c, list.indexOf(c), list, pref, isAuto)).join("");
+  }).join("");
+}
+
+/* 自定义天数那两个输入框，读出来并夹到合法范围 */
+function readCustomPlan() {
+  const cfg = ROUTE_PLAN_CFG;
+  const dEl = document.querySelector("#rtDays");
+  const pEl = document.querySelector("#rtPace");
+  let days = Number(dEl && dEl.value);
+  let pace = Number(pEl && pEl.value);
+  if (!(days > 0)) days = 2;
+  if (!(pace > 0)) pace = cfg.pace;
+  days = Math.min(cfg.daysMax, Math.max(cfg.daysMin, days));
+  pace = Math.min(cfg.paceMax, Math.max(cfg.paceMin, Math.round(pace)));
+  return { days, pace };
+}
+
+function daysLabel(days) {
+  return days < 1 ? "半天" : `${days} 天`;
+}
+
 function renderRoutes() {
   const dayChip = document.querySelector(".fw-day-chip.on");
   const prefChip = document.querySelector(".fw-pref-chip.on");
   const box = document.querySelector("#routeOut");
+  const customRow = document.querySelector("#routeCustom");
   if (!dayChip || !prefChip || !box) return;
-  const days = dayChip.dataset.days;
-  const prefMeta = ROUTE_PREFS.find((p) => p.id === prefChip.dataset.pref);
-  const route = ROUTES[`${days}-${prefMeta.id}`];
-  if (!route) {
-    box.innerHTML = `<p class="fw-empty">这条「${days} 天 · ${prefMeta.name}」还没配路线。
-      想补就在 js/fengwu.js 的 <code>ROUTES["${days}-${prefMeta.id}"]</code> 里加一站站名单。</p>`;
+
+  const pref = ROUTE_PREFS.find((p) => p.id === prefChip.dataset.pref);
+  const isCustom = dayChip.dataset.days === "x";
+  if (customRow) customRow.hidden = !isCustom;
+
+  const plan = isCustom ? readCustomPlan() : { days: Number(dayChip.dataset.days), pace: ROUTE_PLAN_CFG.pace };
+  const curated = rtState.mode === "hand" ? ROUTES[`${plan.days}-${pref.id}`] : null;
+  const title = `${daysLabel(plan.days)} · ${pref.name}`;
+
+  let list, line, extra = "", isAuto;
+  if (curated) {
+    // 编者自己写的路线：不再重复标"编者也选了它"（这句对固定路线本身是废话）
+    list = curated.stops.map(findFengwu).filter(Boolean).map((item) => ({ item, score: 0, bonus: 0, viaKind: false }));
+    line = curated.line;
+    isAuto = false;
+  } else {
+    const r = planStops(pref.id, plan.days, plan.pace, rtState.offset);
+    list = r.list;
+    line = pref.line;
+    isAuto = true;
+    if (rtState.mode === "hand") extra = `「${title}」这条编者没写固定路线，下面这条是按规则自动凑的。`;
+    if (r.got < r.want) extra += ` 想排 ${r.want} 站，可这条玩法在图鉴里只有 ${r.got} 处对得上，剩下 ${r.want - r.got} 个位置空着，不硬塞。`;
+  }
+
+  if (!list.length) {
+    box.innerHTML = `<p class="fw-empty">「${title}」凑不出站来 —— 这条玩法在图鉴里一处都没匹配上，
+      去 js/fengwu.js 的 <code>ROUTE_RULES["${pref.id}"]</code> 里加个关键词。</p>`;
     return;
   }
+
+  const perDay = curated ? Math.ceil(list.length / plan.days) : plan.pace;
+  const noteLead = isAuto
+    ? "这条是页面按「同一区县连着走」的规则从上面图鉴里凑的，不是实地踩线过的路线；"
+    : "这条是编者写的玩法建议，";
   box.innerHTML =
-    `<p class="rt-line"><b>${days} 天 · ${prefMeta.name}</b>${route.line}</p>` +
-    route.stops.map((id, i) => {
-      const it = findFengwu(id);
-      if (!it) return "";   // id 写错了就不显示，别让页面报错
-      return `<button type="button" class="rt-stop" data-fwid="${id}">
-                <span class="rt-no">${i + 1}</span>
-                <span class="rt-body"><b>${it.name}</b><span>${it.town} · ${it.line}</span></span>
-              </button>`;
-    }).join("") +
-    `<p class="rt-note">上面的顺序只是玩法建议，具体车程和开放时间请以现场为准；
-      点任意一站可以看详细介绍。</p>`;
+    `<p class="rt-line"><b>${title}</b>${line}</p>` +
+    (extra ? `<p class="rt-extra">${extra.trim()}</p>` : "") +
+    rtDaysHTML(list, pref, perDay, isAuto) +
+    (isAuto ? `<div class="rt-bar"><button type="button" class="btn" data-action="rt-shuffle">换一条</button>
+        <span>换一次往后挪 ${list.length} 站，把池子里下一批地方排进来</span></div>` : "") +
+    `<p class="rt-note">${noteLead}
+      车程、门票、开放时间和潮汐都以现场为准。点站名出弹层，点「看详细介绍」就地展开。</p>`;
 }
 
 /* ---------- 分享长图：canvas 画一张竖版海报 ---------- */
@@ -1092,12 +1309,39 @@ document.addEventListener("click", (e) => {
   const day = e.target.closest(".fw-day-chip");
   if (day) {
     document.querySelectorAll(".fw-day-chip").forEach((c) => c.classList.toggle("on", c === day));
+    rtState.offset = 0;
     renderRoutes();
     return;
   }
   const pref = e.target.closest(".fw-pref-chip");
   if (pref) {
     document.querySelectorAll(".fw-pref-chip").forEach((c) => c.classList.toggle("on", c === pref));
+    rtState.offset = 0;
+    renderRoutes();
+    return;
+  }
+  /* 路线：编者给的还是自动凑的 */
+  const mode = e.target.closest(".fw-mode-chip");
+  if (mode) {
+    rtState.mode = mode.dataset.mode;
+    rtState.offset = 0;
+    document.querySelectorAll(".fw-mode-chip").forEach((c) => c.classList.toggle("on", c === mode));
+    renderRoutes();
+    return;
+  }
+  /* 路线：换一条（把候选池往后挪一批） */
+  if (e.target.closest('[data-action="rt-shuffle"]')) {
+    rtState.offset += 1;
+    renderRoutes();
+    return;
+  }
+  /* 路线：就地展开/收起某一站的详细介绍 */
+  const more = e.target.closest("[data-rtmore]");
+  if (more) {
+    const id = more.dataset.rtmore;
+    const at = rtState.open.indexOf(id);
+    if (at >= 0) rtState.open.splice(at, 1);
+    else rtState.open.push(id);
     renderRoutes();
     return;
   }
@@ -1115,6 +1359,17 @@ const kwInput = document.querySelector("#fwSearch");
 if (kwInput) {
   kwInput.addEventListener("input", () => { state.kw = kwInput.value.trim(); renderCards(); });
 }
+
+/* 自定义天数、每天几站：输入即重画；离开输入框时把越界的数字修正回范围内 */
+["#rtDays", "#rtPace"].forEach((sel) => {
+  const el = document.querySelector(sel);
+  if (!el) return;
+  el.addEventListener("input", renderRoutes);
+  el.addEventListener("change", () => {
+    const p = readCustomPlan();
+    el.value = el === document.querySelector("#rtDays") ? p.days : p.pace;
+  });
+});
 
 /* 选地点 → 长图区跟着预选好，但要点"生成"才画 */
 const pickSel = document.querySelector("#posterPick");

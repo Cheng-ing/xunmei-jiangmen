@@ -26,13 +26,13 @@
 .fw-tab:hover { border-color: var(--gold); }
 .fw-tab.on { background: var(--gold); color: var(--ink); border-color: var(--gold); font-weight: 700; }
 
-.fw-town-chip, .fw-day-chip, .fw-pref-chip {
+.fw-town-chip, .fw-day-chip, .fw-pref-chip, .fw-mode-chip {
   padding: 6px 14px; border-radius: 999px; font-size: 13px; letter-spacing: 1px;
   color: rgba(233, 226, 211, .78); background: transparent;
   border: 1px solid var(--line-soft); transition: all .2s;
 }
-.fw-town-chip:hover, .fw-day-chip:hover, .fw-pref-chip:hover { border-color: var(--gold); color: var(--paper); }
-.fw-town-chip.on, .fw-day-chip.on, .fw-pref-chip.on {
+.fw-town-chip:hover, .fw-day-chip:hover, .fw-pref-chip:hover, .fw-mode-chip:hover { border-color: var(--gold); color: var(--paper); }
+.fw-town-chip.on, .fw-day-chip.on, .fw-pref-chip.on, .fw-mode-chip.on {
   background: rgba(201, 168, 106, .22); border-color: var(--gold); color: var(--paper);
 }
 .fw-towns { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; }
@@ -206,30 +206,77 @@
 .quiz-final { font-family: var(--font-title); font-size: 22px; letter-spacing: 2px; color: var(--paper); }
 .quiz-rankline { color: rgba(233, 226, 211, .7); }
 
-/* ---------- 6. 路线推荐 ---------- */
+/* ---------- 6. 路线推荐（编者路线 + 自动规划） ---------- */
 .rt-picker { display: flex; flex-wrap: wrap; gap: 18px 26px; justify-content: center; margin-bottom: 20px; }
 .rt-group { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .rt-group > span { font-size: 13px; letter-spacing: 2px; color: rgba(201, 168, 106, .8); margin-right: 4px; }
+/* 自定义天数那一行：只有点了"自定义"才出现（hidden 由 fengwu.js 控制） */
+.rt-custom { gap: 14px; }
+.rt-num { display: flex; align-items: center; gap: 7px; font-size: 13px; color: rgba(233, 226, 211, .78); }
+.rt-num input {
+  width: 74px; padding: 6px 10px; border-radius: 8px; font-size: 14px; color: var(--paper);
+  background: rgba(9, 14, 21, .5); border: 1px solid var(--line-soft); outline: none;
+}
+.rt-num input:focus { border-color: var(--gold); }
+.rt-hint { font-size: 12px; color: rgba(233, 226, 211, .45); }
 .rt-out { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
 .rt-line {
   text-align: center; font-size: 15px; line-height: 1.9; color: rgba(233, 226, 211, .8); margin-bottom: 6px;
 }
 .rt-line b { display: inline-block; margin-right: 10px; font-family: var(--font-title); font-size: 18px; letter-spacing: 2px; color: var(--gold); }
-.rt-stop {
-  display: flex; align-items: center; gap: 14px; padding: 12px 16px; text-align: left;
-  background: var(--card-bg); border: 1px solid var(--line-soft); border-radius: 999px;
-  color: var(--text-light); transition: all .25s;
+/* 自动兜底、站点不够这类"给作者和访客都看得懂"的说明 */
+.rt-extra {
+  max-width: 860px; margin: 0 auto; padding: 10px 14px; font-size: 13px; line-height: 1.8;
+  color: rgba(233, 226, 211, .75); background: rgba(201, 168, 106, .1);
+  border: 1px dashed rgba(201, 168, 106, .45); border-radius: 10px;
 }
-.rt-stop:hover { border-color: var(--gold); background: var(--card-bg-hover); transform: translateX(4px); }
+/* 每天一段的天头 */
+.rt-day {
+  display: flex; align-items: baseline; gap: 10px; margin-top: 14px; padding-left: 2px;
+  font-family: var(--font-title); font-size: 17px; letter-spacing: 3px; color: var(--gold);
+}
+.rt-day span { font-family: var(--font-body); font-size: 12.5px; letter-spacing: 1px; color: rgba(233, 226, 211, .5); }
+/* 一站一张卡片：站名可以点开弹层，理由常驻，详细介绍按需展开 */
+.rt-stop {
+  display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px; text-align: left;
+  background: var(--card-bg); border: 1px solid var(--line-soft); border-radius: 14px;
+  color: var(--text-light); transition: border-color .25s, background .25s;
+}
+.rt-stop:hover { border-color: var(--gold); background: var(--card-bg-hover); }
+.rt-stop.open { border-color: rgba(201, 168, 106, .7); }
 .rt-no {
-  flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%;
+  flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%; margin-top: 2px;
   display: flex; align-items: center; justify-content: center;
   font-family: ui-monospace, Consolas, monospace; font-size: 14px;
   color: var(--ink); background: var(--gold);
 }
-.rt-body { display: flex; flex-direction: column; gap: 3px; }
-.rt-body b { font-family: var(--font-title); font-weight: 400; font-size: 18px; letter-spacing: 2px; color: var(--paper); }
-.rt-body span { font-size: 13px; line-height: 1.6; color: rgba(233, 226, 211, .65); }
+.rt-body { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.rt-name {
+  align-self: flex-start; padding: 0; background: none; border: none; outline: none; cursor: pointer;
+  font-family: var(--font-title); font-weight: 400; font-size: 18px; letter-spacing: 2px;
+  color: var(--paper); transition: color .2s;
+}
+.rt-name:hover { color: var(--gold); text-decoration: underline; text-underline-offset: 4px; }
+.rt-meta { font-size: 13px; line-height: 1.6; color: rgba(233, 226, 211, .65); }
+.rt-why {
+  font-size: 12.5px; line-height: 1.75; color: rgba(201, 168, 106, .85);
+  padding-left: 10px; border-left: 2px solid rgba(201, 168, 106, .35);
+}
+.rt-more {
+  align-self: flex-start; margin-top: 2px; padding: 4px 12px; border-radius: 999px; cursor: pointer;
+  font-size: 12.5px; letter-spacing: 1px; color: rgba(233, 226, 211, .8);
+  background: transparent; border: 1px solid var(--line-soft); transition: all .2s;
+}
+.rt-more:hover { border-color: var(--gold); color: var(--paper); }
+.rt-detail {
+  margin-top: 6px; padding: 12px 14px; border-radius: 10px;
+  background: rgba(9, 14, 21, .35); border: 1px solid var(--line-soft);
+  font-size: 13.5px; line-height: 1.9; color: rgba(233, 226, 211, .8);
+}
+.rt-tip { margin-top: 8px; font-size: 12.5px; color: rgba(233, 226, 211, .6); }
+.rt-tip b { display: inline-block; margin-right: 8px; color: var(--gold); font-weight: 400; letter-spacing: 1px; }
+.rt-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 4px; }
+.rt-bar span { font-size: 12px; color: rgba(233, 226, 211, .45); }
 .rt-note { margin-top: 10px; text-align: center; font-size: 12.5px; line-height: 1.8; color: rgba(233, 226, 211, .5); }
 
 /* ---------- 7. 分享长图 ---------- */
@@ -308,9 +355,13 @@
 
   .rt-picker { gap: 12px; }
   .rt-group { width: 100%; justify-content: flex-start; }
-  .rt-stop { padding: 10px 12px; gap: 10px; }
-  .rt-body b { font-size: 16px; letter-spacing: 1px; }
-  .rt-body span { font-size: 12px; }
+  .rt-stop { padding: 12px 12px; gap: 10px; }
+  .rt-name { font-size: 16px; letter-spacing: 1px; }
+  .rt-meta { font-size: 12px; }
+  .rt-why { font-size: 12px; }
+  .rt-detail { font-size: 12.5px; padding: 10px 11px; }
+  .rt-day { font-size: 15px; letter-spacing: 2px; margin-top: 12px; }
+  .rt-custom { gap: 10px; }
 
   .pf-form select, .pf-form input { flex: 1 1 100%; }
   #posterCanvas { width: 78vw; }
