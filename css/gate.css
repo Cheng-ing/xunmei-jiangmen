@@ -1,11 +1,12 @@
 /* ============================================================
    gate.css —— 「侨都风物」开场闸门的外观
-   只管长相：文案、图片路径、节奏全在 js/fengwu-gate.js 顶部四个块里。
-   三块面板同一时刻只显示一块：gt-ask 问句 / gt-door 开门 / gt-wait 等看画。
-   开门那一屏只有一道门：两扇木门滑开 → 露出厅堂 → 厅堂里那束光从小小一条涨满、
-   浮出光束。想调快慢与大小只改第 3 节 .gt-stage 上那六个变量和几条 transition，
-   不用碰动画本身。等等屏是六张画叠成一摞，错位量在第 4 节。
-   本文件不写任何 url()，图片由 JS 挂上去，所以换图只改 JS 一处。
+   只管长相：文案、图片路径、节奏全在 js/fengwu-gate.js 顶部三个块里。
+   三块面板同一时刻只显示一块：gt-ask 问句 / gt-spot 打灯 / gt-wait 等看画。
+   打灯那一屏没有门也没有图：顶上五个灯口往下扫五束聚光灯，从不同角度收在
+   「进入侨都风物 / 先不进去」那两个按钮上，按钮背后浮出一团光斑。
+   想调快慢、角度、粗细、光斑大小，只改第 3 节 .sp-stage 上那一串变量，
+   不用碰动画本身；窄屏与扁窗口的第二套角度在第 5 节。等等屏是六张画叠成一摞，错位量在第 4 节。
+   本文件不写任何 url()，六张画的路径在 JS 的 GATE_SCENES 里。
    ============================================================ */
 
 /* ---------- 1. 遮罩、滚动锁与跳过键 ---------- */
@@ -15,7 +16,7 @@
   /* 窗口很扁时门 + 欢迎语会高过一屏：让闸门自己可滚，且从顶上开始滚而不是被居中剪掉。
      浏览器不认 safe 这一行就会退回上面那条 center。 */
   place-items: safe center;
-  overflow-y: auto;
+  overflow: hidden auto;        /* 横向一律不出滚动条（灯和光斑都比视口宽） */
   padding: 30px 18px;
   background:
     radial-gradient(820px 480px at 50% 6%, rgba(201, 168, 106, .13), transparent 68%),
@@ -68,93 +69,105 @@ html.gate-lock, html.gate-lock body { overflow: hidden; }
 .gt-btn-soft:hover { background: rgba(201, 168, 106, .16); color: var(--text-light); transform: none; }
 .gt-fine { font-size: 12px; line-height: 1.85; text-align: center; color: rgba(233, 226, 211, .48); letter-spacing: 1px; }
 
-/* ---------- 3. 第二屏：一道门滑开 + 厅堂里那束光慢慢涨大 ----------
-   层序从后到前：gt-photo 整幅大门 → gt-open 里（gt-hall 厅堂 → gt-light 光
-   → gt-haze 暖雾 → gt-leaf 两扇木门）。两扇门滑开才看得见厅堂，
-   光从门洞中间那一小条开始，慢慢涨到整个厅堂那么亮。
-   下面这些百分比全是用 PIL 在图上量出来的（改图必须重量，见文件末尾第 7 节）。 */
-.gt-stage {
-  --door-l: 30.2%;   /* 门洞左边（占整幅画宽） */
-  --door-t: 17.2%;   /* 门洞顶边（拱顶最高点） */
-  --door-w: 39.8%;   /* 门洞宽 */
-  --door-h: 58.6%;   /* 门洞高 */
-  --arch: 19%;       /* 拱的竖直半径，占门洞高的百分比 */
-  --slide: 94%;      /* 每片门滑出自身宽度的百分比 */
-  position: relative; overflow: hidden;
-  width: min(86vw, 420px, calc(62vh * .8));
-  aspect-ratio: 76 / 95;
-  border-radius: 16px; background: var(--ink); box-shadow: var(--shadow);
+/* ---------- 3. 第二屏：舞台聚光灯（没有门、也没有图） ----------
+   顶上五个灯口各打下一束光，五束从不同角度掠下来，最后都收在下面那两个按钮上。
+   层序从后到前：sp-haze 满屏暖雾 → 五束 sp-beam → 灯口 sp-lamp → 文字按钮（在 .gt-welcome 里）。
+   光斑 .sp-pool 垫在按钮背后，由 .lit 触发（.lit 是 JS 按 GATE_CFG.welcomeDelay 加的）。
+   ★ 角度与束长是 js/fengwu-gate.js 的 layoutSpots() 现量现算的：量出按钮在视口哪儿，
+     再反推每束该斜多少度、打多长，所以窗口怎么变都收在按钮上（也就不用为断点调角度了）。
+     下面 --ra…--re 与 --len 只是"JS 还没跑"时的初值。
+   ★ 要改的：--w 束底宽度、--swing 起手多偏、--dur 扫过来几秒、每条 .sp-beam 自己的 --d 晚几秒动，
+     颜色在 .sp-beam / .sp-haze / .sp-pool 那几个 gradient 里。 */
+.sp-stage {
+  --fx: 50%;                    /* 聚焦点：暖雾对准的那一点，JS 会按按钮实际位置改写 */
+  --fy: 62%;
+  --len: 86vh;                  /* 一束光打多长（JS 改成 px） */
+  --w: 30vw;                    /* 束底有多宽 */
+  --ra: -34deg; --rb: -17deg; --rc: -3deg; --rd: 15deg; --re: 32deg;
+  --swing: 1.55;                /* 起手比落点再偏这么多倍 → 看着是"扫过来才收住" */
+  --dur: 1.5s;
+  --ease: cubic-bezier(.22, .78, .24, 1);
+  position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0;
 }
-.gt-photo { position: absolute; inset: 0; background: center / cover no-repeat; }
-/* 门洞那一块：裁成拱形，两片门滑出去时在拱口消失，像藏进两侧墙里。
-   四边压一点暗角，厅堂才像是"在门里头"而不是贴了一张画。 */
-.gt-open {
-  position: absolute; left: var(--door-l); top: var(--door-t);
-  width: var(--door-w); height: var(--door-h);
-  overflow: hidden;
-  border-radius: 50% 50% 0 0 / var(--arch) var(--arch) 0 0;
-  box-shadow: inset 0 0 22px rgba(8, 10, 14, .55);
+/* 一束光：顶边收在灯口那一点、往下张开成梯形，靠 rotate 决定往哪倒。
+   transform-origin 是 50% 0，也就是"挂在灯口上转"，所以 --x 定灯口、--r 定落点方向。 */
+.sp-beam {
+  position: absolute; top: -5vh; left: var(--x);
+  width: var(--w); height: var(--len); margin-left: calc(var(--w) / -2);
+  transform-origin: 50% 0;
+  clip-path: polygon(49% 0, 51% 0, 100% 100%, 0 100%);
+  background: linear-gradient(to bottom,
+    rgba(255, 248, 228, .6) 0%, rgba(255, 242, 214, .32) 26%,
+    rgba(255, 232, 196, .16) 58%, rgba(255, 224, 180, .05) 84%,
+    rgba(255, 220, 176, 0) 100%);
+  filter: blur(2.5px);
+  mix-blend-mode: screen;
+  opacity: 0;
+  transform: rotate(calc(var(--r) * var(--swing))) scaleX(.7);
+  transition: transform var(--dur) var(--ease) var(--d),
+              opacity calc(var(--dur) * .5) ease var(--d);
 }
-/* 厅堂：两扇门背后就是它。图和门洞区同比例（0.543），所以 cover 不会裁到东西 */
-.gt-hall { position: absolute; inset: 0; background: center / cover no-repeat; }
-/* 光：起点是门洞中间小小一条，慢慢涨到整个厅堂那么亮 */
-.gt-light {
-  position: absolute; inset: 0; transform-origin: 50% 50%;
-  background: radial-gradient(ellipse 40% 46% at 50% 52%,
-    #fffaf0 0%, rgba(255, 244, 222, .96) 26%, rgba(255, 231, 194, .78) 50%,
-    rgba(255, 216, 160, .4) 74%, rgba(255, 206, 146, 0) 100%);
-  filter: blur(1.5px);
-  opacity: 0; transform: scale(.06, .3);    /* 起点 = 门洞中间一小条光 */
-  transition: transform 2.4s cubic-bezier(.26, .84, .26, 1) .8s, opacity 1.2s ease .8s;
+/* 五束：--x 是灯口位置，--r 是收住时的倾角，--d 是晚几秒开始，--bre 是落定后的呼吸周期 */
+.sp-beam.a { --x: 6%;  --r: var(--ra); --d: .10s; --bre: 7s; }
+.sp-beam.b { --x: 26%; --r: var(--rb); --d: .26s; --bre: 8.4s; }
+.sp-beam.c { --x: 50%; --r: var(--rc); --d: .04s; --bre: 6.2s; }
+.sp-beam.d { --x: 74%; --r: var(--rd); --d: .30s; --bre: 9.1s; }
+.sp-beam.e { --x: 94%; --r: var(--re); --d: .16s; --bre: 7.6s; }
+.gt-spot.on .sp-stage.open .sp-beam { opacity: 1; transform: rotate(var(--r)) scaleX(1); }
+/* 落定之后极慢地一亮一暗，像舞台灯还在呼吸；各束周期不一样，就不会整齐地一起闪。
+   起始值故意就是 1（收住时本来就是 1），这样 2.6s 接手的那一刻不会闪一下。 */
+.gt-spot.on .sp-stage.open .sp-beam { animation: sp-breathe var(--bre) ease-in-out 2.6s infinite alternate; }
+@keyframes sp-breathe { from { opacity: 1; } to { opacity: .84; } }
+/* 灯口：一个白点 + 一圈晕，让光看得出是从哪儿下来的 */
+.sp-lamp {
+  position: absolute; top: 1.6vh; left: var(--x); width: 13px; height: 13px;
+  border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, #fffaf0 0%, rgba(255, 244, 214, .9) 42%, rgba(255, 232, 196, 0) 72%);
+  box-shadow: 0 0 22px 7px rgba(255, 241, 206, .3);
+  opacity: 0; transform: translate(-50%, -50%) scale(.35);
+  transition: opacity .7s ease var(--d), transform .9s var(--ease) var(--d);
 }
-/* 暖雾：光涨起来时把厅堂也染暖一点，压在厅堂和光前面、两扇木门后面 */
-.gt-haze {
-  position: absolute; inset: -8%; pointer-events: none;
-  opacity: 0; mix-blend-mode: screen;
-  background: radial-gradient(ellipse 46% 52% at 50% 44%,
-    rgba(255, 238, 202, .5), rgba(255, 220, 168, .16) 52%, transparent 78%);
-  transition: opacity 2.2s ease 1.7s;
+.sp-lamp.a { --x: 6%;  --d: .06s; }
+.sp-lamp.b { --x: 26%; --d: .22s; }
+.sp-lamp.c { --x: 50%; --d: 0s; }
+.sp-lamp.d { --x: 74%; --d: .26s; }
+.sp-lamp.e { --x: 94%; --d: .12s; }
+.gt-spot.on .sp-stage.open .sp-lamp { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+/* 满屏暖雾：束与束之间那点空气被照亮 */
+.sp-haze {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0; mix-blend-mode: screen;
+  background: radial-gradient(ellipse 62% 46% at var(--fx) var(--fy),
+    rgba(255, 240, 206, .22), rgba(255, 232, 196, .07) 46%, transparent 74%);
+  transition: opacity 1.6s ease .8s;
 }
-/* 两扇木门：整幅画里那扇门裁成左右两半，所以关着时和原图一模一样 */
-.gt-leaf {
-  position: absolute; top: 0; height: 100%; width: 50%;
-  background: no-repeat; background-size: 200% 100%;
-  transition: transform 2.8s cubic-bezier(.58, .02, .26, 1) .25s;
+.gt-spot.on .sp-stage.open .sp-haze { opacity: 1; }
+/* 按钮那一团：光池垫在按钮背后，跟欢迎语一起浮上来（.lit 由 JS 加）。
+   宽高压到视口以内 —— 它是 screen 混合的实心渐变，超出视口会被 .fw-gate 的 overflow-x: hidden
+   切成两条竖直硬边，看着就像贴了张方块。 */
+.sp-focus { position: relative; display: flex; justify-content: center; width: 100%; }
+.sp-pool {
+  position: absolute; left: 50%; top: 50%;
+  width: min(168%, 92vw); height: min(260%, 46vh);
+  pointer-events: none; opacity: 0; mix-blend-mode: screen; filter: blur(7px);
+  transform: translate(-50%, -50%) scale(.62);
+  background: radial-gradient(ellipse 44% 40% at 50% 50%,
+    rgba(255, 251, 238, .5), rgba(255, 240, 208, .22) 42%, rgba(255, 228, 190, 0) 74%);
+  transition: opacity 1.2s ease, transform 1.4s var(--ease);
 }
-.gt-leaf.l { left: 0; background-position: left center; }
-.gt-leaf.r { right: 0; background-position: right center; }
-/* 光溢出到门框外的部分，压在照片上面 */
-.gt-bloom, .gt-rays { position: absolute; pointer-events: none; opacity: 0; mix-blend-mode: screen; }
-.gt-bloom {
-  inset: -14%;
-  background: radial-gradient(ellipse 26% 34% at 50% 46%,
-    rgba(255, 252, 242, .9), rgba(255, 243, 216, .4) 44%, transparent 72%);
-  transition: opacity 2s ease 2.1s;
-}
-.gt-rays {
-  inset: -32%;
-  background: repeating-conic-gradient(from 90deg at 50% 46%,
-    rgba(255, 250, 236, .2) 0deg 3deg, transparent 3deg 13deg);
-  -webkit-mask-image: radial-gradient(circle at 50% 46%, #000 0%, rgba(0, 0, 0, .5) 34%, transparent 62%);
-  mask-image: radial-gradient(circle at 50% 46%, #000 0%, rgba(0, 0, 0, .5) 34%, transparent 62%);
-  transition: opacity 1.5s ease 2.4s;
-}
-.gt-stage.open .gt-leaf.l { transform: translateX(calc(var(--slide) * -1)); }
-.gt-stage.open .gt-leaf.r { transform: translateX(var(--slide)); }
-.gt-stage.open .gt-light { opacity: 1; transform: scale(1.04, 1.04); }
-.gt-stage.open .gt-haze { opacity: 1; }
-.gt-stage.open .gt-bloom { opacity: 1; }
-.gt-stage.open .gt-rays { opacity: .85; animation: gt-spin 42s linear infinite; }
-@keyframes gt-spin { to { transform: rotate(360deg); } }
+.gt-spot.on.lit .sp-pool { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+/* 这一屏是"整个舞台"：灯在顶上、按钮在中线附近，所以让面板自己占满高、内容居中，
+   窄屏那个 place-items: start 也就不把按钮顶到眉毛底下了。矮窗口里它退回内容本来那么高。 */
+.gt-spot.on { min-height: 84vh; justify-content: center; }
 
-/* 欢迎语：等光涨到位才浮上来（.lit 由 JS 按 GATE_CFG.welcomeDelay 加） */
+/* 欢迎语与那两个按钮：压在灯的前面，等光扫到位才浮上来（.lit 由 JS 按 GATE_CFG.welcomeDelay 加） */
 .gt-welcome {
+  position: relative; z-index: 2;
   display: flex; flex-direction: column; align-items: center; gap: 12px;
   max-width: 460px; text-align: center;
   opacity: 0; transform: translateY(12px);
   transition: opacity .9s ease, transform .9s ease;
 }
-.gt-door.on.lit .gt-welcome { opacity: 1; transform: none; }
+.gt-spot.on.lit .gt-welcome { opacity: 1; transform: none; }
 .gt-welcome h3 {
   font-family: var(--font-title); color: var(--gold);
   font-size: clamp(19px, 3.8vw, 27px); letter-spacing: 2px; line-height: 1.6;
@@ -219,54 +232,59 @@ html.gate-lock, html.gate-lock body { overflow: hidden; }
 .gw-dot:hover { border-color: var(--gold); }
 .gw-dot.on { background: var(--gold); transform: scale(1.28); }
 
-/* ---------- 5. 移动端（≤720px）：门占更大一块，按钮改成竖排满宽 ----------
-   桌面上门是"摆在桌上的一个景"，手机上是"整个首屏"，所以宽度和高度上限分开给。 */
+/* ---------- 5. 窄屏与扁窗口 ----------
+   五束的角度和长短由 JS 按按钮位置现算，所以这里不再摆角度；窄屏只把束改粗一点
+   （451px 宽的窗口里 30vw 只有 135px，五束看着像五根线），扁窗口把字和间距压一点，
+   让欢迎语 + 两个按钮不用往下滑就能看全。改完按 README 第三节那三个视口量一遍。 */
 @media (max-width: 720px) {
-  .fw-gate { padding: 22px 14px; place-items: start center; overflow-y: auto; }
+  .fw-gate { padding: 22px 14px; place-items: start center; }
   .gt-pane.on { gap: 12px; padding-top: 10px; }
   .gt-kicker { font-size: 11.5px; letter-spacing: 3px; }
   .gt-q { font-size: 22px; letter-spacing: 1px; }
   .gt-hint { font-size: 13.5px; line-height: 1.9; }
   .gt-btns { flex-direction: column; width: 100%; max-width: 300px; }
   .gt-btn { width: 100%; }
-  .gt-stage { width: min(90vw, calc(52vh * .8)); }
+  .sp-stage { --w: 42vw; }
   .gt-welcome { max-width: 100%; }
   .gt-welcome h3 { font-size: 19px; }
   .gw-img { border-radius: 12px; }
   .gw-word { font-size: 17.5px; }
 }
 
-/* 窗口很扁（笔记本分屏、横过来的手机）：门缩一点，让门 + 说明 + 欢迎语一屏装下，
-   不用往下滑才能看到「进入侨都风物」那颗按钮。44vh 这个数是按 560px 高试出来的。 */
+/* 窗口很扁（笔记本分屏、横过来的手机）：竖着放的字和按钮压一点，一屏装下。 */
 @media (max-height: 680px) {
   .gt-pane.on { gap: 10px; }
-  .gt-stage { width: min(86vw, 420px, calc(44vh * .8)); }
-  .gt-welcome { gap: 9px; }
+  .gt-welcome { gap: 10px; }
   .gt-welcome h3 { font-size: clamp(17px, 3vw, 21px); }
 }
 
-/* ---------- 6. 无障碍：系统设了"减少动效"时，门不再滑、光不再涨，直接给结果 ---------- */
+/* ---------- 6. 无障碍：系统设了"减少动效"时，灯不再扫、不再呼吸，直接给结果 ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .gt-leaf, .gt-light, .gt-haze, .gt-bloom, .gt-rays,
+  .sp-beam, .sp-lamp, .sp-haze, .sp-pool,
   .gt-welcome, .gw-img, .fw-gate {
     transition-duration: .01s !important;
     transition-delay: 0s !important;
   }
-  .gt-stage.open .gt-rays { animation: none; }
+  .gt-spot.on .sp-stage.open .sp-beam { animation: none; }
   .gw-word.pop, .gw-sub.pop { animation: none; }
   /* 一摞画照样自动换，只是不再滑动淡入（翻到第几张就停在第几张） */
 }
 
 /* ---------- 7. 常用调整
-   门开得快慢         → .gt-leaf 的 2.8s/.25s（这一个就是整扇门的时间）
-   光几秒起、涨得多慢 → .gt-light 的 2.4s 与延迟 .8s（延迟要落在门滑开到滑完之间才不穿帮）
-   光涨得多大         → .gt-stage.open .gt-light 里的 scale(1.04, 1.04)
-   光起点想更小/更大  → .gt-light 的 transform: scale(.06, .3)（第二个数是竖直方向，做出"一小条"）
-   太白 / 太黄        → .gt-light 那个 radial-gradient 的五档颜色，从里到外
-   光束、溢出太抢     → .gt-bloom 的 2.1s、.gt-rays 的 2.4s；想整个不要就删这两条 .open 规则
-   厅堂不够暖         → .gt-haze 的 opacity 目标（.open .gt-haze）和它的两档颜色
+   五束一起快/慢      → .sp-stage 的 --dur（这一个数就是整束光扫过来的时间）
+   谁先亮谁后亮        → 每条 .sp-beam / .sp-lamp 自己的 --d（秒）
+   束的落点角度        → 不用手调：js/fengwu-gate.js 的 layoutSpots() 量出按钮位置反算角度和束长；
+                         真要改的是第 3 块 GATE_LAMPS 那五个灯口百分比
+   灯口挪一挪          → 同上，改 GATE_LAMPS，并跟 HTML 里五个 .sp-beam / .sp-lamp 的 --x 对齐
+   扫过来的幅度大一点  → --swing（1.55 = 起手比落点偏 1.55 倍；1 就是不走、直接淡入）
+   束太粗/太细        → --w（束底宽度，占视口宽）；想更收就改 .sp-beam 的 clip-path 那两个百分比
+   光打多长           → layoutSpots() 里那个 1.24（打到按钮之后再出去多少）
+   聚焦点不对         → --fx/--fy 只影响暖雾那一团，JS 会按按钮实际位置改写
+   太白 / 太黄        → .sp-beam 那个 linear-gradient 的五档颜色，从灯口到束底
+   空气感太强/太弱    → .sp-haze 的 opacity 目标和它那一档颜色
+   按钮那团光         → .sp-pool 的 width/height（168%/260% 是相对按钮那一块）、模糊量与两档颜色
+   灯呼吸的节奏        → 各条 .sp-beam 的 --bre（周期秒）与 @keyframes sp-breathe 的两个透明度
    欢迎语出得早晚     → js/fengwu-gate.js 的 GATE_CFG.welcomeDelay（要跟上面这些延迟对得上）
    一摞画的大小       → .gw-frame 的 42vh（改成 50vh 更大，但矮窗口要往下滑才看全）
    一摞错开得开多少   → .gw-img.d1 / .d2 的 translateY 与 scale（改大就要跟着加 .gw-frame 的 margin-bottom）
-   门的位置不对       → 重新用 PIL 量，改 --door-* 四个数（换 gate.jpg 或 gate-door.jpg 都要重量的）
    ============================================================ */

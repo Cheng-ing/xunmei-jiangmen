@@ -17,8 +17,8 @@
 </head>
 <body class="fw-wrap">
 
-  <!-- ▼ 开场闸门：先问一句，两条路（去开门 / 先看几张画）。
-       文案、图片路径、节奏全在 js/fengwu-gate.js 顶部四个块里改，本文件只给骨架。
+  <!-- ▼ 开场闸门：先问一句，两条路（打灯进去 / 先看几张画）。
+       文案、灯口站位、节奏全在 js/fengwu-gate.js 顶部四个块里改，本文件只给骨架。
        想整块关掉：删掉下面这一坨 + head 里的 gate.css 和末尾的 fengwu-gate.js 两行引用。 -->
   <div class="fw-gate" id="fwGate" role="dialog" aria-modal="true" aria-label="侨都风物开场">
     <button type="button" class="gt-skip" data-gate="skip">跳过</button>
@@ -37,29 +37,26 @@
       <p class="gt-fine">插画由 AIGC 生成 · 按 Esc 可以直接进去</p>
     </div>
 
-    <!-- 第二屏：只有一道门。外面两扇木门缓缓滑开 → 露出画里的厅堂 →
-         厅堂里那束光从小小一条慢慢涨满、浮出光束 → 欢迎语。
-         滑多远、几秒开、光涨多大，全在 css/gate.css 第 3 节。 -->
-    <div class="gt-pane gt-door" id="gtDoor">
-      <div class="gt-stage" id="gtStage">
-        <div class="gt-photo" id="gtPhoto"></div>
-        <div class="gt-open">
-          <div class="gt-hall" id="gtHall"></div>
-          <div class="gt-light"></div>
-          <div class="gt-haze"></div>
-          <div class="gt-leaf l" id="gtLeafL"></div>
-          <div class="gt-leaf r" id="gtLeafR"></div>
-        </div>
-        <div class="gt-bloom"></div>
-        <div class="gt-rays"></div>
+    <!-- 第二屏：没有门了，改成舞台聚光灯。点「我准备好了」之后，五束光从顶上不同
+         位置、不同角度掠下来，最后都收在下面那两个按钮上，按钮下面浮出一团光斑。
+         束的角度、快慢、粗细和光斑多大，全在 css/gate.css 第 3 节；窄屏与扁窗口各有一套角度。 -->
+    <div class="gt-pane gt-spot" id="gtSpot">
+      <div class="sp-stage" id="spStage" aria-hidden="true">
+        <span class="sp-lamp a"></span><span class="sp-lamp b"></span><span class="sp-lamp c"></span>
+        <span class="sp-lamp d"></span><span class="sp-lamp e"></span>
+        <span class="sp-beam a"></span><span class="sp-beam b"></span><span class="sp-beam c"></span>
+        <span class="sp-beam d"></span><span class="sp-beam e"></span>
+        <span class="sp-haze"></span>
       </div>
-      <p class="gt-fine" id="gtDoorNote"></p>
       <div class="gt-welcome">
         <h3>欢迎您了解侨都之乡</h3>
-        <p>门开了 —— 里面是五邑的吃食、山水和老房子。</p>
-        <div class="gt-btns">
-          <button type="button" class="gt-btn" id="gtEnter" data-gate="enter">进入侨都风物</button>
-          <button type="button" class="gt-btn gt-btn-soft" data-gate="ask">先不进去</button>
+        <p>灯亮了 —— 这里是五邑的吃食、山水和老房子。</p>
+        <div class="sp-focus">
+          <span class="sp-pool" aria-hidden="true"></span>
+          <div class="gt-btns">
+            <button type="button" class="gt-btn" id="gtEnter" data-gate="enter">进入侨都风物</button>
+            <button type="button" class="gt-btn gt-btn-soft" data-gate="ask">先不进去</button>
+          </div>
         </div>
       </div>
     </div>
@@ -77,7 +74,7 @@
       <p class="gw-sub" id="gwSub"></p>
       <div class="gw-dots" id="gwDots"></div>
       <div class="gt-btns">
-        <button type="button" class="gt-btn" data-gate="ready">我准备好了，去开门</button>
+        <button type="button" class="gt-btn" data-gate="ready">我准备好了</button>
         <button type="button" class="gt-btn gt-btn-soft" data-gate="ask">回到开头</button>
       </div>
       <p class="gt-fine" id="gwFoot"></p>

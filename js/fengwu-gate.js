@@ -1,13 +1,15 @@
 /* ============================================================
    fengwu-gate.js —— 「侨都风物」开场闸门
    每次打开这一页（含刷新）都先问一句「你准备好认识侨都之乡了吗？」，两条路：
-     · 我准备好了 → 两扇木门缓缓滑开，露出画里的厅堂；厅堂里那束光从小小一条
-                    慢慢涨满、浮出光束，然后浮出「欢迎您了解侨都之乡 · 进入侨都风物」。
+     · 我准备好了 → 没有门，改成舞台聚光灯：顶上五个灯口往下扫五束光，从不同角度
+                    收在「进入侨都风物 / 先不进去」那两个按钮上，按钮背后浮出一团光斑，
+                    随后浮出「欢迎您了解侨都之乡」。
      · 让我等等   → 六张 AIGC 侨乡插画叠成一摞，每 5 秒换一张、换完接着循环，
-                    每张配一句鼓励语，随时能回去开门。
+                    每张配一句鼓励语，随时能回去看灯。
    ★ 要改的东西全在本文件顶部四个块里：
-       GATE_CFG 节奏与开关 / GATE_COPY 文案 / GATE_IMGS 大门那三张图 / GATE_SCENES 六张画与鼓励语
-     图片路径也只写在这里（css/gate.css 里没有任何 url()）。
+       GATE_CFG 节奏与开关 / GATE_COPY 文案 / GATE_LAMPS 五个灯口位置 / GATE_SCENES 六张画与鼓励语
+     图片路径也只写在这里（css/gate.css 里没有任何 url()）；打灯那一屏不铺图，
+     束的角度与长短由 layoutSpots() 按按钮位置现算，斜多少度、粗细、快慢在 css/gate.css 第 3 节。
    ★ 想整块关掉闸门：删掉 fengwu.html 里 id="fwGate" 那一坨 + 两行引用
      （css/gate.css 与 js/fengwu-gate.js），页面就回到直接显示内容。
    本页没有后端：闸门的状态只在当前这一次页面里，不做任何记录，所以刷新一定会再出现。
@@ -15,8 +17,8 @@
 
 /* ---------- 1. 节奏与开关（毫秒） ---------- */
 const GATE_CFG = {
-  openDelay: 240,             /* 点「我准备好了」到门开始动（CSS 里的延迟从这一刻起算） */
-  welcomeDelay: 3600,         /* 门开始动到欢迎语浮出：门 2.8s/.25s、光 2.4s/.8s、光束 1.5s/2.4s */
+  openDelay: 240,             /* 点「我准备好了」到灯开始扫（CSS 里的延迟从这一刻起算） */
+  welcomeDelay: 1300,         /* 灯开始扫到欢迎语与按钮浮出：五束最晚一束 .3s 起、1.5s 收住 */
   autoNext: 5000,             /* 「让我等等」几秒换一张，一直换下去 */
   stackBack: 2,               /* 一摞画在最前面那张后面露几张（改 1 就只露一张边） */
   skipOnHash: true            /* 链接里带 #（比如从别处跳到某一节）时直接放行 */
@@ -24,26 +26,23 @@ const GATE_CFG = {
 
 /* ---------- 2. 闸门上的固定文案 ---------- */
 const GATE_COPY = {
-  doorNote: "门与厅堂都是画出来的示意场景，不是江门市博物馆实景。",
   waitLead: "不急 · 先看几张画里的侨乡",
   waitTag: "AI 生成插画 · 不是实景照片",
   waitFoot: "每隔几秒自动换一张，点下面的圆点可以直接跳。"
 };
 
-/* ---------- 3. 大门用的三张图（同一张源图裁出来的才能对齐） ----------
-   full/door = 那扇门（整幅 + 门洞裁切，两扇木门用裁切那份拼）；hall = 门里的厅堂。
-   换 full 或 door 都要回 css/gate.css 第 3 节重新量门洞。 */
-const GATE_IMGS = {
-  full: "images/gate/gate.jpg",
-  door: "images/gate/gate-door.jpg",
-  hall: "images/gate/gate-hall.jpg"
-};
+/* ---------- 3. 五个灯口在视口宽度的哪个百分比上 ----------
+   束的斜度和长短不用写死：layoutSpots() 会量出按钮此刻在视口哪儿，反算每束该斜多少度、打多长，
+   所以窗口大小一变，五束还是收在那两个按钮上。这里只决定灯口横向站在哪儿。
+   ★ 改了这里要同步改 fengwu.html 里五个 .sp-beam / .sp-lamp 的 --x，两边一一对应。 */
+const GATE_LAMPS = [6, 26, 50, 74, 94];
 
 /* ---------- 4. 「让我等等」那六张：img 路径 / alt 读屏 / word 鼓励语 / sub 补一句 ----------
-   word 是给人打气的话，sub 只描述画里画了什么，都不当实景介绍用。 */
+   word 是给人打气的话，sub 只描述画里画了什么，都不当实景介绍用。
+   ★ 打灯那一屏现在不铺图（纯 CSS 的光），所以六张画是这个文件里唯一的图片路径。 */
 const GATE_SCENES = [
   { img: "images/gate/s1-diaolou.jpg", alt: "画里的碉楼与稻田",
-    word: "不急，门一直开着。", sub: "田中间那几座楼，是侨乡最认得出的样子。" },
+    word: "不急，灯一直给你亮着。", sub: "田中间那几座楼，是侨乡最认得出的样子。" },
   { img: "images/gate/s2-qilou.jpg", alt: "画里的骑楼老街黄昏",
     word: "看累了就歇一会儿。", sub: "骑楼底下的灯刚亮，街上还没有人。" },
   { img: "images/gate/s3-coast.jpg", alt: "画里的海岸、渔船与远岬",
@@ -66,8 +65,8 @@ const GATE_SCENES = [
   if (!gate) return;                       /* 页面没放闸门那一坨就整个不跑 */
 
   const $ = function (id) { return document.getElementById(id); };
-  const panes = { ask: $("gtAsk"), door: $("gtDoor"), wait: $("gtWait") };
-  const stage = $("gtStage");
+  const panes = { ask: $("gtAsk"), spot: $("gtSpot"), wait: $("gtWait") };
+  const stage = $("spStage");
   const gwImgs = $("gwImgs");
   const gwDots = $("gwDots");
   const gwWord = $("gwWord");
@@ -79,21 +78,7 @@ const GATE_SCENES = [
 
   const st = { pane: "ask", idx: 0, timer: 0, built: false, imgs: [], dots: [] };
 
-  /* ---- 图片路径由这里挂上去：CSS 里不留 url()，换图只改上面 ---- */
-  function bg(id, path) {
-    const el = $(id);
-    if (el) el.style.backgroundImage = 'url("' + path + '")';
-    new Image().src = path;
-  }
-  bg("gtPhoto", GATE_IMGS.full);
-  bg("gtHall", GATE_IMGS.hall);
-  ["gtLeafL", "gtLeafR"].forEach(function (id) {
-    const el = $(id);
-    el.style.backgroundImage = 'url("' + GATE_IMGS.door + '")';
-  });
-  new Image().src = GATE_IMGS.door;
-
-  $("gtDoorNote").textContent = GATE_COPY.doorNote;
+  /* ---- 闸门上的小字（画的路径在 GATE_SCENES 里，由 buildWait() 挂上去） ---- */
   $("gwLead").textContent = GATE_COPY.waitLead;
   $("gwTag").textContent = GATE_COPY.waitTag;
   $("gwFoot").textContent = GATE_COPY.waitFoot;
@@ -116,18 +101,43 @@ const GATE_SCENES = [
     }, ms(760) + 30);
   }
 
-  /* ---- 第一支：一道门滑开，厅堂里那束光慢慢涨满 ---- */
-  function runDoor() {
-    show("door");
-    panes.door.classList.remove("lit");
+  /* ---- 五束光要对准按钮：按钮此刻在视口哪儿跟窗口大小有关，所以角度和束长现量现算。
+         灯口挂在视口顶上（CSS 里 top: -5vh），从灯口到按钮中心连线就是这束该走的方向；
+         CSS 的 rotate 顺时针为正、而"往右倒"要负，所以角度取负。束长取到按钮再放 24%，
+         光才会盖过按钮那一团而不是停在其上边缘。 ---- */
+  function layoutSpots() {
+    const box = panes.spot.querySelector(".gt-btns");
+    const beams = stage.querySelectorAll(".sp-beam");
+    if (!box || !beams.length) return;
+    const de = document.documentElement;
+    const vw = window.innerWidth || de.clientWidth;
+    const vh = window.innerHeight || de.clientHeight;
+    const r = box.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    stage.style.setProperty("--fx", (cx / vw * 100).toFixed(1) + "%");
+    stage.style.setProperty("--fy", (cy / vh * 100).toFixed(1) + "%");
+    GATE_LAMPS.forEach(function (p, i) {
+      const beam = beams[i];
+      if (!beam) return;
+      const dx = cx - p / 100 * vw, dy = cy + 0.05 * vh;
+      beam.style.setProperty("--r", (-Math.atan2(dx, dy) * 180 / Math.PI).toFixed(1) + "deg");
+      beam.style.setProperty("--len", (Math.sqrt(dx * dx + dy * dy) * 1.24).toFixed(0) + "px");
+    });
+  }
+
+  /* ---- 第一支：五束聚光灯从不同角度扫下来，收在按钮那一团上 ---- */
+  function runSpot() {
+    show("spot");
+    panes.spot.classList.remove("lit");
     stage.classList.remove("open");
-    void stage.offsetWidth;                /* 强制回流：第二次进来时动画要能从关闭态重放 */
-    live.textContent = "大门正在打开。";
+    layoutSpots();
+    void stage.offsetWidth;                /* 强制回流：第二次进来时动画要能从起始态重放 */
+    live.textContent = "聚光灯正在打下来。";
     setTimeout(function () {
-      stage.classList.add("open");         /* 滑多远、光几秒起、涨多大，全在 CSS 的延迟里 */
+      stage.classList.add("open");         /* 每束几点起、扫多快，全在 CSS 的延迟里 */
     }, ms(GATE_CFG.openDelay));
     setTimeout(function () {
-      panes.door.classList.add("lit");
+      panes.spot.classList.add("lit");     /* 欢迎语 + 两个按钮 + 它们背后那团光一起浮上来 */
       live.textContent = "欢迎您了解侨都之乡，按回车可以进入。";
       const b = $("gtEnter");
       if (b) b.focus();
@@ -200,7 +210,7 @@ const GATE_SCENES = [
     const act = e.target.closest("[data-gate]");
     if (act) {
       const a = act.dataset.gate;
-      if (a === "ready") runDoor();
+      if (a === "ready") runSpot();
       else if (a === "wait") openWait();
       else if (a === "enter" || a === "skip") enter();
       else if (a === "ask") { stopTimer(); show("ask"); }
@@ -214,6 +224,11 @@ const GATE_SCENES = [
   document.addEventListener("visibilitychange", function () {
     if (document.hidden) stopTimer();
     else if (st.pane === "wait") startTimer();
+  });
+
+  /* 窗口一变大变小（转手机、拖窗口、手机地址栏收起）就重新量一次，五束才不会打偏 */
+  window.addEventListener("resize", function () {
+    if (st.pane === "spot") layoutSpots();
   });
 
   /* Esc = 跳过闸门，别把人关在门口 */
