@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <!-- ============================================================
      fengwu.html —— 侨都风物：美食美景图鉴 + 侨都知多少小测 + 路线推荐 + 分享长图
-     ★ 这一页的所有文字（条目、题目、选项、路线站点）都在 js/fengwu.js 顶部四个数组里改 ★
-     ★ 外观在 css/fengwu.css（卡片每行几张、颜色、移动端那一套）★
+     ★ 这一页正片的文字（条目、题目、选项、路线站点）都在 js/fengwu.js 顶部四个数组里改 ★
+     ★ 开场那一句问话、门和六张画的文案在 js/fengwu-gate.js；外观在 css/gate.css ★
+     ★ 正片外观在 css/fengwu.css（卡片每行几张、颜色、移动端那一套）★
      本页全部交互都不需要后端：打卡记录只存在访问者自己的浏览器里。
      ============================================================ -->
 <html lang="zh-CN">
@@ -12,8 +13,70 @@
   <title>侨都风物 · 寻美江门</title>
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/fengwu.css">
+  <link rel="stylesheet" href="css/gate.css">
 </head>
 <body class="fw-wrap">
+
+  <!-- ▼ 开场闸门：先问一句，两条路（去开门 / 先看几张画）。
+       文案、图片路径、节奏全在 js/fengwu-gate.js 顶部四个块里改，本文件只给骨架。
+       想整块关掉：删掉下面这一坨 + head 里的 gate.css 和末尾的 fengwu-gate.js 两行引用。 -->
+  <div class="fw-gate" id="fwGate" role="dialog" aria-modal="true" aria-label="侨都风物开场">
+    <button type="button" class="gt-skip" data-gate="skip">跳过</button>
+    <p class="gt-live" id="gtLive" role="status" aria-live="polite"></p>
+
+    <!-- 第一屏：问句 + 两个按钮 -->
+    <div class="gt-pane on" id="gtAsk">
+      <p class="gt-kicker">侨 都 风 物</p>
+      <h2 class="gt-q">你准备好认识侨都之乡了吗？</h2>
+      <div class="gt-ornament"></div>
+      <p class="gt-hint">这一页收着五邑的吃食与山水：图鉴、小题、几天怎么走，都可以自己挑。</p>
+      <div class="gt-btns">
+        <button type="button" class="gt-btn" data-gate="ready">我准备好了</button>
+        <button type="button" class="gt-btn gt-btn-soft" data-gate="wait">让我等等</button>
+      </div>
+      <p class="gt-fine">插画由 AIGC 生成 · 按 Esc 可以直接进去</p>
+    </div>
+
+    <!-- 第二屏：大门向两侧缓缓滑开，门缝里的白光一点点涨大，再浮出欢迎语 -->
+    <div class="gt-pane gt-door" id="gtDoor">
+      <div class="gt-stage" id="gtStage">
+        <div class="gt-photo" id="gtPhoto"></div>
+        <div class="gt-open">
+          <div class="gt-light"></div>
+          <div class="gt-leaf l" id="gtLeafL"></div>
+          <div class="gt-leaf r" id="gtLeafR"></div>
+        </div>
+        <div class="gt-bloom"></div>
+        <div class="gt-rays"></div>
+      </div>
+      <p class="gt-fine" id="gtDoorNote"></p>
+      <div class="gt-welcome">
+        <h3>欢迎您了解侨都之乡</h3>
+        <p>门开了 —— 里面是五邑的吃食、山水和老房子。</p>
+        <div class="gt-btns">
+          <button type="button" class="gt-btn" id="gtEnter" data-gate="enter">进入侨都风物</button>
+          <button type="button" class="gt-btn gt-btn-soft" data-gate="ask">先不进去</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第三屏：让我等等（六张画与鼓励语在 GATE_SCENES 里，图和点都由 JS 生成） -->
+    <div class="gt-pane gt-wait" id="gtWait">
+      <p class="gw-lead" id="gwLead"></p>
+      <div class="gw-frame" id="gwFrame">
+        <div class="gw-imgs" id="gwImgs"></div>
+        <p class="gw-tag" id="gwTag"></p>
+      </div>
+      <h3 class="gw-word" id="gwWord"></h3>
+      <p class="gw-sub" id="gwSub"></p>
+      <div class="gw-dots" id="gwDots"></div>
+      <div class="gt-btns">
+        <button type="button" class="gt-btn" data-gate="ready">我准备好了，去开门</button>
+        <button type="button" class="gt-btn gt-btn-soft" data-gate="ask">回到开头</button>
+      </div>
+      <p class="gt-fine" id="gwFoot"></p>
+    </div>
+  </div>
 
   <nav class="site-nav">
     <div class="brand">寻美江门<small>侨都薪火</small></div>
@@ -30,7 +93,7 @@
 
   <!-- ▼ 导语 + 四个板块的跳转（点一下平滑滚到对应小节） -->
   <section class="section" style="text-align:center;">
-    <h2 class="section-title">侨都风物</h2>
+    <h2 class="section-title" id="fwTop" tabindex="-1">侨都风物</h2>
     <div class="title-ornament"></div>
     <p class="section-sub">五邑滋味的来处，山水楼台的去处 —— 这一页不讲人物，讲江门这块地方本身</p>
     <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
@@ -171,6 +234,8 @@
 
   <script src="js/common.js"></script>
   <!-- common.js 负责窄屏导航的横滑与"当前页那颗先滑到看得见"；本页没有信封，其它函数不会触发 -->
+  <script src="js/fengwu-gate.js"></script>
+  <!-- 开场闸门：先它后图鉴，闸门只管遮罩那一块，和 fengwu.js 互不引用 -->
   <script src="js/fengwu.js"></script>
 </body>
 </html>

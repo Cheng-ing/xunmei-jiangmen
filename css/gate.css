@@ -1,0 +1,210 @@
+/* ============================================================
+   gate.css —— 「侨都风物」开场闸门的外观
+   只管长相：文案、图片路径、节奏全在 js/fengwu-gate.js 顶部三个数组里。
+   三块面板同一时刻只显示一块：gt-ask 问句 / gt-door 开门 / gt-wait 等看画。
+   想调门开得快慢、光涨得多大：改第 3 节 .gt-stage 上那六个变量，不用碰动画。
+   本文件不写任何 url()，图片由 JS 挂上去，所以换图只改 JS 一处。
+   ============================================================ */
+
+/* ---------- 1. 遮罩、滚动锁与跳过键 ---------- */
+.fw-gate {
+  position: fixed; inset: 0; z-index: 90;
+  display: grid; place-items: center;
+  /* 窗口很扁时门 + 欢迎语会高过一屏：让闸门自己可滚，且从顶上开始滚而不是被居中剪掉。
+     浏览器不认 safe 这一行就会退回上面那条 center。 */
+  place-items: safe center;
+  overflow-y: auto;
+  padding: 30px 18px;
+  background:
+    radial-gradient(820px 480px at 50% 6%, rgba(201, 168, 106, .13), transparent 68%),
+    radial-gradient(1200px 700px at 70% -10%, var(--ink-2), var(--ink));
+  transition: opacity .7s ease, visibility 0s linear .7s;
+}
+.fw-gate.gone { opacity: 0; visibility: hidden; pointer-events: none; }
+/* 淡出结束后 JS 会加 hidden；不写这条会被上面的 display:grid 顶掉 */
+.fw-gate[hidden] { display: none; }
+html.gate-lock, html.gate-lock body { overflow: hidden; }
+
+.gt-pane { display: none; }
+.gt-pane.on {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 14px; width: 100%;
+}
+.gt-skip {
+  position: absolute; top: 12px; right: 14px; z-index: 5;
+  border: 1px solid rgba(201, 168, 106, .38); background: transparent;
+  color: rgba(233, 226, 211, .68); border-radius: 999px;
+  padding: 6px 14px; font-size: 12.5px; letter-spacing: 1px;
+}
+.gt-skip:hover { border-color: var(--gold); color: var(--gold); }
+/* 读屏用的进度播报，屏幕上看不见 */
+.gt-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- 2. 第一屏：问一句 ---------- */
+.gt-kicker { font-size: 12.5px; letter-spacing: 5px; color: rgba(233, 226, 211, .55); }
+.gt-q {
+  font-family: var(--font-title); color: var(--gold);
+  font-size: clamp(22px, 4.6vw, 34px); letter-spacing: 2px;
+  line-height: 1.6; text-align: center;
+}
+.gt-ornament { width: 72px; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+.gt-hint {
+  max-width: 44ch; text-align: center; line-height: 1.95;
+  color: rgba(233, 226, 211, .72); font-size: 14px;
+}
+.gt-btns { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+.gt-btn {
+  padding: 13px 32px; border: 1px solid var(--gold); border-radius: 999px;
+  background: transparent; color: var(--gold);
+  font-size: 16px; letter-spacing: 3px; transition: all .28s ease;
+}
+.gt-btn:hover { background: var(--gold); color: var(--ink); transform: translateY(-2px); }
+.gt-btn-soft {
+  border-color: rgba(201, 168, 106, .42); color: rgba(233, 226, 211, .8);
+  font-size: 15px; letter-spacing: 2px; padding: 11px 24px;
+}
+.gt-btn-soft:hover { background: rgba(201, 168, 106, .16); color: var(--text-light); transform: none; }
+.gt-fine { font-size: 12px; line-height: 1.85; text-align: center; color: rgba(233, 226, 211, .48); letter-spacing: 1px; }
+
+/* ---------- 3. 第二屏：大门缓缓开 + 白光涨大 ----------
+   六个变量就是这一屏的全部几何：门洞在整幅画里的位置（百分比）、
+   拱顶的弧度、两片门各滑出去多远。数字是用 PIL 量出来的，改图要重新量。 */
+.gt-stage {
+  --door-l: 30.2%;   /* 门洞左边 */
+  --door-t: 17.2%;   /* 门洞顶边（拱顶最高点） */
+  --door-w: 39.8%;   /* 门洞宽 */
+  --door-h: 58.6%;   /* 门洞高 */
+  --arch: 19%;       /* 拱的竖直半径，占门洞高的百分比 */
+  --slide: 94%;      /* 每片门滑出自身宽度的百分比 */
+  position: relative; overflow: hidden;
+  width: min(86vw, 420px, calc(62vh * .8));
+  aspect-ratio: 76 / 95;
+  border-radius: 16px; background: var(--ink); box-shadow: var(--shadow);
+}
+.gt-photo { position: absolute; inset: 0; background: center / cover no-repeat; }
+/* 门洞那一块：裁成拱形，两片门滑出去时在拱口消失，像藏进两侧墙里 */
+.gt-open {
+  position: absolute; left: var(--door-l); top: var(--door-t);
+  width: var(--door-w); height: var(--door-h);
+  overflow: hidden;
+  border-radius: 50% 50% 0 0 / var(--arch) var(--arch) 0 0;
+}
+/* 光在两片门背后：门滑开多少，光就露出来多少 */
+.gt-light {
+  position: absolute; inset: 0; transform-origin: 50% 50%;
+  background: radial-gradient(ellipse 44% 50% at 50% 62%,
+    #fffdf6 0%, rgba(255, 247, 228, .97) 30%, rgba(255, 239, 206, .72) 56%,
+    rgba(255, 231, 188, .3) 78%, rgba(255, 226, 180, 0) 100%);
+  filter: blur(2px);
+  opacity: 0; transform: scale(.035, .62);   /* 起始 = 门缝里一条细光 */
+  transition: transform 2.9s cubic-bezier(.32, .86, .3, 1) .5s, opacity 1.1s ease .35s;
+}
+.gt-leaf {
+  position: absolute; top: 0; height: 100%; width: 50%;
+  background: no-repeat; background-size: 200% 100%;
+  transition: transform 3.1s cubic-bezier(.58, .02, .26, 1) .55s;
+}
+.gt-leaf.l { left: 0; background-position: left center; }
+.gt-leaf.r { right: 0; background-position: right center; }
+/* 光溢出到门框外的部分，压在照片上面 */
+.gt-bloom, .gt-rays { position: absolute; pointer-events: none; opacity: 0; mix-blend-mode: screen; }
+.gt-bloom {
+  inset: -14%;
+  background: radial-gradient(ellipse 26% 34% at 50% 46%,
+    rgba(255, 252, 242, .9), rgba(255, 243, 216, .4) 44%, transparent 72%);
+  transition: opacity 2.2s ease 1.2s;
+}
+.gt-rays {
+  inset: -32%;
+  background: repeating-conic-gradient(from 90deg at 50% 46%,
+    rgba(255, 250, 236, .2) 0deg 3deg, transparent 3deg 13deg);
+  -webkit-mask-image: radial-gradient(circle at 50% 46%, #000 0%, rgba(0, 0, 0, .5) 34%, transparent 62%);
+  mask-image: radial-gradient(circle at 50% 46%, #000 0%, rgba(0, 0, 0, .5) 34%, transparent 62%);
+  transition: opacity 1.6s ease 1.6s;
+}
+.gt-stage.open .gt-leaf.l { transform: translateX(calc(var(--slide) * -1)); }
+.gt-stage.open .gt-leaf.r { transform: translateX(var(--slide)); }
+.gt-stage.open .gt-light { opacity: 1; transform: scale(1.08, 1.06); }
+.gt-stage.open .gt-bloom { opacity: 1; }
+.gt-stage.open .gt-rays { opacity: .85; animation: gt-spin 42s linear infinite; }
+@keyframes gt-spin { to { transform: rotate(360deg); } }
+
+/* 欢迎语：等光涨到位才浮上来（.lit 由 JS 按 GATE_CFG.welcomeDelay 加） */
+.gt-welcome {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  max-width: 460px; text-align: center;
+  opacity: 0; transform: translateY(12px);
+  transition: opacity .9s ease, transform .9s ease;
+}
+.gt-door.on.lit .gt-welcome { opacity: 1; transform: none; }
+.gt-welcome h3 {
+  font-family: var(--font-title); color: var(--gold);
+  font-size: clamp(19px, 3.8vw, 27px); letter-spacing: 2px; line-height: 1.6;
+}
+.gt-welcome p { font-size: 13.5px; line-height: 1.9; color: rgba(233, 226, 211, .7); }
+
+/* ---------- 4. 第三屏：让我等等（六张画轮着看） ---------- */
+.gt-wait { width: min(92vw, 560px); }
+.gt-wait .gw-lead { font-size: 12.5px; letter-spacing: 3px; color: rgba(233, 226, 211, .55); }
+.gw-frame {
+  position: relative; width: 100%; aspect-ratio: 4 / 3;
+  border: 1px solid var(--line-soft); border-radius: 14px;
+  overflow: hidden; background: #101a26;
+}
+.gw-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: 0; transition: opacity 1s ease;
+}
+.gw-img.on { opacity: 1; }
+.gw-tag {
+  position: absolute; right: 8px; bottom: 8px; z-index: 2;
+  padding: 4px 10px; border-radius: 999px; font-size: 11px; letter-spacing: 1px;
+  background: rgba(16, 26, 38, .74); color: rgba(233, 226, 211, .86);
+}
+.gw-word {
+  font-family: var(--font-title); color: var(--gold);
+  font-size: clamp(18px, 3.6vw, 24px); letter-spacing: 1px;
+  text-align: center; line-height: 1.7; min-height: 1.7em;
+}
+.gw-sub { font-size: 13px; color: rgba(233, 226, 211, .64); text-align: center; }
+.gw-dots { display: flex; gap: 10px; justify-content: center; }
+.gw-dot {
+  width: 9px; height: 9px; padding: 0; border-radius: 50%;
+  border: 1px solid rgba(201, 168, 106, .6); background: transparent;
+  transition: all .25s ease;
+}
+.gw-dot:hover { border-color: var(--gold); }
+.gw-dot.on { background: var(--gold); transform: scale(1.28); }
+
+/* ---------- 5. 移动端（≤720px）：门占更大一块，按钮改成竖排满宽 ----------
+   桌面上门是"摆在桌上的一个景"，手机上是"整个首屏"，所以宽度和高度上限分开给。 */
+@media (max-width: 720px) {
+  .fw-gate { padding: 22px 14px; place-items: start center; overflow-y: auto; }
+  .gt-pane.on { gap: 12px; padding-top: 10px; }
+  .gt-kicker { font-size: 11.5px; letter-spacing: 3px; }
+  .gt-q { font-size: 22px; letter-spacing: 1px; }
+  .gt-hint { font-size: 13.5px; line-height: 1.9; }
+  .gt-btns { flex-direction: column; width: 100%; max-width: 300px; }
+  .gt-btn { width: 100%; }
+  .gt-stage { width: min(90vw, calc(52vh * .8)); }
+  .gt-welcome { max-width: 100%; }
+  .gt-welcome h3 { font-size: 19px; }
+  .gw-frame { border-radius: 12px; }
+  .gw-word { font-size: 17.5px; }
+}
+
+/* ---------- 6. 无障碍：系统设了"减少动效"时，门不再滑、光不再涨，直接给结果 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .gt-leaf, .gt-light, .gt-bloom, .gt-rays, .gt-welcome, .gw-img, .fw-gate {
+    transition-duration: .01s !important;
+    transition-delay: 0s !important;
+  }
+  .gt-stage.open .gt-rays { animation: none; }
+}
+
+/* ---------- 7. 常用调整
+   门开得太快/太慢   → .gt-leaf 的 3.1s 与 .gt-light 的 2.9s（两个要一起改，不然光比门快）
+   光太白/太黄       → .gt-light 那个 radial-gradient 的颜色，从里到外五档
+   不想让光溢出画面  → 删掉 .gt-bloom 与 .gt-rays 两条 .open 规则
+   门缝位置不对      → 重新用 PIL 量门洞，改 .gt-stage 上 --door-* 四个数
+   ============================================================ */
