@@ -1,11 +1,12 @@
 /* ============================================================
    fengwu-gate.js —— 「侨都风物」开场闸门
    每次打开这一页（含刷新）都先问一句「你准备好认识侨都之乡了吗？」，两条路：
-     · 我准备好了 → 外面两扇木门缓缓滑开，露出厅堂；厅堂尽头的第二道门再滑开，
-                    门后一点暖光慢慢涨满，然后浮出「欢迎您了解侨都之乡 · 进入侨都风物」。
-     · 让我等等   → 六张 AIGC 侨乡插画一直自动轮着，每张配一句鼓励语，随时能回去开门。
+     · 我准备好了 → 两扇木门缓缓滑开，露出画里的厅堂；厅堂里那束光从小小一条
+                    慢慢涨满、浮出光束，然后浮出「欢迎您了解侨都之乡 · 进入侨都风物」。
+     · 让我等等   → 六张 AIGC 侨乡插画叠成一摞，每 5 秒换一张、换完接着循环，
+                    每张配一句鼓励语，随时能回去开门。
    ★ 要改的东西全在本文件顶部四个块里：
-       GATE_CFG 节奏与开关 / GATE_COPY 文案 / GATE_IMGS 大门那四张图 / GATE_SCENES 六张画与鼓励语
+       GATE_CFG 节奏与开关 / GATE_COPY 文案 / GATE_IMGS 大门那三张图 / GATE_SCENES 六张画与鼓励语
      图片路径也只写在这里（css/gate.css 里没有任何 url()）。
    ★ 想整块关掉闸门：删掉 fengwu.html 里 id="fwGate" 那一坨 + 两行引用
      （css/gate.css 与 js/fengwu-gate.js），页面就回到直接显示内容。
@@ -15,8 +16,9 @@
 /* ---------- 1. 节奏与开关（毫秒） ---------- */
 const GATE_CFG = {
   openDelay: 240,             /* 点「我准备好了」到门开始动（CSS 里的延迟从这一刻起算） */
-  welcomeDelay: 5600,         /* 门开始动到欢迎语浮出：外面 2.8s、第二道 1.65+2.5s、光 1.9+3.1s */
+  welcomeDelay: 3600,         /* 门开始动到欢迎语浮出：门 2.8s/.25s、光 2.4s/.8s、光束 1.5s/2.4s */
   autoNext: 5000,             /* 「让我等等」几秒换一张，一直换下去 */
+  stackBack: 2,               /* 一摞画在最前面那张后面露几张（改 1 就只露一张边） */
   skipOnHash: true            /* 链接里带 #（比如从别处跳到某一节）时直接放行 */
 };
 
@@ -28,14 +30,13 @@ const GATE_COPY = {
   waitFoot: "每隔几秒自动换一张，点下面的圆点可以直接跳。"
 };
 
-/* ---------- 3. 大门用的四张图（同一张源图裁出来的才能对齐） ----------
-   full/door = 外面那扇；hall/hallDoor = 厅堂与厅堂尽头第二道门。
-   换任何一张都要回 css/gate.css 第 3 节重新量位置。 */
+/* ---------- 3. 大门用的三张图（同一张源图裁出来的才能对齐） ----------
+   full/door = 那扇门（整幅 + 门洞裁切，两扇木门用裁切那份拼）；hall = 门里的厅堂。
+   换 full 或 door 都要回 css/gate.css 第 3 节重新量门洞。 */
 const GATE_IMGS = {
   full: "images/gate/gate.jpg",
   door: "images/gate/gate-door.jpg",
-  hall: "images/gate/gate-hall.jpg",
-  hallDoor: "images/gate/gate-hall-door.jpg"
+  hall: "images/gate/gate-hall.jpg"
 };
 
 /* ---------- 4. 「让我等等」那六张：img 路径 / alt 读屏 / word 鼓励语 / sub 补一句 ----------
@@ -90,12 +91,7 @@ const GATE_SCENES = [
     const el = $(id);
     el.style.backgroundImage = 'url("' + GATE_IMGS.door + '")';
   });
-  ["gtLeaf2L", "gtLeaf2R"].forEach(function (id) {
-    const el = $(id);
-    el.style.backgroundImage = 'url("' + GATE_IMGS.hallDoor + '")';
-  });
   new Image().src = GATE_IMGS.door;
-  new Image().src = GATE_IMGS.hallDoor;
 
   $("gtDoorNote").textContent = GATE_COPY.doorNote;
   $("gwLead").textContent = GATE_COPY.waitLead;
@@ -120,7 +116,7 @@ const GATE_SCENES = [
     }, ms(760) + 30);
   }
 
-  /* ---- 第一支：两道门先后打开，门后那点光慢慢涨满 ---- */
+  /* ---- 第一支：一道门滑开，厅堂里那束光慢慢涨满 ---- */
   function runDoor() {
     show("door");
     panes.door.classList.remove("lit");
@@ -128,7 +124,7 @@ const GATE_SCENES = [
     void stage.offsetWidth;                /* 强制回流：第二次进来时动画要能从关闭态重放 */
     live.textContent = "大门正在打开。";
     setTimeout(function () {
-      stage.classList.add("open");         /* 滑多远、第二道门几秒后跟着开，全在 CSS 的延迟里 */
+      stage.classList.add("open");         /* 滑多远、光几秒起、涨多大，全在 CSS 的延迟里 */
     }, ms(GATE_CFG.openDelay));
     setTimeout(function () {
       panes.door.classList.add("lit");
@@ -169,9 +165,16 @@ const GATE_SCENES = [
     el.classList.add("pop");
   }
 
+  /* 一摞画：按"离当前这张隔几张"给深度 —— 0 是最前面那张（.on），
+     1..stackBack 是后面露边的两张（.d1/.d2），再往后的收起来。
+     换一张时深度全体往前挪一位，视觉上就是后面那张顶上来。 */
   function scene(i) {
     st.idx = (i + GATE_SCENES.length) % GATE_SCENES.length;
-    st.imgs.forEach(function (el, k) { el.classList.toggle("on", k === st.idx); });
+    st.imgs.forEach(function (el, k) {
+      const d = (k - st.idx + GATE_SCENES.length) % GATE_SCENES.length;
+      el.className = "gw-img " + (d === 0 ? "on" : d <= GATE_CFG.stackBack ? "d" + d : "far");
+      el.setAttribute("aria-hidden", d === 0 ? "false" : "true");
+    });
     st.dots.forEach(function (el, k) { el.classList.toggle("on", k === st.idx); });
     gwWord.textContent = GATE_SCENES[st.idx].word;
     gwSub.textContent = GATE_SCENES[st.idx].sub;

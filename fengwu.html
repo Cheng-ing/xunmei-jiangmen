@@ -37,18 +37,15 @@
       <p class="gt-fine">插画由 AIGC 生成 · 按 Esc 可以直接进去</p>
     </div>
 
-    <!-- 第二屏：外面两扇木门先滑开 → 露出厅堂 → 尽头第二道门再滑开 →
-         门后那一点暖光慢慢涨大 → 浮出欢迎语。层与层的位置全在 css/gate.css 第 3 节。 -->
+    <!-- 第二屏：只有一道门。外面两扇木门缓缓滑开 → 露出画里的厅堂 →
+         厅堂里那束光从小小一条慢慢涨满、浮出光束 → 欢迎语。
+         滑多远、几秒开、光涨多大，全在 css/gate.css 第 3 节。 -->
     <div class="gt-pane gt-door" id="gtDoor">
       <div class="gt-stage" id="gtStage">
         <div class="gt-photo" id="gtPhoto"></div>
         <div class="gt-open">
           <div class="gt-hall" id="gtHall"></div>
-          <div class="gt-inner">
-            <div class="gt-light"></div>
-            <div class="gt-leaf2 l" id="gtLeaf2L"></div>
-            <div class="gt-leaf2 r" id="gtLeaf2R"></div>
-          </div>
+          <div class="gt-light"></div>
           <div class="gt-haze"></div>
           <div class="gt-leaf l" id="gtLeafL"></div>
           <div class="gt-leaf r" id="gtLeafR"></div>
@@ -67,7 +64,9 @@
       </div>
     </div>
 
-    <!-- 第三屏：让我等等（六张画与鼓励语在 GATE_SCENES 里，图和点都由 JS 生成） -->
+    <!-- 第三屏：让我等等。六张画叠成一摞（最前一张正放、后面两张错位露边），
+         每 5 秒换一张、换完接着循环，鼓励语跟着最前面那张走。
+         六张图与文字在 GATE_SCENES 里，图、圆点都由 JS 生成。 -->
     <div class="gt-pane gt-wait" id="gtWait">
       <p class="gw-lead" id="gwLead"></p>
       <div class="gw-frame" id="gwFrame">
