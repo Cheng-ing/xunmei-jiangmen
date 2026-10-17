@@ -19,9 +19,12 @@
      line   —— 卡片上的一句话（20 字上下最好）
      detail —— 弹层里的详情，两三句
      tip    —— 实用提示（怎么去、什么时候去、怎么点）
-     img    —— 配图路径，留空 "" 就显示占位块；
-               想加图：把图放进 images/fengwu/ 再在这里填 "images/fengwu/xxx.jpg"，
-               建议 4:3 横构图，宽 1200 左右，JPG 质量 85、单张 250KB 以内。
+     img    —— 配图路径，留空 "" 就显示占位块。
+               现在 22 条全配了图，都是 AIGC 生成的水彩插画（不是实拍照片），
+               所以卡片和详情图里会自动压一枚「AI 生成示意图」角标，别去掉。
+               想换图：把图放进 images/fengwu/ 再在这里填 "images/fengwu/xxx.jpg"，
+               文件名跟 id 对上最好；建议 4:3 横构图，宽 800 左右、单张 120KB 以内。
+               换成真实照片时，把 cardHTML / openDetail 里的 fw-ai 角标一起删掉。
    ⚠ 文案口径：这一节是"稳妥概述"，凡是年份、称号、数量、片名这类硬事实，
       旁边都用「待核实」标了出来。评奖前请逐条对官方资料（江门市政府网、
       各区政府网、世界遗产名录等），核实完把注释里的"待核实"去掉。
@@ -32,7 +35,7 @@ const FENGWU_TOWNS = ["全部", "蓬江", "江海", "新会", "台山", "开平"
 
 const FOOD = [
   {
-    id: "gujing-shae", name: "古井烧鹅", town: "新会", img: "",
+    id: "gujing-shae", name: "古井烧鹅", town: "新会", img: "images/fengwu/gujing-shae.jpg",
     line: "荔枝木明火烤的脆皮烧鹅，新会酒席上的头一道硬菜。",
     detail: "古井镇靠崖门水道，烧鹅用本地养的肥鹅，腌好后挂进炉里以荔枝木一类硬柴明火烤，"
           + "出来皮脆、肉带汁，斩件时那层油亮的脆皮最见功夫。镇上的烧鹅一条街饭馆连铺，半只一只都点得。",
@@ -40,7 +43,7 @@ const FOOD = [
     // 待核实：具体燃料与腌料配方、"古井烧鹅"做法的官方表述
   },
   {
-    id: "xinhui-chenpi", name: "新会陈皮入馔", town: "新会", img: "",
+    id: "xinhui-chenpi", name: "新会陈皮入馔", town: "新会", img: "images/fengwu/xinhui-chenpi.jpg",
     line: "一瓣陈皮放进汤里、糖水里，柑香把整道菜压住。",
     detail: "新会陈皮是茶枝柑的果皮晒干陈化而成，存放年头越长香气越沉。本地人拿它煲汤、焖肉、"
           + "做陈皮红豆沙，也直接泡水喝；柑香里带一点药香，是侨乡味觉的一张名片。",
@@ -48,14 +51,14 @@ const FOOD = [
     // 待核实：是否为国家地理标志产品、陈化年限的规范说法（站内一律写"三年以上"前先查）
   },
   {
-    id: "taishan-huangshanfan", name: "台山黄鳝饭", town: "台山", img: "",
+    id: "taishan-huangshanfan", name: "台山黄鳝饭", town: "台山", img: "images/fengwu/taishan-huangshanfan.jpg",
     line: "鳝肉撕成丝和米饭同焗，锅底那层饭焦最抢手。",
     detail: "台山一带的做法：黄鳝蒸熟去骨、撕成丝，与米饭一起回锅焗干水汽，"
           + "饭粒分明又不硬，鳝香吃进米里。镇上饭馆多用当季鳝鱼，一人点一份刚好两人吃。",
     tip: "想要饭焦（锅巴）可以让师傅多焗一会儿；配一碗鲫鱼或猪骨汤不腻。"
   },
   {
-    id: "taishan-shenghao", name: "台山生蚝与都斛海鲜", town: "台山", img: "",
+    id: "taishan-shenghao", name: "台山生蚝与都斛海鲜", town: "台山", img: "images/fengwu/taishan-shenghao.jpg",
     line: "镇海湾外的咸淡水养出肥蚝，都斛的海鲜摊排成一条街。",
     detail: "台山海岸线长、近海养殖多，生蚝以都斛、川岛一带出名，常见炭烧、蒜蓉蒸和蚝烙三种做法。"
           + "都斛镇上的海鲜市场可以现买、再拿到附近饭馆加工，是本地人吃海鲜的常规操作。",
@@ -63,7 +66,7 @@ const FOOD = [
     // 待核实：休渔期具体时段（南海伏季休渔通常为 5—8 月，年份会调），以及都斛"海鲜街"的正式名称
   },
   {
-    id: "kaiping-magang-e", name: "开平马冈鹅", town: "开平", img: "",
+    id: "kaiping-magang-e", name: "开平马冈鹅", town: "开平", img: "images/fengwu/kaiping-magang-e.jpg",
     line: "马冈镇的本地鹅，肉紧、皮下脂肪薄，烧卤都撑得住。",
     detail: "马冈鹅是开平马冈镇一带的地方鹅种，当地有烧鹅、白切、醉鹅等做法，"
           + "侨乡村落的宴席和墟镇老店里都常见它。",
@@ -71,14 +74,14 @@ const FOOD = [
     // 待核实：是否为地方畜禽遗传资源、"马冈鹅"名称的官方表述
   },
   {
-    id: "kaiping-doufujiao", name: "开平豆腐角", town: "开平", img: "",
+    id: "kaiping-doufujiao", name: "开平豆腐角", town: "开平", img: "images/fengwu/kaiping-doufujiao.jpg",
     line: "酿过的豆腐煎到两面结壳，老街下午的零嘴。",
     detail: "豆腐角是把豆腐切块、中间酿入鱼胶或肉馅，煎至金黄后再淋汁或略焖，"
           + "外皮带一点脆、里面还是嫩的。开平、台山的老街店铺都做得出来。",
     tip: "刚出锅最好吃；配一碗濑粉或白粥就能当一顿饭。"
   },
   {
-    id: "enping-lecai", name: "恩平簕菜", town: "恩平", img: "",
+    id: "enping-lecai", name: "恩平簕菜", town: "恩平", img: "images/fengwu/enping-lecai.jpg",
     line: "带刺的野生藤芽，炒过之后先苦后甘。",
     detail: "簕菜是恩平一带采野生嫩芽入馔的蔬菜，清炒、做汤、焙成簕菜茶都有。"
           + "它的味道是典型的“回甘”，第一次吃的人多半会记住这个口感。",
@@ -86,14 +89,14 @@ const FOOD = [
     // 待核实："恩平簕菜"的地理标志或特产称号表述
   },
   {
-    id: "enping-laifen", name: "恩平濑粉", town: "恩平", img: "",
+    id: "enping-laifen", name: "恩平濑粉", town: "恩平", img: "images/fengwu/enping-laifen.jpg",
     line: "米浆漏出来的短粉条，全靠一碗汤头撑着。",
     detail: "濑粉用米浆制成，恩平、开平一带都吃。汤底多用猪骨、虾米、头菜，"
           + "面上撒鸡蛋丝、花生和葱花，粉软汤鲜，是本地常见的早餐。",
     tip: "早市的小店最热闹，现煮现卖；加一份猪手或卤蛋更顶饱。"
   },
   {
-    id: "heshan-gulao-mian", name: "鹤山古劳蛋面", town: "鹤山", img: "",
+    id: "heshan-gulao-mian", name: "鹤山古劳蛋面", town: "鹤山", img: "images/fengwu/heshan-gulao-mian.jpg",
     line: "水乡老面店压出来的竹升蛋面，面身细、蛋香重。",
     detail: "古劳镇是珠三角水乡，河涌之间留着不少做面、晒面的老铺。"
           + "竹升压打出来的蛋面爽弹，配腩汁或猪手汁是本地吃法。",
@@ -101,7 +104,7 @@ const FOOD = [
     // 待核实：具体老店名称与"竹升面"工艺的古劳本地说法
   },
   {
-    id: "pjiang-langua", name: "杜阮凉瓜", town: "蓬江", img: "",
+    id: "pjiang-langua", name: "杜阮凉瓜", town: "蓬江", img: "images/fengwu/pjiang-langua.jpg",
     line: "杜阮镇的凉瓜粒大肉厚，苦味过后有回甘。",
     detail: "杜阮凉瓜（苦瓜）是蓬江区杜阮镇出名的本地蔬菜，瘤粒饱满、肉厚核少，"
           + "本地做法有凉瓜排骨汤、酿凉瓜和冰镇蘸酱，夏天饭馆几乎家家有。",
@@ -112,7 +115,7 @@ const FOOD = [
 
 const SCENERY = [
   {
-    id: "kaiping-diaolou", name: "开平碉楼与村落", town: "开平", img: "",
+    id: "kaiping-diaolou", name: "开平碉楼与村落", town: "开平", img: "images/fengwu/kaiping-diaolou.jpg",
     line: "水田之间的多层楼群，2007 年列入世界遗产名录。",
     detail: "开平现存碉楼千余座，把中国传统民居的格局和西式柱廊、穹顶、铁艺合在一起，"
           + "多数是清末民初华侨回乡为防盗匪所建。自力村、锦江里、马降龙、立园是最常被走的几处，"
@@ -121,7 +124,7 @@ const SCENERY = [
     // 待核实：入选年份（2007 第 31 届世界遗产大会）与现存碉楼准确数量
   },
   {
-    id: "kaiping-chikan", name: "赤坎华侨古镇", town: "开平", img: "",
+    id: "kaiping-chikan", name: "赤坎华侨古镇", town: "开平", img: "images/fengwu/kaiping-chikan.jpg",
     line: "潭江边的骑楼长街，老码头与侨商字号都在这条街上。",
     detail: "赤坎镇以骑楼老街出名，廊柱沿街面铺开，过去是侨墟和水路码头，"
           + "华侨把南洋与西式的装饰手法带回这条街。近年按古镇景区整修后开放，街区内有侨批、华侨历史的展陈。",
@@ -129,7 +132,7 @@ const SCENERY = [
     // 待核实：整修后的开放范围、门票与展陈名称，老街准确长度（此处不写数字）
   },
   {
-    id: "taishan-chuandao", name: "台山川岛", town: "台山", img: "",
+    id: "taishan-chuandao", name: "台山川岛", town: "台山", img: "images/fengwu/taishan-chuandao.jpg",
     line: "南海上两座岛，长沙滩、防护林和海上日出。",
     detail: "上川岛、下川岛都从台山北部的码头坐船上岛，岛上有开阔沙滩、海岸防护林和渔村。"
           + "外海水色比近岸清透，旺季时岛上住宿紧张，赶日落和第二天清晨的海最值。",
@@ -137,7 +140,7 @@ const SCENERY = [
     // 待核实：登船码头名称与班次、各沙滩是否需要门票
   },
   {
-    id: "taishan-naqin", name: "那琴半岛海岸", town: "台山", img: "",
+    id: "taishan-naqin", name: "那琴半岛海岸", town: "台山", img: "images/fengwu/taishan-naqin.jpg",
     line: "花岗岩把海岸雕成一片奇石，栈道贴着山脊走。",
     detail: "台山北陡镇一带的海岸以巨石、礁群出名，长年被海蚀磨出圆润的形状。"
           + "景区把步道修在山脊与礁石之间，退潮时可以走到礁盘边看海蚀形态。",
@@ -145,7 +148,7 @@ const SCENERY = [
     // 待核实：景区正式名称、是否收费、开放路段
   },
   {
-    id: "taishan-meijia", name: "梅家大院", town: "台山", img: "",
+    id: "taishan-meijia", name: "梅家大院", town: "台山", img: "images/fengwu/taishan-meijia.jpg",
     line: "骑楼围成一个侨村，广场中间是球场。",
     detail: "端芬镇的梅家大院由华侨集资建于上世纪二三十年代，几十间骑楼围合出一块平整广场，"
           + "走进村要先过一道楼。因为风貌保存完整，多部电影电视剧在这里取过景。",
@@ -153,7 +156,7 @@ const SCENERY = [
     // 待核实：建成年份、房屋间数、具体取景片名（不确认就别写片名）
   },
   {
-    id: "enping-wenquan", name: "恩平温泉", town: "恩平", img: "",
+    id: "enping-wenquan", name: "恩平温泉", town: "恩平", img: "images/fengwu/enping-wenquan.jpg",
     line: "珠三角少见的温泉带，秋冬泡汤、夏天玩水。",
     detail: "恩平一带温泉资源集中，多家温泉度假酒店依泉眼而建，池群做成山地园林的样子，"
           + "是江门人秋冬周末度假的常规去处。",
@@ -161,7 +164,7 @@ const SCENERY = [
     // 待核实："中国温泉之乡"称号与获评年份、温泉集中的具体镇
   },
   {
-    id: "xinhui-guifeng", name: "新会圭峰山", town: "新会", img: "",
+    id: "xinhui-guifeng", name: "新会圭峰山", town: "新会", img: "images/fengwu/xinhui-guifeng.jpg",
     line: "城里就能上山，山腰有寺，山上看得见新会城区。",
     detail: "圭峰山是新会城北的一片山体绿地，林荫步道、山顶观景处和山腰的寺庙组成当地人周末爬山、扫墓、野餐的地方。"
           + "秋天山下是柑田，路上能闻到陈皮季的果香。",
@@ -169,7 +172,7 @@ const SCENERY = [
     // 待核实：景区级别说法（"国家森林公园"/"省级风景名胜区"分别核实），寺名（一般称玉台寺）
   },
   {
-    id: "xinhui-xiaoniaotiantang", name: "小鸟天堂", town: "新会", img: "",
+    id: "xinhui-xiaoniaotiantang", name: "小鸟天堂", town: "新会", img: "images/fengwu/xinhui-xiaoniaotiantang.jpg",
     line: "一棵水榕长成一片“林”，巴金把它写进了课文。",
     detail: "天马村河心的一棵水榕独木成林，枝桠伸到水面上，晨昏时白鹭等水鸟归巢绕树飞。"
           + "巴金 1933 年的游记《鸟的天堂》让这里被全国读者记住。",
@@ -177,7 +180,7 @@ const SCENERY = [
     // 待核实：游记发表年份与"写入语文课本"的准确表述
   },
   {
-    id: "xinhui-gudou", name: "古兜山海温泉", town: "新会", img: "",
+    id: "xinhui-gudou", name: "古兜山海温泉", town: "新会", img: "images/fengwu/xinhui-gudou.jpg",
     line: "崖门山海之间的一片度假区，泡汤和看海能同一天。",
     detail: "古兜一带背山面海，温泉度假设施建在山坳与海岸之间，"
           + "本地常把它安排成两天一夜：第一天海边和古镇，第二天上山泡汤。",
@@ -185,7 +188,7 @@ const SCENERY = [
     // 待核实："一地两泉"之类的宣传说法不要照抄，只写能证实的地理特征
   },
   {
-    id: "pjiang-changdi", name: "长堤—启明里", town: "蓬江", img: "",
+    id: "pjiang-changdi", name: "长堤—启明里", town: "蓬江", img: "images/fengwu/pjiang-changdi.jpg",
     line: "骑楼老街加百年侨村，晚上最有生活气。",
     detail: "长堤风貌街沿西江铺开，骑楼、老商号和小吃摊在同一条街上；"
           + "附近的启明里是蓬江的老侨村，青砖民居、窄巷和侨批主题的展陈如今是散步与拍照的地方。",
@@ -193,7 +196,7 @@ const SCENERY = [
     // 待核实：启明里内各馆的正式名称与开放时间
   },
   {
-    id: "jh-baishuidai", name: "江海白水带", town: "江海", img: "",
+    id: "jh-baishuidai", name: "江海白水带", town: "江海", img: "images/fengwu/jh-baishuidai.jpg",
     line: "城市东面的山林步道，夏天比城里凉，能望见江门城区。",
     detail: "白水带是江海区的一片城市山林，步道串起树林、溪流与观景处，"
           + "是本地人傍晚跑步、周末带小孩爬山常去的地方。",
@@ -201,7 +204,7 @@ const SCENERY = [
     // 待核实：园内具体景点名（塔、瀑布等）先不写，查到再补进 detail
   },
   {
-    id: "heshan-gulao", name: "鹤山古劳水乡", town: "鹤山", img: "",
+    id: "heshan-gulao", name: "鹤山古劳水乡", town: "鹤山", img: "images/fengwu/heshan-gulao.jpg",
     line: "河涌当街巷，船曾经就是门前的路。",
     detail: "古劳镇是珠三角典型的水乡，村落之间河涌交错，榕树、石桥和临水老屋还在。"
           + "这里是咏春宗师梁赞的故里，水乡与拳师两个话题都够走半天。",
@@ -340,8 +343,9 @@ function saveCheckin(id, on) {
 function cardHTML(item, kind) {
   const checked = loadCheckins().indexOf(item.id) >= 0;
   /* 没配图的条目不生成 <img>，直接留占位块，页面不会出破图图标 */
+  /* 配图是 AIGC 生成的示意图，角标写明来源，不冒充实拍 */
   const media = item.img
-    ? `<div class="fw-media has-img"><img src="${item.img}" alt="${item.name}" loading="lazy" decoding="async"><span class="fw-tag">${kind}</span></div>`
+    ? `<div class="fw-media has-img"><img src="${item.img}" alt="${item.name}（AI 生成示意图）" loading="lazy" decoding="async"><span class="fw-tag">${kind}</span><span class="fw-ai">AI 生成示意图</span></div>`
     : `<div class="fw-media"><span class="fw-ph" aria-hidden="true">${item.name.slice(0, 1)}</span><span class="fw-tag">${kind}</span></div>`;
   return `<button type="button" class="fw-card reveal${checked ? " checked" : ""}" data-fwid="${item.id}"
             aria-label="看${item.name}的详细介绍">
@@ -380,7 +384,7 @@ function openDetail(id) {
   modal.querySelector(".fw-modal-body").innerHTML =
     `<h2>${item.name}</h2>` +
     `<p class="fw-m-town">${item.town} · ${FOOD.indexOf(item) >= 0 ? "侨都之味" : "侨都之景"}</p>` +
-    `<div class="fw-m-media">${item.img ? `<img src="${item.img}" alt="${item.name}">` : `<span class="fw-ph big">${item.name.slice(0, 1)}</span>`}</div>` +
+    `<div class="fw-m-media">${item.img ? `<img src="${item.img}" alt="${item.name}（AI 生成示意图）"><span class="fw-ai">AI 生成示意图</span>` : `<span class="fw-ph big">${item.name.slice(0, 1)}</span>`}</div>` +
     `<p class="fw-m-detail">${item.detail}</p>` +
     `<p class="fw-m-tip"><b>怎么去 / 怎么吃</b>${item.tip}</p>` +
     `<button type="button" class="btn fw-checkin${checked ? " on" : ""}" data-checkin="${id}">${checked ? "已打卡 ✓" : "我去过"}</button>`;
