@@ -1,8 +1,10 @@
 /* ============================================================
    gate.css —— 「侨都风物」开场闸门的外观
-   只管长相：文案、图片路径、节奏全在 js/fengwu-gate.js 顶部三个数组里。
+   只管长相：文案、图片路径、节奏全在 js/fengwu-gate.js 顶部四个块里。
    三块面板同一时刻只显示一块：gt-ask 问句 / gt-door 开门 / gt-wait 等看画。
-   想调门开得快慢、光涨得多大：改第 3 节 .gt-stage 上那六个变量，不用碰动画。
+   开门那一屏是两道门：外面两扇木门滑开 → 露出厅堂 → 尽头第二道门再滑开 →
+   门后一点暖光慢慢涨满。想调快慢与大小只改第 3 节 .gt-stage 上那十一个变量
+   和几条 transition，不用碰动画本身。
    本文件不写任何 url()，图片由 JS 挂上去，所以换图只改 JS 一处。
    ============================================================ */
 
@@ -66,16 +68,23 @@ html.gate-lock, html.gate-lock body { overflow: hidden; }
 .gt-btn-soft:hover { background: rgba(201, 168, 106, .16); color: var(--text-light); transform: none; }
 .gt-fine { font-size: 12px; line-height: 1.85; text-align: center; color: rgba(233, 226, 211, .48); letter-spacing: 1px; }
 
-/* ---------- 3. 第二屏：大门缓缓开 + 白光涨大 ----------
-   六个变量就是这一屏的全部几何：门洞在整幅画里的位置（百分比）、
-   拱顶的弧度、两片门各滑出去多远。数字是用 PIL 量出来的，改图要重新量。 */
+/* ---------- 3. 第二屏：两道门先后打开 + 门后那点暖光慢慢涨大 ----------
+   层序从后到前：gt-photo 整幅大门 → gt-hall 厅堂 → gt-inner（gt-light 光 + 第二道门两扇）
+   → gt-haze 暖雾 → gt-leaf 外面那两扇木门。外面两扇滑开才看得见厅堂，厅堂尽头的
+   第二道门再滑开，光才从缝里那一个小点慢慢涨满。
+   下面这些百分比全是用 PIL 在图上量出来的（改图必须重量，见文件末尾第 7 节）。 */
 .gt-stage {
-  --door-l: 30.2%;   /* 门洞左边 */
-  --door-t: 17.2%;   /* 门洞顶边（拱顶最高点） */
-  --door-w: 39.8%;   /* 门洞宽 */
-  --door-h: 58.6%;   /* 门洞高 */
+  --door-l: 30.2%;   /* 外面门洞左边（占整幅画宽） */
+  --door-t: 17.2%;   /* 外面门洞顶边（拱顶最高点） */
+  --door-w: 39.8%;   /* 外面门洞宽 */
+  --door-h: 58.6%;   /* 外面门洞高 */
   --arch: 19%;       /* 拱的竖直半径，占门洞高的百分比 */
-  --slide: 94%;      /* 每片门滑出自身宽度的百分比 */
+  --slide: 94%;      /* 外面每片门滑出自身宽度的百分比 */
+  --in-l: 30.2%;     /* 第二道门左边（占门洞区宽） */
+  --in-t: 28.7%;     /* 第二道门顶边（占门洞区高） */
+  --in-w: 39.3%;     /* 第二道门宽 */
+  --in-h: 39.2%;     /* 第二道门高 */
+  --in-slide: 96%;   /* 第二道门每片滑出的百分比 */
   position: relative; overflow: hidden;
   width: min(86vw, 420px, calc(62vh * .8));
   aspect-ratio: 76 / 95;
@@ -89,20 +98,46 @@ html.gate-lock, html.gate-lock body { overflow: hidden; }
   overflow: hidden;
   border-radius: 50% 50% 0 0 / var(--arch) var(--arch) 0 0;
 }
-/* 光在两片门背后：门滑开多少，光就露出来多少 */
+/* 厅堂：外面那两扇门背后就是它。图和门洞区同比例，所以 cover 不会裁到东西 */
+.gt-hall { position: absolute; inset: 0; background: center / cover no-repeat; }
+/* 第二道门所在的框：位置就是量出来的那道门，四边压一点暗角做出进深 */
+.gt-inner {
+  position: absolute; left: var(--in-l); top: var(--in-t);
+  width: var(--in-w); height: var(--in-h);
+  overflow: hidden;
+  box-shadow: inset 0 0 14px rgba(8, 10, 14, .62);
+}
+/* 光在第二道门背后：起点是门缝里小小一点暖光，慢慢涨到整扇门那么大 */
 .gt-light {
   position: absolute; inset: 0; transform-origin: 50% 50%;
-  background: radial-gradient(ellipse 44% 50% at 50% 62%,
-    #fffdf6 0%, rgba(255, 247, 228, .97) 30%, rgba(255, 239, 206, .72) 56%,
-    rgba(255, 231, 188, .3) 78%, rgba(255, 226, 180, 0) 100%);
-  filter: blur(2px);
-  opacity: 0; transform: scale(.035, .62);   /* 起始 = 门缝里一条细光 */
-  transition: transform 2.9s cubic-bezier(.32, .86, .3, 1) .5s, opacity 1.1s ease .35s;
+  background: radial-gradient(ellipse 40% 46% at 50% 56%,
+    #fffaf0 0%, rgba(255, 244, 222, .96) 26%, rgba(255, 231, 194, .78) 50%,
+    rgba(255, 216, 160, .4) 74%, rgba(255, 206, 146, 0) 100%);
+  filter: blur(1.5px);
+  opacity: 0; transform: scale(.05, .34);   /* 起点 = 门缝中间一小条光 */
+  transition: transform 3.1s cubic-bezier(.26, .84, .26, 1) 1.9s, opacity 1.3s ease 1.9s;
 }
+/* 第二道门的两扇：和外面那两扇同一套做法，各自拿这张门图的一半 */
+.gt-leaf2 {
+  position: absolute; top: 0; height: 100%; width: 50%;
+  background: no-repeat; background-size: 200% 100%;
+  transition: transform 2.5s cubic-bezier(.58, .02, .26, 1) 1.65s;
+}
+.gt-leaf2.l { left: 0; background-position: left center; }
+.gt-leaf2.r { right: 0; background-position: right center; }
+/* 暖雾：光涨起来时把厅堂也染暖一点，压在厅堂和第二道门前面、外面那两扇门后面 */
+.gt-haze {
+  position: absolute; inset: -8%; pointer-events: none;
+  opacity: 0; mix-blend-mode: screen;
+  background: radial-gradient(ellipse 46% 52% at 50% 44%,
+    rgba(255, 238, 202, .5), rgba(255, 220, 168, .16) 52%, transparent 78%);
+  transition: opacity 2.6s ease 3.1s;
+}
+/* 外面那两扇木门：整幅画里那扇门裁成左右两半，所以关着时和原图一模一样 */
 .gt-leaf {
   position: absolute; top: 0; height: 100%; width: 50%;
   background: no-repeat; background-size: 200% 100%;
-  transition: transform 3.1s cubic-bezier(.58, .02, .26, 1) .55s;
+  transition: transform 2.8s cubic-bezier(.58, .02, .26, 1) .25s;
 }
 .gt-leaf.l { left: 0; background-position: left center; }
 .gt-leaf.r { right: 0; background-position: right center; }
@@ -112,7 +147,7 @@ html.gate-lock, html.gate-lock body { overflow: hidden; }
   inset: -14%;
   background: radial-gradient(ellipse 26% 34% at 50% 46%,
     rgba(255, 252, 242, .9), rgba(255, 243, 216, .4) 44%, transparent 72%);
-  transition: opacity 2.2s ease 1.2s;
+  transition: opacity 2.3s ease 3.5s;
 }
 .gt-rays {
   inset: -32%;
@@ -120,11 +155,14 @@ html.gate-lock, html.gate-lock body { overflow: hidden; }
     rgba(255, 250, 236, .2) 0deg 3deg, transparent 3deg 13deg);
   -webkit-mask-image: radial-gradient(circle at 50% 46%, #000 0%, rgba(0, 0, 0, .5) 34%, transparent 62%);
   mask-image: radial-gradient(circle at 50% 46%, #000 0%, rgba(0, 0, 0, .5) 34%, transparent 62%);
-  transition: opacity 1.6s ease 1.6s;
+  transition: opacity 1.6s ease 4.1s;
 }
 .gt-stage.open .gt-leaf.l { transform: translateX(calc(var(--slide) * -1)); }
 .gt-stage.open .gt-leaf.r { transform: translateX(var(--slide)); }
-.gt-stage.open .gt-light { opacity: 1; transform: scale(1.08, 1.06); }
+.gt-stage.open .gt-leaf2.l { transform: translateX(calc(var(--in-slide) * -1)); }
+.gt-stage.open .gt-leaf2.r { transform: translateX(var(--in-slide)); }
+.gt-stage.open .gt-light { opacity: 1; transform: scale(1.06, 1.06); }
+.gt-stage.open .gt-haze { opacity: 1; }
 .gt-stage.open .gt-bloom { opacity: 1; }
 .gt-stage.open .gt-rays { opacity: .85; animation: gt-spin 42s linear infinite; }
 @keyframes gt-spin { to { transform: rotate(360deg); } }
@@ -143,11 +181,14 @@ html.gate-lock, html.gate-lock body { overflow: hidden; }
 }
 .gt-welcome p { font-size: 13.5px; line-height: 1.9; color: rgba(233, 226, 211, .7); }
 
-/* ---------- 4. 第三屏：让我等等（六张画轮着看） ---------- */
-.gt-wait { width: min(92vw, 560px); }
+/* ---------- 4. 第三屏：让我等等（六张画轮着看） ----------
+   画的高度按视口高度算（44vh），加上面那行小字和下面的鼓励语、圆点、按钮，
+   一屏装得下，不用往下滑就能看全。想再大一点就改这个 44vh。 */
+.gt-wait { width: min(92vw, 520px); }
+.gt-wait.on { gap: 10px; }
 .gt-wait .gw-lead { font-size: 12.5px; letter-spacing: 3px; color: rgba(233, 226, 211, .55); }
 .gw-frame {
-  position: relative; width: 100%; aspect-ratio: 4 / 3;
+  position: relative; width: min(100%, calc(44vh * 4 / 3)); aspect-ratio: 4 / 3;
   border: 1px solid var(--line-soft); border-radius: 14px;
   overflow: hidden; background: #101a26;
 }
@@ -167,6 +208,12 @@ html.gate-lock, html.gate-lock body { overflow: hidden; }
   text-align: center; line-height: 1.7; min-height: 1.7em;
 }
 .gw-sub { font-size: 13px; color: rgba(233, 226, 211, .64); text-align: center; }
+/* 换画时鼓励语跟着轻轻抬一下（JS 每次翻页重挂 .pop） */
+.gw-word.pop, .gw-sub.pop { animation: gw-pop .8s ease; }
+@keyframes gw-pop {
+  from { opacity: 0; transform: translateY(9px); }
+  to { opacity: 1; transform: none; }
+}
 .gw-dots { display: flex; gap: 10px; justify-content: center; }
 .gw-dot {
   width: 9px; height: 9px; padding: 0; border-radius: 50%;
@@ -193,18 +240,36 @@ html.gate-lock, html.gate-lock body { overflow: hidden; }
   .gw-word { font-size: 17.5px; }
 }
 
-/* ---------- 6. 无障碍：系统设了"减少动效"时，门不再滑、光不再涨，直接给结果 ---------- */
+/* 窗口很扁（笔记本分屏、横过来的手机）：门缩一点，让门 + 说明 + 欢迎语一屏装下，
+   不用往下滑才能看到「进入侨都风物」那颗按钮。44vh 这个数是按 560px 高试出来的。 */
+@media (max-height: 680px) {
+  .gt-pane.on { gap: 10px; }
+  .gt-stage { width: min(86vw, 420px, calc(44vh * .8)); }
+  .gt-welcome { gap: 9px; }
+  .gt-welcome h3 { font-size: clamp(17px, 3vw, 21px); }
+}
+
+/* ---------- 6. 无障碍：系统设了"减少动效"时，两道门不再滑、光不再涨，直接给结果 ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .gt-leaf, .gt-light, .gt-bloom, .gt-rays, .gt-welcome, .gw-img, .fw-gate {
+  .gt-leaf, .gt-leaf2, .gt-light, .gt-haze, .gt-bloom, .gt-rays,
+  .gt-welcome, .gw-img, .fw-gate {
     transition-duration: .01s !important;
     transition-delay: 0s !important;
   }
   .gt-stage.open .gt-rays { animation: none; }
+  .gw-word.pop, .gw-sub.pop { animation: none; }
+  /* 六张画照样自动轮播，只是不再淡入淡出（翻成哪张就停在哪张） */
 }
 
 /* ---------- 7. 常用调整
-   门开得太快/太慢   → .gt-leaf 的 3.1s 与 .gt-light 的 2.9s（两个要一起改，不然光比门快）
-   光太白/太黄       → .gt-light 那个 radial-gradient 的颜色，从里到外五档
-   不想让光溢出画面  → 删掉 .gt-bloom 与 .gt-rays 两条 .open 规则
-   门缝位置不对      → 重新用 PIL 量门洞，改 .gt-stage 上 --door-* 四个数
+   两道门开得快慢     → 外面 .gt-leaf 的 2.8s/.25s，第二道 .gt-leaf2 的 2.5s/1.65s
+                        （第二道的延迟要晚于外面滑开大半，否则穿帮；也要早于光的 1.9s）
+   光涨得多慢、多大   → .gt-light 的 3.1s 与 .open .gt-light 里的 scale(1.06, 1.06)
+   光起点想更小/更大  → .gt-light 的 transform: scale(.05, .34)（第二个数是竖直方向）
+   太白 / 太黄        → .gt-light 那个 radial-gradient 的五档颜色，从里到外
+   不想让光溢出画面   → 删掉 .gt-bloom 与 .gt-rays 两条 .open 规则
+   厅堂不够暖         → .gt-haze 的 opacity 目标（.open .gt-haze）和它的两档颜色
+   等等屏的照片大小   → .gw-frame 的 44vh（改成 50vh 更大，但要往下滑才看全）
+   门的位置不对       → 重新用 PIL 量：外面那扇改 --door-* 四个数，
+                        第二道门改 --in-* 四个数（它是占"门洞区"的百分比，不是占整幅画）
    ============================================================ */

@@ -1,38 +1,41 @@
 /* ============================================================
    fengwu-gate.js —— 「侨都风物」开场闸门
-   首屏先问一句「你准备好认识侨都之乡了吗？」，两条路：
-     · 我准备好了 → 大门缓缓向两侧滑开，门缝里的白光一点点涨大，
-                    然后浮出「欢迎您了解侨都之乡 · 进入侨都风物」。
-     · 让我等等   → 六张 AIGC 侨乡插画轮着看，每张配一句鼓励语，随时能回去开门。
-   ★ 要改的东西全在本文件顶部三个块里：
-       GATE_CFG 节奏与开关 / GATE_COPY 文案 / GATE_SCENES 图片与鼓励语
+   每次打开这一页（含刷新）都先问一句「你准备好认识侨都之乡了吗？」，两条路：
+     · 我准备好了 → 外面两扇木门缓缓滑开，露出厅堂；厅堂尽头的第二道门再滑开，
+                    门后一点暖光慢慢涨满，然后浮出「欢迎您了解侨都之乡 · 进入侨都风物」。
+     · 让我等等   → 六张 AIGC 侨乡插画一直自动轮着，每张配一句鼓励语，随时能回去开门。
+   ★ 要改的东西全在本文件顶部四个块里：
+       GATE_CFG 节奏与开关 / GATE_COPY 文案 / GATE_IMGS 大门那四张图 / GATE_SCENES 六张画与鼓励语
      图片路径也只写在这里（css/gate.css 里没有任何 url()）。
    ★ 想整块关掉闸门：删掉 fengwu.html 里 id="fwGate" 那一坨 + 两行引用
      （css/gate.css 与 js/fengwu-gate.js），页面就回到直接显示内容。
-   本页没有后端：是否已经进来过只记在访问者自己的 sessionStorage 里。
+   本页没有后端：闸门的状态只在当前这一次页面里，不做任何记录，所以刷新一定会再出现。
    ============================================================ */
 
 /* ---------- 1. 节奏与开关（毫秒） ---------- */
 const GATE_CFG = {
-  key: "xunmei-fengwu-gate",  /* sessionStorage 键：同一个浏览会话里进来过，刷新就不再拦 */
-  openDelay: 240,             /* 点「我准备好了」到门开始动 */
-  welcomeDelay: 3500,         /* 门开始动到欢迎语浮出（CSS 里光与门约 3.4s 走完） */
-  autoNext: 5400,             /* 「让我等等」几秒换一张；系统设了减少动效时不自动换 */
+  openDelay: 240,             /* 点「我准备好了」到门开始动（CSS 里的延迟从这一刻起算） */
+  welcomeDelay: 5600,         /* 门开始动到欢迎语浮出：外面 2.8s、第二道 1.65+2.5s、光 1.9+3.1s */
+  autoNext: 5000,             /* 「让我等等」几秒换一张，一直换下去 */
   skipOnHash: true            /* 链接里带 #（比如从别处跳到某一节）时直接放行 */
 };
 
 /* ---------- 2. 闸门上的固定文案 ---------- */
 const GATE_COPY = {
-  doorNote: "门是画出来的示意场景，不是江门市博物馆实景。",
+  doorNote: "门与厅堂都是画出来的示意场景，不是江门市博物馆实景。",
   waitLead: "不急 · 先看几张画里的侨乡",
   waitTag: "AI 生成插画 · 不是实景照片",
   waitFoot: "每隔几秒自动换一张，点下面的圆点可以直接跳。"
 };
 
-/* ---------- 3. 大门用的两张图（整幅 + 门洞裁切，同一张源图，所以能对齐） ---------- */
+/* ---------- 3. 大门用的四张图（同一张源图裁出来的才能对齐） ----------
+   full/door = 外面那扇；hall/hallDoor = 厅堂与厅堂尽头第二道门。
+   换任何一张都要回 css/gate.css 第 3 节重新量位置。 */
 const GATE_IMGS = {
   full: "images/gate/gate.jpg",
-  door: "images/gate/gate-door.jpg"
+  door: "images/gate/gate-door.jpg",
+  hall: "images/gate/gate-hall.jpg",
+  hallDoor: "images/gate/gate-hall-door.jpg"
 };
 
 /* ---------- 4. 「让我等等」那六张：img 路径 / alt 读屏 / word 鼓励语 / sub 补一句 ----------
@@ -64,9 +67,6 @@ const GATE_SCENES = [
   const $ = function (id) { return document.getElementById(id); };
   const panes = { ask: $("gtAsk"), door: $("gtDoor"), wait: $("gtWait") };
   const stage = $("gtStage");
-  const leafL = $("gtLeafL");
-  const leafR = $("gtLeafR");
-  const gwFrame = $("gwFrame");
   const gwImgs = $("gwImgs");
   const gwDots = $("gwDots");
   const gwWord = $("gwWord");
@@ -79,12 +79,23 @@ const GATE_SCENES = [
   const st = { pane: "ask", idx: 0, timer: 0, built: false, imgs: [], dots: [] };
 
   /* ---- 图片路径由这里挂上去：CSS 里不留 url()，换图只改上面 ---- */
-  $("gtPhoto").style.backgroundImage = 'url("' + GATE_IMGS.full + '")';
-  const doorBg = 'url("' + GATE_IMGS.door + '")';
-  leafL.style.backgroundImage = doorBg;
-  leafR.style.backgroundImage = doorBg;
-  new Image().src = GATE_IMGS.full;
+  function bg(id, path) {
+    const el = $(id);
+    if (el) el.style.backgroundImage = 'url("' + path + '")';
+    new Image().src = path;
+  }
+  bg("gtPhoto", GATE_IMGS.full);
+  bg("gtHall", GATE_IMGS.hall);
+  ["gtLeafL", "gtLeafR"].forEach(function (id) {
+    const el = $(id);
+    el.style.backgroundImage = 'url("' + GATE_IMGS.door + '")';
+  });
+  ["gtLeaf2L", "gtLeaf2R"].forEach(function (id) {
+    const el = $(id);
+    el.style.backgroundImage = 'url("' + GATE_IMGS.hallDoor + '")';
+  });
   new Image().src = GATE_IMGS.door;
+  new Image().src = GATE_IMGS.hallDoor;
 
   $("gtDoorNote").textContent = GATE_COPY.doorNote;
   $("gwLead").textContent = GATE_COPY.waitLead;
@@ -96,10 +107,9 @@ const GATE_SCENES = [
     Object.keys(panes).forEach(function (k) { panes[k].classList.toggle("on", k === name); });
   }
 
-  /* ---- 进入正片：撤掉遮罩与滚动锁 ---- */
+  /* ---- 进入正片：撤掉遮罩与滚动锁（不记任何东西，刷新一定还会问一次） ---- */
   function enter() {
     stopTimer();
-    try { sessionStorage.setItem(GATE_CFG.key, "in"); } catch (e) { /* 隐私模式下写不进去，无所谓 */ }
     gate.classList.add("gone");
     document.documentElement.classList.remove("gate-lock");
     live.textContent = "已进入侨都风物。";
@@ -110,14 +120,16 @@ const GATE_SCENES = [
     }, ms(760) + 30);
   }
 
-  /* ---- 第一支：开门 ---- */
+  /* ---- 第一支：两道门先后打开，门后那点光慢慢涨满 ---- */
   function runDoor() {
     show("door");
     panes.door.classList.remove("lit");
     stage.classList.remove("open");
     void stage.offsetWidth;                /* 强制回流：第二次进来时动画要能从关闭态重放 */
     live.textContent = "大门正在打开。";
-    setTimeout(function () { stage.classList.add("open"); }, ms(GATE_CFG.openDelay));
+    setTimeout(function () {
+      stage.classList.add("open");         /* 滑多远、第二道门几秒后跟着开，全在 CSS 的延迟里 */
+    }, ms(GATE_CFG.openDelay));
     setTimeout(function () {
       panes.door.classList.add("lit");
       live.textContent = "欢迎您了解侨都之乡，按回车可以进入。";
@@ -149,19 +161,27 @@ const GATE_SCENES = [
     });
   }
 
+  /* 换画时把 .pop 重新挂一次，鼓励语才会再抬一下（同一帧内先摘后加 + 强制回流） */
+  function pop(el) {
+    if (!el || RM) return;
+    el.classList.remove("pop");
+    void el.offsetWidth;
+    el.classList.add("pop");
+  }
+
   function scene(i) {
     st.idx = (i + GATE_SCENES.length) % GATE_SCENES.length;
     st.imgs.forEach(function (el, k) { el.classList.toggle("on", k === st.idx); });
     st.dots.forEach(function (el, k) { el.classList.toggle("on", k === st.idx); });
     gwWord.textContent = GATE_SCENES[st.idx].word;
     gwSub.textContent = GATE_SCENES[st.idx].sub;
+    pop(gwWord); pop(gwSub);
     live.textContent = "第 " + (st.idx + 1) + " 张，共 " + GATE_SCENES.length + " 张：" + GATE_SCENES[st.idx].word;
   }
 
   function stopTimer() { if (st.timer) { clearInterval(st.timer); st.timer = 0; } }
   function startTimer() {
     stopTimer();
-    if (RM) return;                        /* 减少动效时不自己翻，留给人点 */
     st.timer = setInterval(function () { scene(st.idx + 1); }, GATE_CFG.autoNext);
   }
 
@@ -187,9 +207,7 @@ const GATE_SCENES = [
     if (dot) { scene(+dot.dataset.scene); startTimer(); }
   });
 
-  /* 手放在画上时别抢着翻页 */
-  gwFrame.addEventListener("pointerenter", stopTimer);
-  gwFrame.addEventListener("pointerleave", function () { if (st.pane === "wait") startTimer(); });
+  /* 切到别的标签页时先停一下，回来接着轮播（手放在画上不再打断，六张画一直轮） */
   document.addEventListener("visibilitychange", function () {
     if (document.hidden) stopTimer();
     else if (st.pane === "wait") startTimer();
@@ -200,10 +218,8 @@ const GATE_SCENES = [
     if (e.key === "Escape" && !gate.classList.contains("gone")) enter();
   });
 
-  /* ---- 开场：带 # 的深链、或本会话已经进来过，就直接放行 ---- */
-  let skip = false;
-  if (GATE_CFG.skipOnHash && location.hash) skip = true;
-  try { if (sessionStorage.getItem(GATE_CFG.key)) skip = true; } catch (e) { /* 读不到就照常拦一次 */ }
+  /* ---- 开场：只有链接里带 # 的深链才放行，其余每次打开（含刷新）都先问一句 ---- */
+  const skip = !!(GATE_CFG.skipOnHash && location.hash);
 
   if (skip) {
     gate.hidden = true;

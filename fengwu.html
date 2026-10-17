@@ -37,12 +37,19 @@
       <p class="gt-fine">插画由 AIGC 生成 · 按 Esc 可以直接进去</p>
     </div>
 
-    <!-- 第二屏：大门向两侧缓缓滑开，门缝里的白光一点点涨大，再浮出欢迎语 -->
+    <!-- 第二屏：外面两扇木门先滑开 → 露出厅堂 → 尽头第二道门再滑开 →
+         门后那一点暖光慢慢涨大 → 浮出欢迎语。层与层的位置全在 css/gate.css 第 3 节。 -->
     <div class="gt-pane gt-door" id="gtDoor">
       <div class="gt-stage" id="gtStage">
         <div class="gt-photo" id="gtPhoto"></div>
         <div class="gt-open">
-          <div class="gt-light"></div>
+          <div class="gt-hall" id="gtHall"></div>
+          <div class="gt-inner">
+            <div class="gt-light"></div>
+            <div class="gt-leaf2 l" id="gtLeaf2L"></div>
+            <div class="gt-leaf2 r" id="gtLeaf2R"></div>
+          </div>
+          <div class="gt-haze"></div>
           <div class="gt-leaf l" id="gtLeafL"></div>
           <div class="gt-leaf r" id="gtLeafR"></div>
         </div>
