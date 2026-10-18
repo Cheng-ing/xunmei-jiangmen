@@ -2,7 +2,7 @@
 <!-- ============================================================
      fengwu.html —— 侨都风物：美食美景图鉴 + 侨都知多少小测 + 路线推荐 + 分享长图
      ★ 这一页正片的文字（条目、题目、选项、路线站点）都在 js/fengwu.js 顶部四个数组里改 ★
-     ★ 开场那一句问话、门和六张画的文案在 js/fengwu-gate.js；外观在 css/gate.css ★
+     ★ 开场闸门已撤掉，打开直接是正片；那套代码留在 css/gate.css + js/fengwu-gate.js（见正文顶部注释）★
      ★ 正片外观在 css/fengwu.css（卡片每行几张、颜色、移动端那一套）★
      本页全部交互都不需要后端：打卡记录只存在访问者自己的浏览器里。
      ============================================================ -->
@@ -13,73 +13,13 @@
   <title>侨都风物 · 寻美江门</title>
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/fengwu.css">
-  <link rel="stylesheet" href="css/gate.css">
 </head>
 <body class="fw-wrap">
 
-  <!-- ▼ 开场闸门：先问一句，两条路（打灯进去 / 先看几张画）。
-       文案、灯口站位、节奏全在 js/fengwu-gate.js 顶部四个块里改，本文件只给骨架。
-       想整块关掉：删掉下面这一坨 + head 里的 gate.css 和末尾的 fengwu-gate.js 两行引用。 -->
-  <div class="fw-gate" id="fwGate" role="dialog" aria-modal="true" aria-label="侨都风物开场">
-    <button type="button" class="gt-skip" data-gate="skip">跳过</button>
-    <p class="gt-live" id="gtLive" role="status" aria-live="polite"></p>
-
-    <!-- 第一屏：问句 + 两个按钮 -->
-    <div class="gt-pane on" id="gtAsk">
-      <p class="gt-kicker">侨 都 风 物</p>
-      <h2 class="gt-q">你准备好认识侨都之乡了吗？</h2>
-      <div class="gt-ornament"></div>
-      <p class="gt-hint">这一页收着五邑的吃食与山水：图鉴、小题、几天怎么走，都可以自己挑。</p>
-      <div class="gt-btns">
-        <button type="button" class="gt-btn" data-gate="ready">我准备好了</button>
-        <button type="button" class="gt-btn gt-btn-soft" data-gate="wait">让我等等</button>
-      </div>
-      <p class="gt-fine">插画由 AIGC 生成 · 按 Esc 可以直接进去</p>
-    </div>
-
-    <!-- 第二屏：没有门了，改成舞台聚光灯。点「我准备好了」之后，五束光从顶上不同
-         位置、不同角度掠下来，最后都收在下面那两个按钮上，按钮下面浮出一团光斑。
-         束的角度、快慢、粗细和光斑多大，全在 css/gate.css 第 3 节；窄屏与扁窗口各有一套角度。 -->
-    <div class="gt-pane gt-spot" id="gtSpot">
-      <div class="sp-stage" id="spStage" aria-hidden="true">
-        <span class="sp-lamp a"></span><span class="sp-lamp b"></span><span class="sp-lamp c"></span>
-        <span class="sp-lamp d"></span><span class="sp-lamp e"></span>
-        <span class="sp-beam a"></span><span class="sp-beam b"></span><span class="sp-beam c"></span>
-        <span class="sp-beam d"></span><span class="sp-beam e"></span>
-        <span class="sp-haze"></span>
-      </div>
-      <div class="gt-welcome">
-        <h3>欢迎您了解侨都之乡</h3>
-        <p>灯亮了 —— 这里是五邑的吃食、山水和老房子。</p>
-        <div class="sp-focus">
-          <span class="sp-pool" aria-hidden="true"></span>
-          <div class="gt-btns">
-            <button type="button" class="gt-btn" id="gtEnter" data-gate="enter">进入侨都风物</button>
-            <button type="button" class="gt-btn gt-btn-soft" data-gate="ask">先不进去</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 第三屏：让我等等。六张画横着排成一圈慢慢转（中间那张正对、两边歪着往后收），
-         每 5 秒转一张、转完接着来，鼓励语跟着中间那张走。
-         六张图与文字在 GATE_SCENES 里，图、圆点都由 JS 生成；站位与大小在 css/gate.css 第 4 节。 -->
-    <div class="gt-pane gt-wait" id="gtWait">
-      <p class="gw-lead" id="gwLead"></p>
-      <div class="gw-frame" id="gwFrame">
-        <div class="gw-imgs" id="gwImgs"></div>
-        <p class="gw-tag" id="gwTag"></p>
-      </div>
-      <h3 class="gw-word" id="gwWord"></h3>
-      <p class="gw-sub" id="gwSub"></p>
-      <div class="gw-dots" id="gwDots"></div>
-      <div class="gt-btns">
-        <button type="button" class="gt-btn" data-gate="ready">我准备好了</button>
-        <button type="button" class="gt-btn gt-btn-soft" data-gate="ask">回到开头</button>
-      </div>
-      <p class="gt-fine" id="gwFoot"></p>
-    </div>
-  </div>
+  <!-- ▼ 开场闸门已于 2026-10-18 撤掉：打开这一页直接显示正片内容。
+       闸门本身（三屏：问一句 / 舞台聚光灯 / 一圈横排画）代码还在 css/gate.css 与
+       js/fengwu-gate.js 里，没有删。想恢复：把 head 里的 gate.css 那行、下面这一坨
+       骨架、末尾的 fengwu-gate.js 那行引用加回来即可，三处都在 git 提交 d5d39fc 里。 -->
 
   <nav class="site-nav">
     <div class="brand">寻美江门<small>侨都薪火</small></div>
@@ -237,8 +177,6 @@
 
   <script src="js/common.js"></script>
   <!-- common.js 负责窄屏导航的横滑与"当前页那颗先滑到看得见"；本页没有信封，其它函数不会触发 -->
-  <script src="js/fengwu-gate.js"></script>
-  <!-- 开场闸门：先它后图鉴，闸门只管遮罩那一块，和 fengwu.js 互不引用 -->
   <script src="js/fengwu.js"></script>
 </body>
 </html>
