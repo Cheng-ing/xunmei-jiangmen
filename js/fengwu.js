@@ -20,13 +20,16 @@
      line   —— 卡片上的一句话（20 字上下最好）
      detail —— 弹层里的详情，两三句
      tip    —— 实用提示（怎么去、什么时候去、怎么点）
-     img    —— 配图路径，留空 "" 就显示描金占位块（不会出破图图标）。
-               现在美食 28 条全配了 AIGC 生成的水彩插画，卡片和详情图里会自动压一枚「AI 生成示意图」角标。
-               美景 48 条一律留空：那批 AI 插画已经删掉，等真实风景照片放进来。
-               放图做法：把图丢进 images/fengwu/ 再在这里填 "images/fengwu/<条目id>.jpg"，
-               文件名跟 id 对上最好；建议 4:3 横构图，宽 800–1200、单张 120KB 以内。
+     img    —— 配图路径，两种写法：
+               美食：填 "images/fengwu/<条目id>.jpg"。那批是 AIGC 水彩插画，图上会自动压「AI 生成示意图」角标。
+               美景：一律留空 ""，页面自己去 images/scenery/ 找同名照片 —— 先拿条目 id 当文件名试，
+                     再拿卡片上那个中文名试。所以照片丢进那个文件夹就会显示，不用回来改这里；
+                     还没放照片的条目仍是描金占位块，不会出破图图标。
+                     48 条该叫什么名，写在 images/scenery/README.md 里。
+               两边都建议 4:3 横构图，宽 800–1200、单张 120KB 以内。
      realImg —— 可选。这条的配图是真实照片时写 realImg: true，角标和 alt 里的字样会自动去掉；
-               不写就默认按 AIGC 示意图标注。
+               不写就默认按 AIGC 示意图标注。美景那种 img 留空、从 images/scenery/ 自动找到的照片
+               本来就当真照片处理，不用另外写这个字段。
    ⚠ 文案口径：这一节是"稳妥概述"，凡是年份、称号、数量、片名这类硬事实，
       旁边都用「待核实」标了出来。评奖前请逐条对官方资料（江门市政府网、
       各区政府网、世界遗产名录等），核实完把注释里的"待核实"去掉。
@@ -790,12 +793,59 @@ function saveCheckin(id, on) {
   return list;
 }
 
+/* ---------- 美景照片自动找 ---------- */
+/* 美景的 img 全留空，照片文件名对上就自动显示：先试条目 id，再试卡片上那个中文名。
+   一张都没放也不会出破图 —— 加载失败时先换另一种命名重试，两种都没有就退回描金占位块。 */
+const SCENERY_DIR = "images/scenery/";
+const SCENERY_IDS = new Set(SCENERY.map((x) => x.id));
+
+function sceneryImgs(item) {
+  return [SCENERY_DIR + item.id + ".jpg", SCENERY_DIR + item.name + ".jpg"];
+}
+
+/* 渲染用的一张图的路径：数据里填了就用填的；美景那种留空的用自动找的第一个；美食留空就还是没图 */
+function imgOf(item) {
+  if (item.img) return item.img;
+  return SCENERY_IDS.has(item.id) ? sceneryImgs(item)[0] : "";
+}
+
+function sceneryImgFail(el) {
+  const item = findFengwu(el.dataset.fwimg);
+  if (!item) return;
+  const list = sceneryImgs(item);
+  const next = (+el.dataset.retry || 0) + 1;
+  if (next < list.length) {
+    el.dataset.retry = next;
+    el.src = list[next];
+    return;
+  }
+  const box = el.parentNode;
+  const ph = document.createElement("span");
+  ph.className = box.classList.contains("fw-m-media") ? "fw-ph big" : "fw-ph";
+  ph.setAttribute("aria-hidden", "true");
+  ph.textContent = item.name.slice(0, 1);
+  el.remove();
+  box.insertBefore(ph, box.firstChild);
+  box.classList.remove("has-img");
+  const tag = box.querySelector(".fw-ai");
+  if (tag) tag.remove();
+}
+
+/* 卡片和详情里的 <img> 生成之后要绑一次失败回调（error 事件不往上冒，用不了事件委托）。
+   data-fwimg 只加在自动找的那批图上，美食那种写死路径的图不参与。 */
+function bindSceneryImgs(root) {
+  root.querySelectorAll("img[data-fwimg]").forEach((el) => {
+    el.addEventListener("error", () => sceneryImgFail(el));
+    if (el.complete && el.naturalWidth === 0) sceneryImgFail(el);
+  });
+}
+
 /* ---------- 配图来源角标 ---------- */
 /* 美食那批配图是 AIGC 生成的水彩插画，图上必须写明来源，不冒充实拍。
-   风景改用你提供的真实照片后，在那一条的字段里加 realImg: true，
-   角标和 alt 里的「AI 生成示意图」字样会一起去掉，不用再来改这段代码。 */
+   风景照片是真的：img 留空、从 images/scenery/ 自动找到的那批一律不压角标；
+   要是哪天给某条填了写死的路径又确实是照片，在那一条里加 realImg: true 就行。 */
 function imgBadge(item) {
-  return item.realImg
+  return item.realImg || !item.img
     ? { alt: "", tag: "" }
     : { alt: "（AI 生成示意图）", tag: '<span class="fw-ai">AI 生成示意图</span>' };
 }
@@ -803,10 +853,12 @@ function imgBadge(item) {
 /* ---------- 一张卡（图 + 名字 + 区县 + 一句话） ---------- */
 function cardHTML(item, kind) {
   const checked = loadCheckins().indexOf(item.id) >= 0;
-  /* 没配图的条目不生成 <img>，直接留占位块，页面不会出破图图标 */
+  /* 没图的条目不生成 <img>，直接留占位块；美景那种"照片还没放"的会先出图再被 bindSceneryImgs 退回占位块 */
   const b = imgBadge(item);
-  const media = item.img
-    ? `<div class="fw-media has-img"><img src="${item.img}" alt="${item.name}${b.alt}" loading="lazy" decoding="async"><span class="fw-tag">${kind}</span>${b.tag}</div>`
+  const src = imgOf(item);
+  const auto = src && !item.img ? ` data-fwimg="${item.id}"` : "";
+  const media = src
+    ? `<div class="fw-media has-img"><img src="${src}" alt="${item.name}${b.alt}" loading="lazy" decoding="async"${auto}><span class="fw-tag">${kind}</span>${b.tag}</div>`
     : `<div class="fw-media"><span class="fw-ph" aria-hidden="true">${item.name.slice(0, 1)}</span><span class="fw-tag">${kind}</span></div>`;
   return `<button type="button" class="fw-card reveal${checked ? " checked" : ""}" data-fwid="${item.id}"
             aria-label="看${item.name}的详细介绍">
@@ -832,6 +884,7 @@ function renderCards() {
     ? list.map((x) => cardHTML(x, state.kind === "food" ? "食" : "景")).join("")
     : `<p class="fw-empty">这个筛选下暂时没有条目 —— 换个区县，或把关键词清空。</p>`;
   observeReveal(grid);
+  bindSceneryImgs(grid);
   const count = document.querySelector("#fwCount");
   if (count) count.textContent = `共 ${list.length} 条`;
 }
@@ -843,13 +896,17 @@ function openDetail(id) {
   if (!item || !modal) return;
   const checked = loadCheckins().indexOf(id) >= 0;
   const b = imgBadge(item);
-  modal.querySelector(".fw-modal-body").innerHTML =
+  const src = imgOf(item);
+  const auto = src && !item.img ? ` data-fwimg="${item.id}"` : "";
+  const body = modal.querySelector(".fw-modal-body");
+  body.innerHTML =
     `<h2>${item.name}</h2>` +
     `<p class="fw-m-town">${item.town} · ${FOOD.indexOf(item) >= 0 ? "侨都之味" : "侨都之景"}</p>` +
-    `<div class="fw-m-media">${item.img ? `<img src="${item.img}" alt="${item.name}${b.alt}">${b.tag}` : `<span class="fw-ph big">${item.name.slice(0, 1)}</span>`}</div>` +
+    `<div class="fw-m-media">${src ? `<img src="${src}" alt="${item.name}${b.alt}"${auto}>${b.tag}` : `<span class="fw-ph big">${item.name.slice(0, 1)}</span>`}</div>` +
     `<p class="fw-m-detail">${item.detail}</p>` +
     `<p class="fw-m-tip"><b>怎么去 / 怎么吃</b>${item.tip}</p>` +
     `<button type="button" class="btn fw-checkin${checked ? " on" : ""}" data-checkin="${id}">${checked ? "已打卡 ✓" : "我去过"}</button>`;
+  bindSceneryImgs(body);
   modal.hidden = false;
   document.body.classList.add("modal-open");
   modal.querySelector(".modal-close").focus();
