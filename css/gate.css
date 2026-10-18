@@ -5,7 +5,7 @@
    打灯那一屏没有门也没有图：顶上五个灯口往下扫五束聚光灯，从不同角度收在
    「进入侨都风物 / 先不进去」那两个按钮上，按钮背后浮出一团光斑。
    想调快慢、角度、粗细、光斑大小，只改第 3 节 .sp-stage 上那一串变量，
-   不用碰动画本身；窄屏与扁窗口的第二套角度在第 5 节。等等屏是六张画叠成一摞，错位量在第 4 节。
+   不用碰动画本身；窄屏与扁窗口的第二套角度在第 5 节。等等屏是六张画横着排成一圈慢慢转，大小只看第 4 节那一个 --cw。
    本文件不写任何 url()，六张画的路径在 JS 的 GATE_SCENES 里。
    ============================================================ */
 
@@ -174,38 +174,48 @@ html.gate-lock, html.gate-lock body { overflow: hidden; }
 }
 .gt-welcome p { font-size: 13.5px; line-height: 1.9; color: rgba(233, 226, 211, .7); }
 
-/* ---------- 4. 第三屏：让我等等（六张画叠成一摞） ----------
-   最前面那张正放，第二、第三张往下错一点、小一点、淡一点，露出两条边就是一摞；
-   剩下三张和刚翻过去那张都停在第三张的位置上、只是全透明，所以整摞往下只占 .d2 那么多。
-   换下一张时最前面那张淡出往后收、后面的顶上来，鼓励语跟着最前面那张一起换
-   （.on/.d1/.d2/.far 由 JS 按"离当前这张隔几张"算）。
-   整摞的高度按视口高度算（42vh），加上面那行小字和下面的鼓励语、圆点、按钮，
-   一屏装得下，不用往下滑就能看全。想再大一点就改这个 42vh，
-   想摞得更开就改 .d1/.d2 的 translateY 与 scale（改大了要跟着加 .gw-frame 的 margin-bottom）。 */
-.gt-wait { width: min(92vw, 520px); }
+/* ---------- 4. 第三屏：让我等等（六张画横着排成一圈，3D 转着放） ----------
+   中间那张正对着人，右边两张依次往后歪、往远缩、变淡，左边同理，形成一点透视感；
+   每到一个点就全体往左挪一位（右边那张顶到中间、中间那张歪到左边），
+   所以看上去不是切图，是一圈画在慢慢转（.c/.r1/.r2/.off/.l2/.l1 由 JS 按"隔几张"算，
+   .off 是转到背面的那一张，只透明地停在中间那张背后，所以怎么转都不会把这一屏顶高）。
+   大小只由 .gw-frame 的 --cw 一个数决定，其余全是百分比，窗口一放大整圈就跟着放大。 */
+.gt-wait { width: 100%; }
 .gt-wait.on { gap: 10px; }
 .gt-wait .gw-lead { font-size: 12.5px; letter-spacing: 3px; color: rgba(233, 226, 211, .55); }
-/* 框本身不再画边和底色（那些都到每张画上了），只负责占位；
-   margin-bottom 给露出来的两张边留位置，免得压到下面的鼓励语。 */
+/* --cw = 中间那张的宽。50vh*4/3 是"画占掉半个屏幕高"（4:3 的画：宽 = 高×4/3），
+   56vw 是横屏时的上限，免得中间这张把两边露出来的那两张全挤出屏幕。
+   窄屏在第 5 节改成按视口宽算（手机上以"占掉大半屏宽"为准）。 */
 .gw-frame {
-  position: relative; width: min(100%, calc(42vh * 4 / 3)); aspect-ratio: 4 / 3;
-  margin-bottom: 14px;
+  --cw: min(calc(50vh * 4 / 3), 56vw);
+  position: relative; width: var(--cw); aspect-ratio: 4 / 3;
+  margin-bottom: 16px;
 }
-.gw-imgs { position: absolute; inset: 0; }
-/* 收到后面的画（含刚翻过去那张）就停在第三张的位置上、只是全透明：
-   这样一摞画往下只占 .d2 那么多，不会把这一屏顶得要用滑块才看全。 */
+/* perspective 决定近大远小有多凶：数字越大越接近平面。按 --cw 给，
+   所以窗口变大变小时歪的程度跟着画走，不会宽屏看着平、窄屏看着晕。 */
+.gw-imgs {
+  position: absolute; inset: 0;
+  perspective: calc(var(--cw) * 1.9);
+  perspective-origin: 50% 46%;
+}
+/* 六张画都铺满框，站位全靠 transform：translateX 的百分比是相对自己这张的宽，
+   所以画一放大，整圈的间距自动跟着放大，不用再改第二个数。
+   远处的画靠 translateZ 自己就被压小、压到中间那张后面，不用管层序。
+   默认态（没带位置类）就是背面那张。 */
 .gw-img {
   position: absolute; inset: 0; width: 100%; height: 100%;
   display: block; object-fit: cover;
-  border: 1px solid var(--line-soft); border-radius: 14px; background: #101a26;
-  box-shadow: 0 12px 26px rgba(4, 8, 14, .4);
-  opacity: 0; transform: translateY(11%) scale(.88) rotate(-2.2deg); z-index: 0;
-  transition: transform .75s cubic-bezier(.22, .78, .24, 1), opacity .55s ease;
+  border: 1px solid var(--line-soft); border-radius: 16px; background: #101a26;
+  box-shadow: 0 16px 34px rgba(4, 8, 14, .45);
+  opacity: 0; transform: translateZ(-420px) scale(.6); pointer-events: none;
+  transition: transform .9s cubic-bezier(.22, .78, .24, 1), opacity .6s ease;
 }
-.gw-img.d2 { opacity: .34; transform: translateY(11%) scale(.88) rotate(-2.2deg); z-index: 1; }
-.gw-img.d1 { opacity: .68; transform: translateY(5.5%) scale(.95) rotate(1.4deg); z-index: 2; }
-.gw-img.on { opacity: 1; transform: none; z-index: 4; }
-.gw-img.far { opacity: 0; z-index: 0; }
+.gw-img.c { opacity: 1; transform: translateX(0) translateZ(0) rotateY(0) scale(1); }
+.gw-img.r1 { opacity: .86; transform: translateX(70%) translateZ(-100px) rotateY(-28deg) scale(.86); }
+.gw-img.l1 { opacity: .86; transform: translateX(-70%) translateZ(-100px) rotateY(28deg) scale(.86); }
+.gw-img.r2 { opacity: .5; transform: translateX(122%) translateZ(-230px) rotateY(-33deg) scale(.72); }
+.gw-img.l2 { opacity: .5; transform: translateX(-122%) translateZ(-230px) rotateY(33deg) scale(.72); }
+.gw-img.off { opacity: 0; transform: translateZ(-420px) scale(.6); }
 .gw-tag {
   position: absolute; right: 8px; bottom: 8px; z-index: 6;
   padding: 4px 10px; border-radius: 999px; font-size: 11px; letter-spacing: 1px;
@@ -247,15 +257,23 @@ html.gate-lock, html.gate-lock body { overflow: hidden; }
   .sp-stage { --w: 42vw; }
   .gt-welcome { max-width: 100%; }
   .gt-welcome h3 { font-size: 19px; }
+  /* 窄屏（竖着的手机）改按屏宽定大小：半屏高在这种窗口上会把两边露出来的画全挤没了，
+     80vw 让中间这张占掉大半屏宽，左右各留一条边当"还在转"的提示；
+     更外圈那两张直接收起来，免得压到屏幕边上看不清。 */
+  .gw-frame { --cw: min(80vw, calc(44vh * 4 / 3)); margin-bottom: 12px; }
   .gw-img { border-radius: 12px; }
+  .gw-img.r1 { transform: translateX(66%) translateZ(-90px) rotateY(-24deg) scale(.84); }
+  .gw-img.l1 { transform: translateX(-66%) translateZ(-90px) rotateY(24deg) scale(.84); }
+  .gw-img.r2, .gw-img.l2 { opacity: 0; transform: translateZ(-420px) scale(.6); }
   .gw-word { font-size: 17.5px; }
 }
 
-/* 窗口很扁（笔记本分屏、横过来的手机）：竖着放的字和按钮压一点，一屏装下。 */
+/* 窗口很扁（笔记本分屏、横过来的手机）：竖着放的字和按钮压一点，画也小一圈，一屏装下。 */
 @media (max-height: 680px) {
   .gt-pane.on { gap: 10px; }
   .gt-welcome { gap: 10px; }
   .gt-welcome h3 { font-size: clamp(17px, 3vw, 21px); }
+  .gw-frame { --cw: min(calc(40vh * 4 / 3), 50vw); }
 }
 
 /* ---------- 6. 无障碍：系统设了"减少动效"时，灯不再扫、不再呼吸，直接给结果 ---------- */
@@ -267,7 +285,7 @@ html.gate-lock, html.gate-lock body { overflow: hidden; }
   }
   .gt-spot.on .sp-stage.open .sp-beam { animation: none; }
   .gw-word.pop, .gw-sub.pop { animation: none; }
-  /* 一摞画照样自动换，只是不再滑动淡入（翻到第几张就停在第几张） */
+  /* 一圈画照样自动转，只是不再滑动歪斜（转到第几张就停在第几张） */
 }
 
 /* ---------- 7. 常用调整
@@ -285,6 +303,10 @@ html.gate-lock, html.gate-lock body { overflow: hidden; }
    按钮那团光         → .sp-pool 的 width/height（168%/260% 是相对按钮那一块）、模糊量与两档颜色
    灯呼吸的节奏        → 各条 .sp-beam 的 --bre（周期秒）与 @keyframes sp-breathe 的两个透明度
    欢迎语出得早晚     → js/fengwu-gate.js 的 GATE_CFG.welcomeDelay（要跟上面这些延迟对得上）
-   一摞画的大小       → .gw-frame 的 42vh（改成 50vh 更大，但矮窗口要往下滑才看全）
-   一摞错开得开多少   → .gw-img.d1 / .d2 的 translateY 与 scale（改大就要跟着加 .gw-frame 的 margin-bottom）
+   中间那张多大        → .gw-frame 的 --cw（一个数就够：50vh*4/3 = 画占半屏高，56vw = 横屏的上限；
+                         窄屏那套是 min(86vw, 44vh*4/3)，扁窗口是 min(40vh*4/3, 50vw)）
+   旁边两张歪多少、多远 → .gw-img.r1 / .l1 的 rotateY 与 translateX（.r2/.l2 是更外圈那两张）
+   3D 近大远小多强      → .gw-imgs 的 perspective 那个 1.9（改 1.4 更夸张、更晕，3 就接近平面）
+   一圈转得多快         → 滑行动画看 .gw-img 的 transition 时长，几张秒转到下一张看 JS 的 GATE_CFG.autoNext
+   画上的圆角、阴影      → .gw-img 的 border-radius 与 box-shadow
    ============================================================ */

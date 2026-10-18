@@ -4,8 +4,8 @@
      · 我准备好了 → 没有门，改成舞台聚光灯：顶上五个灯口往下扫五束光，从不同角度
                     收在「进入侨都风物 / 先不进去」那两个按钮上，按钮背后浮出一团光斑，
                     随后浮出「欢迎您了解侨都之乡」。
-     · 让我等等   → 六张 AIGC 侨乡插画叠成一摞，每 5 秒换一张、换完接着循环，
-                    每张配一句鼓励语，随时能回去看灯。
+     · 让我等等   → 六张 AIGC 侨乡插画横着排成一圈（中间那张正对、两边歪着往后收），
+                    每 5 秒自己转一张、转完接着循环，中间那张配一句鼓励语，随时能回去看灯。
    ★ 要改的东西全在本文件顶部四个块里：
        GATE_CFG 节奏与开关 / GATE_COPY 文案 / GATE_LAMPS 五个灯口位置 / GATE_SCENES 六张画与鼓励语
      图片路径也只写在这里（css/gate.css 里没有任何 url()）；打灯那一屏不铺图，
@@ -19,8 +19,7 @@
 const GATE_CFG = {
   openDelay: 240,             /* 点「我准备好了」到灯开始扫（CSS 里的延迟从这一刻起算） */
   welcomeDelay: 1300,         /* 灯开始扫到欢迎语与按钮浮出：五束最晚一束 .3s 起、1.5s 收住 */
-  autoNext: 5000,             /* 「让我等等」几秒换一张，一直换下去 */
-  stackBack: 2,               /* 一摞画在最前面那张后面露几张（改 1 就只露一张边） */
+  autoNext: 5000,             /* 「让我等等」几秒转一张，一直转下去（六张转完接着第二轮） */
   skipOnHash: true            /* 链接里带 #（比如从别处跳到某一节）时直接放行 */
 };
 
@@ -28,7 +27,7 @@ const GATE_CFG = {
 const GATE_COPY = {
   waitLead: "不急 · 先看几张画里的侨乡",
   waitTag: "AI 生成插画 · 不是实景照片",
-  waitFoot: "每隔几秒自动换一张，点下面的圆点可以直接跳。"
+  waitFoot: "画一圈每隔几秒自己转一张，点下面的圆点可以直接跳到那一张。"
 };
 
 /* ---------- 3. 五个灯口在视口宽度的哪个百分比上 ----------
@@ -175,14 +174,29 @@ const GATE_SCENES = [
     el.classList.add("pop");
   }
 
-  /* 一摞画：按"离当前这张隔几张"给深度 —— 0 是最前面那张（.on），
-     1..stackBack 是后面露边的两张（.d1/.d2），再往后的收起来。
-     换一张时深度全体往前挪一位，视觉上就是后面那张顶上来。 */
+  /* 横着的一圈：先算这张"隔几张"（d），再换成带符号的位移（右边为正、左边为负），
+     最后按位移取位 —— 0 是中间那张（.c），±1 是紧挨着露边的两张（.r1/.l1），
+     ±2 是更外圈那两张（.r2/.l2），再往外就是转到背面去的（.off，透明地停在中间那张背后）。
+     每次 idx+1，全体往左挪一位，看上去就是那一圈画在慢慢转。
+     站位长什么样（歪多少度、隔多远、淡多少）全在 css/gate.css 第 4 节，这里只管排位。 */
+  function ringClass(d, n) {
+    const back = Math.ceil(n / 2) - 1;         /* 一边最多露几张：六张 → 2 */
+    const o = d > back ? d - n : d;            /* 变成带符号的位移 */
+    if (o === 0) return "c";
+    const k = Math.abs(o);
+    return k > back ? "off" : (o > 0 ? "r" : "l") + k;
+  }
+
+  /* ★ 六张正好排满 .c/.r1/.r2/.off/.l2/.l1。要是 GATE_SCENES 加到七张以上，
+       css/gate.css 第 4 节得补上 .r3/.l3 的站位，多出来的那张才会有位置；
+       没补的话它会按 .gw-img 的默认态收在背面，看不见也不会把这一屏顶高。 */
+
   function scene(i) {
-    st.idx = (i + GATE_SCENES.length) % GATE_SCENES.length;
+    const n = GATE_SCENES.length;
+    st.idx = (i + n) % n;
     st.imgs.forEach(function (el, k) {
-      const d = (k - st.idx + GATE_SCENES.length) % GATE_SCENES.length;
-      el.className = "gw-img " + (d === 0 ? "on" : d <= GATE_CFG.stackBack ? "d" + d : "far");
+      const d = (k - st.idx + n) % n;
+      el.className = "gw-img " + ringClass(d, n);
       el.setAttribute("aria-hidden", d === 0 ? "false" : "true");
     });
     st.dots.forEach(function (el, k) { el.classList.toggle("on", k === st.idx); });
