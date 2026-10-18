@@ -4,8 +4,8 @@
    2) 背景照片带：把同一批照片虚化后铺在地球后面
    3) 英雄墙：首页下方的一排人物卡，点一下弹出完整介绍
 
-   照片怎么放：把真实照片按下面 file 字段的名字放进 images/heroes/
-   例如 images/heroes/liang-qichao.jpg —— 文件名对上就自动显示，
+   照片怎么放：把真实照片按下面 file 字段的名字放进 images/照片/历代名人/
+   例如 images/照片/历代名人/liang-qichao.jpg —— 文件名对上就自动显示，
    没有照片时卡片会显示"姓名 + 待补照片"的占位样式，不会破版。
    尺寸建议：竖构图 3:4，如 900×1200，JPG 质量 82，单张 300KB 以内。
    ============================================================ */
@@ -14,7 +14,7 @@ const HEROES = [
   {
     id: "chen-baihua", name: "陈白沙", years: "1428—1500",
     place: "新会白沙里", role: "明代大儒 · 江门学派开创者",
-    file: "images/heroes/chen-baihua.jpg",
+    file: "images/照片/历代名人/chen-baihua.jpg",
     quote: "以虚而无，自然为宗",
     intro: "名陈献章，明代思想家、教育家、书法家。在白沙村设帐讲学十余年，开创"
          + "“江门学派”，是岭南地区唯一入祀孔庙的学者，江门也因此被称作“白沙故里”。"
@@ -23,7 +23,7 @@ const HEROES = [
   {
     id: "wu-tingfang", name: "伍廷芳", years: "1842—1922",
     place: "新会", role: "外交家 · 法学家",
-    file: "images/heroes/wu-tingfang.jpg",
+    file: "images/照片/历代名人/wu-tingfang.jpg",
     quote: "法者，国之权衡",
     intro: "生于新会，早年赴英国学习法学，是清末最出色的涉外法政人才之一。"
          + "与沈家本一同主持修订刑律，奏请废除凌迟、缘坐等酷刑；先后出任驻美、"
@@ -34,7 +34,7 @@ const HEROES = [
        这里暂取 1850—1927；要改就改下面 years，题材页 qiaobao.html 的信封正文刻意没写年份。 */
     id: "chen-yixi", name: "陈宜禧", years: "1850—1927",
     place: "台山斗山", role: "侨领 · 新宁铁路主持者",
-    file: "images/heroes/chen-yixi.jpg",
+    file: "images/照片/历代名人/chen-yixi.jpg",
     quote: "以中国人之资本，筑中国人之铁路",
     intro: "台山斗山人，16 岁赴美在铁路做工、后在西雅图经商。"
          + "1904 年回乡，立下“不用洋人、不借外债、不招洋股”的规矩，主持修建新宁铁路——"
@@ -44,7 +44,7 @@ const HEROES = [
   {
     id: "liang-qichao", name: "梁启超", years: "1873—1929",
     place: "新会茶坑", role: "维新领袖 · 学者",
-    file: "images/heroes/liang-qichao.jpg",
+    file: "images/照片/历代名人/liang-qichao.jpg",
     quote: "少年强，则国强",
     intro: "戊戌变法领袖，与康有为并称“康梁”。变法失败后流亡海外，办报著文，"
          + "以一支笔影响了整整一代中国人，《少年中国说》中“少年强则国强”成为几代青年的自勉之语。"
@@ -54,7 +54,7 @@ const HEROES = [
   {
     id: "chen-shaobai", name: "陈少白", years: "1869—1934",
     place: "新会外海", role: "辛亥元老 · 报人",
-    file: "images/heroes/chen-shaobai.jpg",
+    file: "images/照片/历代名人/chen-shaobai.jpg",
     quote: "革命非报馆不能鼓吹",
     intro: "新会外海人，兴中会早期会员，与孙中山、尢列、杨鹤龄并称“四大寇”。"
          + "1900 年在香港创办《中国日报》，以报纸为武器鼓吹革命；"
@@ -63,7 +63,7 @@ const HEROES = [
   {
     id: "siu-mei-tong", name: "司徒美堂", years: "1868—1955",
     place: "开平赤坎", role: "美洲侨领 · 致公党创始人之一",
-    file: "images/heroes/siu-mei-tong.jpg",
+    file: "images/照片/历代名人/siu-mei-tong.jpg",
     quote: "我还是一个地道的中国人",
     intro: "开平赤坎镇中股村牛路里人，约 12 岁随乡人赴美国旧金山谋生，"
          + "1885 年加入洪门致公堂，后成为全美洪门领袖、美洲华侨领袖。"
@@ -74,7 +74,7 @@ const HEROES = [
   {
     id: "feng-ru", name: "冯如", years: "1884—1912",
     place: "恩平", role: "中国第一位飞机设计师、飞行家",
-    file: "images/heroes/feng-ru.jpg",
+    file: "images/照片/历代名人/feng-ru.jpg",
     quote: "勿因吾毙而阻其进取心",
     intro: "恩平人，少年随舅父赴美，在机器厂里自学成材。1909 年在美国奥克兰试飞自制飞机成功，"
          + "比莱特兄弟首飞只晚六年。1911 年携两架飞机回国投身辛亥革命，创建中国第一支飞机制造队。"
@@ -83,7 +83,7 @@ const HEROES = [
   {
     id: "chen-yuan", name: "陈垣", years: "1880—1971",
     place: "新会", role: "史学大家 · 教育家",
-    file: "images/heroes/chen-yuan.jpg",
+    file: "images/照片/历代名人/chen-yuan.jpg",
     quote: "纪律自律，刻苦治学",
     intro: "新会人，著名历史学家、教育家，在宗教史、元史、校勘学与避讳学上均有开创性贡献，"
          + "著有《元西域人华化考》《校勘学释例》《史讳举例》《通鉴胡注表微》。"
@@ -92,7 +92,7 @@ const HEROES = [
   {
     id: "zhou-wenyong", name: "周文雍", years: "1905—1928",
     place: "开平", role: "广州起义工人赤卫队总指挥",
-    file: "images/heroes/zhou-wenyong.jpg",
+    file: "images/照片/历代名人/zhou-wenyong.jpg",
     quote: "头可断，肢可折，革命精神不可灭",
     intro: "开平人，1927 年参加广州起义，任工人赤卫队总指挥。1928 年被捕，"
          + "在广州红花岗就义，年仅 23 岁。临刑前他写下绝笔诗，与同赴刑场的陈铁军当众宣布结婚，"
@@ -101,7 +101,7 @@ const HEROES = [
   {
     id: "chen-tiejun", name: "陈铁军", years: "1914—1928",
     place: "佛山 · 与周文雍并肩就义", role: "革命烈士",
-    file: "images/heroes/chen-tiejun.jpg",
+    file: "images/照片/历代名人/chen-tiejun.jpg",
     quote: "为革命而死，我们感到无限光荣",
     intro: "佛山人，广东大学（今中山大学）预科学生，为追求革命与富裕家庭决裂。"
          + "她与周文雍以“夫妻”身份作掩护从事地下工作，1928 年一同被捕。"
@@ -111,7 +111,7 @@ const HEROES = [
   {
     id: "lin-jilu", name: "林基路", years: "1916—1943",
     place: "台山四九", role: "革命烈士 · 新疆学院教务长",
-    file: "images/heroes/lin-jilu.jpg",
+    file: "images/照片/历代名人/lin-jilu.jpg",
     quote: "坚定信念，贞守立场",
     intro: "台山人，少年家贫失学，靠自学考入上海大夏大学，后赴苏联留学。"
          + "1942 年受党派遣赴新疆工作，任新疆学院教务长，与毛泽民等共同整顿教学、提倡实干。"
