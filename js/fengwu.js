@@ -843,6 +843,10 @@ function sceneryImgFail(el) {
   el.remove();
   box.insertBefore(ph, box.firstChild);
   box.classList.remove("has-img");
+  /* 照片其实没放上来，连"网络公开素材"那套一起撤：没图就没什么可声明的 */
+  box.classList.remove("has-net", "net-on");
+  const net = box.querySelector(".fw-net");
+  if (net) net.remove();
   const tag = box.querySelector(".fw-ai");
   if (tag) tag.remove();
 }
@@ -854,6 +858,29 @@ function bindSceneryImgs(root) {
     el.addEventListener("error", () => sceneryImgFail(el));
     if (el.complete && el.naturalWidth === 0) sceneryImgFail(el);
   });
+}
+
+/* ---------- 网络图库照片的翻背面 ---------- */
+/* 条目给了 credit（摄影者 · 许可证）就认定这张是从维基共享资源拿的公开素材，
+   照片做成能翻的卡片：鼠标放上去（手机是点一下）翻到背面，背面只写一句 NET_NOTE，
+   平时正面就是照片本身，跟其它照片长得一样，页面上不摆署名。
+   摄影者与许可证不显示出来，只紧跟在 <img> 前面写成 HTML 注释：查看网页源码能看到，
+   images/scenery/README.md 里也逐条列着（那份清单不上线）。
+   没给 credit 的是本站实拍，不做翻面。
+   ★ 那句话说什么只改下面 NET_NOTE 一处；翻面的样式在 css/fengwu.css 第 3 节 .has-net / .fw-net。 */
+const NET_NOTE = "图片均为网络公开素材";
+
+function netCls(item) { return item.credit ? " has-net" : ""; }
+
+/* 注释里不能出现连续两个减号，文件名里真有就换成一个 */
+function netComment(item) {
+  if (!item.credit) return "";
+  const f = String(item.creditFile || "").replace(/-{2,}/g, "-");
+  return `<!-- 摄影 ${item.credit}${f ? " · commons.wikimedia.org/wiki/" + f : ""} -->`;
+}
+
+function netHTML(item) {
+  return item.credit ? `<span class="fw-net">${NET_NOTE}</span>` : "";
 }
 
 /* ---------- 配图来源角标 ---------- */
@@ -874,7 +901,7 @@ function cardHTML(item, kind) {
   const src = imgOf(item);
   const auto = src && !item.img ? ` data-fwimg="${item.id}"` : "";
   const media = src
-    ? `<div class="fw-media has-img"><img src="${src}" alt="${item.name}${b.alt}" loading="lazy" decoding="async"${auto}><span class="fw-tag">${kind}</span>${b.tag}</div>`
+    ? `<div class="fw-media has-img${netCls(item)}">${netComment(item)}<img src="${src}" alt="${item.name}${b.alt}" loading="lazy" decoding="async"${auto}><span class="fw-tag">${kind}</span>${b.tag}${netHTML(item)}</div>`
     : `<div class="fw-media"><span class="fw-ph" aria-hidden="true">${item.name.slice(0, 1)}</span><span class="fw-tag">${kind}</span></div>`;
   return `<button type="button" class="fw-card reveal${checked ? " checked" : ""}" data-fwid="${item.id}"
             aria-label="看${item.name}的详细介绍">
@@ -906,16 +933,6 @@ function renderCards() {
 }
 
 /* ---------- 详情弹层 ---------- */
-/* 从维基共享资源拿的照片必须在图下面写清作者、许可证和原图页 —— CC BY / BY-SA 的硬要求。
-   条目里给 credit（作者 · 许可证）和 creditFile（Commons 文件名）就显示，没给的不占行。 */
-function creditHTML(item) {
-  if (!item.credit) return "";
-  const link = item.creditFile
-    ? ` · <a href="https://commons.wikimedia.org/wiki/${encodeURIComponent(item.creditFile)}" target="_blank" rel="noopener">原图与许可</a>`
-    : "";
-  return `<p class="fw-m-credit">摄影 ${item.credit}${link}</p>`;
-}
-
 function openDetail(id) {
   const item = findFengwu(id);
   const modal = document.querySelector("#fwModal");
@@ -928,12 +945,14 @@ function openDetail(id) {
   body.innerHTML =
     `<h2>${item.name}</h2>` +
     `<p class="fw-m-town">${item.town} · ${FOOD.indexOf(item) >= 0 ? "侨都之味" : "侨都之景"}</p>` +
-    `<div class="fw-m-media">${src ? `<img src="${src}" alt="${item.name}${b.alt}"${auto}>${b.tag}` : `<span class="fw-ph big">${item.name.slice(0, 1)}</span>`}</div>` +
-    creditHTML(item) +
+    `<div class="fw-m-media${netCls(item)}">${netComment(item)}${src ? `<img src="${src}" alt="${item.name}${b.alt}"${auto}>${b.tag}${netHTML(item)}` : `<span class="fw-ph big">${item.name.slice(0, 1)}</span>`}</div>` +
     `<p class="fw-m-detail">${item.detail}</p>` +
     `<p class="fw-m-tip"><b>怎么去 / 怎么吃</b>${item.tip}</p>` +
     `<button type="button" class="btn fw-checkin${checked ? " on" : ""}" data-checkin="${id}">${checked ? "已打卡 ✓" : "我去过"}</button>`;
   bindSceneryImgs(body);
+  /* 手机上没有鼠标悬停，所以详情里的照片点一下也能翻面（点空白和右上叉仍然是关弹层） */
+  const media = body.querySelector(".fw-m-media.has-net");
+  if (media) media.addEventListener("click", () => media.classList.toggle("net-on"));
   modal.hidden = false;
   document.body.classList.add("modal-open");
   modal.querySelector(".modal-close").focus();
