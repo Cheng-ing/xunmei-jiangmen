@@ -58,8 +58,11 @@ button { font-family: inherit; cursor: pointer; }
 .site-nav a.nav-link.active { background: var(--gold); color: var(--ink); font-weight: 700; }
 
 /* ---------- 4. 页脚 ---------- */
+/* 底下留出 72px 是给 Qoder 那条链接右下角浮动的那枚徽标让位：它 fixed 在 视口底部 14px、高 32px（占掉最下面约 46px），
+   手机上滚到底时"创作者：庄嘉成、陈俊安"这一行正好压在它下面，末尾几个字被盖住看不清。
+   留够这段距离，这行字就永远在徽标上方（GitHub Pages 那条链接没有徽标，多这点空白不影响）。 */
 .site-footer {
-  margin-top: 60px; padding: 26px 5vw 40px;
+  margin-top: 60px; padding: 26px 5vw 72px;
   text-align: center; color: rgba(233, 226, 211, .65); font-size: 13px;
   border-top: 1px solid rgba(201, 168, 106, .25);
 }
@@ -130,7 +133,7 @@ button { font-family: inherit; cursor: pointer; }
   .section-title { letter-spacing: 2px; }
   .section-sub { font-size: 13.5px; letter-spacing: .5px; margin-bottom: 24px; }
   .btn { padding: 10px 20px; font-size: 14px; letter-spacing: 1px; }
-  .site-footer { margin-top: 30px; padding: 20px 16px 30px; font-size: 12px; }
+  .site-footer { margin-top: 30px; padding: 20px 16px 72px; font-size: 12px; }
   .site-footer .foot-nav a { margin: 0 7px; }
   /* 桌面端才用的左右方向性按钮，手机上排不下，改成竖排 */
   .page-links .btn { display: block; margin: 0 auto 10px !important; max-width: 260px; }
