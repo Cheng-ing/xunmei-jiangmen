@@ -106,25 +106,6 @@
   color: rgba(246, 239, 226, .92); background: rgba(9, 14, 21, .62);
   border: 1px solid rgba(246, 239, 226, .22);
 }
-/* 网络公开素材的照片：平时只看得到图，鼠标移到照片上（详情里再点一下）照片翻到背面，
-   露出"图片均为网络公开素材"那一行。作者和许可证不显示，只写在图片前面那段注释里。 */
-.has-net { perspective: 700px; }
-.has-net img, .has-net .fw-net {
-  backface-visibility: hidden; -webkit-backface-visibility: hidden;
-  transition: transform .45s ease;
-}
-.has-net img { transform: rotateY(0deg); }
-.has-net .fw-net {
-  position: absolute; inset: 0; z-index: 3; pointer-events: none;
-  display: flex; align-items: center; justify-content: center; text-align: center;
-  padding: 0 10%; font-size: 12px; line-height: 1.9; letter-spacing: 1.5px;
-  color: rgba(246, 239, 226, .9);
-  background: linear-gradient(180deg, rgba(35, 50, 74, .96), rgba(16, 29, 44, .96));
-  border-left: 1px solid rgba(201, 168, 106, .45);
-  transform: rotateY(-90deg);
-}
-.has-net:hover img, .has-net.net-on img { transform: rotateY(-90deg); }
-.has-net:hover .fw-net, .has-net.net-on .fw-net { transform: rotateY(0deg); }
 /* 打卡角标：只有点过"我去过"的卡片才有 */
 .fw-checked {
   position: absolute; right: 10px; top: 10px; z-index: 2;
@@ -357,8 +338,6 @@
   .fw-checked { font-size: 10px; padding: 2px 7px; right: 8px; top: 8px; }
   /* 窄屏图槽只有 150px 上下，角标跟着缩一点才不压住画面 */
   .fw-ai { font-size: 9.5px; padding: 1px 6px; left: 6px; bottom: 6px; }
-  /* 翻面那行字也跟着缩，11 个字在两列卡片的小图槽里刚好排成两行 */
-  .fw-net { font-size: 10.5px; letter-spacing: .5px; padding: 0 6%; }
 
   .fw-modal { padding: 0; }
   .fw-modal-body {
@@ -392,7 +371,6 @@
 @media (prefers-reduced-motion: reduce) {
   .fw-card, .rt-stop, .q-opt, .fw-town-chip, .fw-tab { transition: none; }
   .reveal { transition: none; }
-  .has-net img, .has-net .fw-net { transition: none; }
 }
 
 /* ---------- 11. 常用调整 ----------

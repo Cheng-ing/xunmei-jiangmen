@@ -854,10 +854,7 @@ function sceneryImgFail(el) {
   el.remove();
   box.insertBefore(ph, box.firstChild);
   box.classList.remove("has-img");
-  /* 照片其实没放上来，连"网络公开素材"那套一起撤：没图就没什么可声明的 */
-  box.classList.remove("has-net", "net-on");
-  const net = box.querySelector(".fw-net");
-  if (net) net.remove();
+  /* 照片其实没放上来：占位块顶上，AI 角标也一起撤 */
   const tag = box.querySelector(".fw-ai");
   if (tag) tag.remove();
 }
@@ -871,27 +868,18 @@ function bindSceneryImgs(root) {
   });
 }
 
-/* ---------- 网络图库照片的翻背面 ---------- */
-/* 条目给了 credit（摄影者 · 许可证）就认定这张是从维基共享资源拿的公开素材，
-   照片做成能翻的卡片：鼠标放上去（手机是点一下）翻到背面，背面只写一句 NET_NOTE，
-   平时正面就是照片本身，跟其它照片长得一样，页面上不摆署名。
-   摄影者与许可证不显示出来，只紧跟在 <img> 前面写成 HTML 注释：查看网页源码能看到，
-   images/scenery/README.md 里也逐条列着（那份清单不上线）。
-   没给 credit 的是本站实拍，不做翻面。
-   ★ 那句话说什么只改下面 NET_NOTE 一处；翻面的样式在 css/fengwu.css 第 3 节 .has-net / .fw-net。 */
-const NET_NOTE = "图片均为网络公开素材";
-
-function netCls(item) { return item.credit ? " has-net" : ""; }
-
+/* ---------- 照片的来源说明：只写在代码里，页面上什么都不显示 ---------- */
+/* 照片来自网络素材。条目给了 credit（摄影者 · 许可证）的那些，取自维基共享资源等自由版权图库。
+   2026-10-20 起原来那套"点击照片翻背面显示『图片均为网络公开素材』"整个撤了 —— 照片直接看，
+   页面上不再有提示、也不再有翻面交互；来源与作者改成紧跟在 <img> 前面的一段 HTML 注释，
+   查看网页源码能看到，逐条清单在 images/scenery/README.md 里（那份清单不上线）。
+   没给 credit 的是本站实拍，同样不发这段注释 —— "照片来自网络素材"这句话对实拍照片是假的。
+   ★ 那句话与格式只改下面 netComment() 一处。 */
 /* 注释里不能出现连续两个减号，文件名里真有就换成一个 */
 function netComment(item) {
   if (!item.credit) return "";
   const f = String(item.creditFile || "").replace(/-{2,}/g, "-");
-  return `<!-- 摄影 ${item.credit}${f ? " · commons.wikimedia.org/wiki/" + f : ""} -->`;
-}
-
-function netHTML(item) {
-  return item.credit ? `<span class="fw-net">${NET_NOTE}</span>` : "";
+  return `<!-- 照片来自网络素材 · 摄影 ${item.credit}${f ? " · commons.wikimedia.org/wiki/" + f : ""} -->`;
 }
 
 /* ---------- 配图来源角标 ---------- */
@@ -912,7 +900,7 @@ function cardHTML(item, kind) {
   const src = imgOf(item);
   const auto = src && !item.img ? ` data-fwimg="${item.id}"` : "";
   const media = src
-    ? `<div class="fw-media has-img${netCls(item)}">${netComment(item)}<img src="${src}" alt="${item.name}${b.alt}" loading="lazy" decoding="async"${auto}><span class="fw-tag">${kind}</span>${b.tag}${netHTML(item)}</div>`
+    ? `<div class="fw-media has-img">${netComment(item)}<img src="${src}" alt="${item.name}${b.alt}" loading="lazy" decoding="async"${auto}><span class="fw-tag">${kind}</span>${b.tag}</div>`
     : `<div class="fw-media"><span class="fw-ph" aria-hidden="true">${item.name.slice(0, 1)}</span><span class="fw-tag">${kind}</span></div>`;
   return `<button type="button" class="fw-card reveal${checked ? " checked" : ""}" data-fwid="${item.id}"
             aria-label="看${item.name}的详细介绍">
@@ -956,14 +944,11 @@ function openDetail(id) {
   body.innerHTML =
     `<h2>${item.name}</h2>` +
     `<p class="fw-m-town">${item.town} · ${FOOD.indexOf(item) >= 0 ? "侨都之味" : "侨都之景"}</p>` +
-    `<div class="fw-m-media${netCls(item)}">${netComment(item)}${src ? `<img src="${src}" alt="${item.name}${b.alt}"${auto}>${b.tag}${netHTML(item)}` : `<span class="fw-ph big">${item.name.slice(0, 1)}</span>`}</div>` +
+    `<div class="fw-m-media">${netComment(item)}${src ? `<img src="${src}" alt="${item.name}${b.alt}"${auto}>${b.tag}` : `<span class="fw-ph big">${item.name.slice(0, 1)}</span>`}</div>` +
     `<p class="fw-m-detail">${item.detail}</p>` +
     `<p class="fw-m-tip"><b>怎么去 / 怎么吃</b>${item.tip}</p>` +
     `<button type="button" class="btn fw-checkin${checked ? " on" : ""}" data-checkin="${id}">${checked ? "已打卡 ✓" : "我去过"}</button>`;
   bindSceneryImgs(body);
-  /* 手机上没有鼠标悬停，所以详情里的照片点一下也能翻面（点空白和右上叉仍然是关弹层） */
-  const media = body.querySelector(".fw-m-media.has-net");
-  if (media) media.addEventListener("click", () => media.classList.toggle("net-on"));
   modal.hidden = false;
   document.body.classList.add("modal-open");
   modal.querySelector(".modal-close").focus();
