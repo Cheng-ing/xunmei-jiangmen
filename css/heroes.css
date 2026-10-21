@@ -118,20 +118,6 @@
   text-shadow: 0 1px 2px rgba(0,0,0,.8);
 }
 
-.hero-wall-note {
-  max-width: 760px; margin: 34px auto 0;
-  padding: 14px 18px;
-  font-size: 12.5px; line-height: 1.8; letter-spacing: .5px;
-  color: rgba(233,226,211,.55);
-  border-left: 2px solid rgba(201,168,106,.5);
-  background: rgba(246,239,226,.04);
-}
-.hero-wall-note code {
-  font-family: ui-monospace, Consolas, monospace;
-  color: var(--gold); background: rgba(201,168,106,.12);
-  padding: 1px 5px; border-radius: 3px;
-}
-
 /* ---------- 4. 点击后弹出的介绍浮层 ---------- */
 .hero-modal {
   position: fixed; inset: 0; z-index: 80;
@@ -207,7 +193,6 @@ body.modal-open { overflow: hidden; }   /* 弹出时锁住页面滚动 */
   .hero-card .idx { top: 14px; right: 12px; font-size: 10px; }
   .photo-ph b { font-size: 17px; letter-spacing: 3px; }
   .photo-ph span { font-size: 10px; letter-spacing: 2px; }
-  .hero-wall-note { margin-top: 20px; font-size: 11.5px; padding: 10px 12px; }
 
   .hero-modal { padding: 0; }
   .modal-body,

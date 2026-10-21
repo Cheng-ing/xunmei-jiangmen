@@ -1,8 +1,8 @@
-/* ============================================================
-   carousel.css —— 轮播图组件（江门页使用，5 张）
-   图片路径在 jiangmen.html 的 .slide img 里改；
-   每张幻灯片自带渐变兜底背景，没放图时也有画面。
-   ============================================================ */
+/* ============================================
+   carousel.css —— 轮播图组件（五个页面各一组，每组 5 张）
+   图片路径在各页面 .carousel 里的 .slide img 改；
+   每张幻灯片自带渐变兜底背景，图还没加载完时也有画面。
+   ============================================ */
 
 .carousel {
   position: relative; max-width: 1080px; margin: 0 auto;
@@ -24,13 +24,6 @@
 .slide.ph2 { background: linear-gradient(135deg, #38503f, #8fae72); }
 .slide.ph3 { background: linear-gradient(135deg, #4a3b6e, #9a86c4); }
 .slide.ph4 { background: linear-gradient(135deg, #6e2b3a, #c96a72); }
-/* 兜底画面中央的大字装饰 */
-.slide .ph-word {
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-title); font-size: clamp(48px, 9vw, 110px);
-  color: rgba(246, 239, 226, .22); letter-spacing: 14px;
-}
-
 /* 底部渐变遮罩 + 字幕 */
 .slide .caption {
   position: absolute; left: 0; right: 0; bottom: 0; padding: 44px 30px 22px;
@@ -79,7 +72,6 @@
   .slide .caption { padding: 26px 16px 32px; }
   .slide .caption b { font-size: 17px; letter-spacing: 2px; margin-bottom: 2px; }
   .slide .caption span { font-size: 12.5px; }
-  .slide .ph-word { font-size: clamp(40px, 13vw, 64px); letter-spacing: 8px; }
   .carousel .arrow { width: 34px; height: 34px; font-size: 17px; }
   .carousel .arrow.prev { left: 8px; }
   .carousel .arrow.next { right: 8px; }

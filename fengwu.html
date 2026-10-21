@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<!-- ============================================================
+<!-- ===============================================================================
      fengwu.html —— 侨都风物：美食美景图鉴 + 侨都知多少小测 + 路线推荐 + 分享长图
-     ★ 这一页正片的文字（条目、题目、选项、路线站点）都在 js/fengwu.js 顶部四个数组里改 ★
-     ★ 正片外观在 css/fengwu.css（卡片每行几张、颜色、移动端那一套）★
-     本页全部交互都不需要后端：打卡记录只存在访问者自己的浏览器里。
-     ============================================================ -->
+     * 这一页正片的文字（条目、题目、选项、路线站点）都在 js/fengwu.js 顶部四个数组里改
+     * 正片外观在 css/fengwu.css（卡片每行几张、颜色、移动端那一套）
+     * 本页全部交互都不需要后端：打卡记录只存在访问者自己的浏览器里。
+     =============================================================================== -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -55,6 +55,7 @@
       <span class="fw-count" id="fwCount"></span>
     </div>
     <div class="fw-toolbar" style="margin-bottom:20px;">
+
       <!-- 区县按钮由 js/fengwu.js 的 FENGWU_TOWNS 决定顺序，这里手写一份是为了没有 JS 也能看见结构 -->
       <div class="fw-towns">
         <button type="button" class="fw-town-chip on" data-town="全部">全部</button>
@@ -133,7 +134,7 @@
 
     <div class="pf-form">
       <select id="posterPick" aria-label="选择地点"></select>
-      <input id="posterWish" type="text" maxlength="24" placeholder="写一句你的心愿（24 字内）" aria-label="心愿">
+      <input id="posterWish" type="text" maxlength="24" placeholder="写一句你的心愿(24 字内)" aria-label="心愿">
       <button type="button" class="btn" id="posterGo">生成长图</button>
     </div>
 
@@ -165,7 +166,7 @@
       <a href="index.html">首页</a><a href="jiangmen.html">寻美江门</a><a href="qiaobao.html">优秀侨胞</a><a href="feiyi.html">非遗传承人</a><a href="gongjiang.html">能工巧匠</a><a href="mofan.html">模范人物</a>
     </div>
     "寻美江门"2026 AIGC 创作大赛 · 侨都风物
-    <nav> 创作者：庄嘉成、陈俊安</nav>
+    <nav> 创作者：陈俊安、庄嘉成</nav>
   </footer>
 
   <script src="js/common.js"></script>
