@@ -820,47 +820,62 @@ function saveCheckin(id, on) {
   return list;
 }
 
-/* ---------- 美景照片自动找 ---------- */
+/* ---------- 照片：卡片用缩略图，详情弹层用原图 ---------- */
 /* 美景的 img 全留空，照片文件名对上就自动显示：先试条目 id，再试卡片上那个中文名。
-   一张都没放也不会出破图 —— 加载失败时先换另一种命名重试，两种都没有就退回描金占位块。 */
+   一张都没放也不会出破图 —— 加载失败时先换另一种命名重试，再退到原图，最后退回描金占位块。
+   ★ 缩略图由 tools/make-thumbs.py 生成（512×384 的 4:3），放在 <图片目录>/thumb/ 下。
+     卡片那格只有 146~217 CSS px 宽，直接塞原图（一张 160~200 KB）慢到看不出照片。 */
 const SCENERY_DIR = "images/scenery/";
 const SCENERY_IDS = new Set(SCENERY.map((x) => x.id));
 
-function sceneryImgs(item) {
-  return [SCENERY_DIR + item.id + ".jpg", SCENERY_DIR + item.name + ".jpg"];
+/* 原图路径 → 同名缩略图路径：images/fengwu/x.jpg → images/fengwu/thumb/x.jpg */
+function thumbPath(src) {
+  return src.replace(/^(.*\/)([^/]+)$/, "$1thumb/$2");
 }
 
-/* 渲染用的一张图的路径：数据里填了就用填的；美景那种留空的用自动找的第一个；美食留空就还是没图 */
-function imgOf(item) {
-  if (item.img) return item.img;
-  return SCENERY_IDS.has(item.id) ? sceneryImgs(item)[0] : "";
+/* 一张图按顺序能试的路径：先缩略图（卡片用），再原图（详情用）。
+   缩略图没生成就自动用原图；原图也没有就退回描金占位块。 */
+function imgCandidates(item, kind) {
+  const out = [];
+  const add = (u) => { if (u && out.indexOf(u) < 0) out.push(u); };
+  if (item.img) {
+    if (kind === "thumb") add(thumbPath(item.img));
+    add(item.img);
+  } else if (SCENERY_IDS.has(item.id)) {
+    if (kind === "thumb") {
+      add(SCENERY_DIR + "thumb/" + item.id + ".jpg");
+      add(SCENERY_DIR + "thumb/" + item.name + ".jpg");
+    }
+    add(SCENERY_DIR + item.id + ".jpg");
+    add(SCENERY_DIR + item.name + ".jpg");
+  }
+  return out;
+}
+
+/* 渲染用的一张图：数据里填了就用填的；美景那种留空的用自动找的第一个 */
+function imgOf(item, kind) {
+  return imgCandidates(item, kind)[0] || "";
 }
 
 function sceneryImgFail(el) {
   const item = findFengwu(el.dataset.fwimg);
   if (!item) return;
-  const list = sceneryImgs(item);
+  const list = imgCandidates(item, el.dataset.fwkind || "full");
   const next = (+el.dataset.retry || 0) + 1;
   if (next < list.length) {
     el.dataset.retry = next;
     el.src = list[next];
     return;
   }
+  /* 全都没有：撤掉 <img>，底下垫着的描金占位块就露出来，AI 角标也一起撤 */
   const box = el.parentNode;
-  const ph = document.createElement("span");
-  ph.className = box.classList.contains("fw-m-media") ? "fw-ph big" : "fw-ph";
-  ph.setAttribute("aria-hidden", "true");
-  ph.textContent = item.name.slice(0, 1);
   el.remove();
-  box.insertBefore(ph, box.firstChild);
   box.classList.remove("has-img");
-  /* 照片其实没放上来：占位块顶上，AI 角标也一起撤 */
   const tag = box.querySelector(".fw-ai");
   if (tag) tag.remove();
 }
 
-/* 卡片和详情里的 <img> 生成之后要绑一次失败回调（error 事件不往上冒，用不了事件委托）。
-   data-fwimg 只加在自动找的那批图上，美食那种写死路径的图不参与。 */
+/* 卡片和详情里的 <img> 生成之后要绑一次失败回调（error 事件不往上冒，用不了事件委托）。 */
 function bindSceneryImgs(root) {
   root.querySelectorAll("img[data-fwimg]").forEach((el) => {
     el.addEventListener("error", () => sceneryImgFail(el));
@@ -895,13 +910,15 @@ function imgBadge(item) {
 /* ---------- 一张卡（图 + 名字 + 区县 + 一句话） ---------- */
 function cardHTML(item, kind) {
   const checked = loadCheckins().indexOf(item.id) >= 0;
-  /* 没图的条目不生成 <img>，直接留占位块；美景那种"照片还没放"的会先出图再被 bindSceneryImgs 退回占位块 */
   const b = imgBadge(item);
-  const src = imgOf(item);
-  const auto = src && !item.img ? ` data-fwimg="${item.id}"` : "";
+  /* 卡片用缩略图；缩略图没生成就自动退回原图 */
+  const src = imgOf(item, "thumb");
+  const auto = src ? ` data-fwimg="${item.id}" data-fwkind="thumb"` : "";
+  /* 照片还没到之前先垫着描金占位块，照片铺上来就把它盖住 —— 慢网下不会只剩一片黑 */
+  const ph = `<span class="fw-ph" aria-hidden="true">${item.name.slice(0, 1)}</span>`;
   const media = src
-    ? `<div class="fw-media has-img">${netComment(item)}<img src="${src}" alt="${item.name}${b.alt}" loading="lazy" decoding="async"${auto}><span class="fw-tag">${kind}</span>${b.tag}</div>`
-    : `<div class="fw-media"><span class="fw-ph" aria-hidden="true">${item.name.slice(0, 1)}</span><span class="fw-tag">${kind}</span></div>`;
+    ? `<div class="fw-media has-img">${netComment(item)}${ph}<img src="${src}" alt="${item.name}${b.alt}" loading="lazy" decoding="async"${auto}><span class="fw-tag">${kind}</span>${b.tag}</div>`
+    : `<div class="fw-media">${ph}<span class="fw-tag">${kind}</span></div>`;
   return `<button type="button" class="fw-card reveal${checked ? " checked" : ""}" data-fwid="${item.id}"
             aria-label="看${item.name}的详细介绍">
             ${media}
@@ -938,13 +955,15 @@ function openDetail(id) {
   if (!item || !modal) return;
   const checked = loadCheckins().indexOf(id) >= 0;
   const b = imgBadge(item);
-  const src = imgOf(item);
-  const auto = src && !item.img ? ` data-fwimg="${item.id}"` : "";
+  /* 详情这一格大，用原图；512 像素的缩略图铺不满 */
+  const src = imgOf(item, "full");
+  const auto = src ? ` data-fwimg="${item.id}" data-fwkind="full"` : "";
+  const ph = `<span class="fw-ph big" aria-hidden="true">${item.name.slice(0, 1)}</span>`;
   const body = modal.querySelector(".fw-modal-body");
   body.innerHTML =
     `<h2>${item.name}</h2>` +
     `<p class="fw-m-town">${item.town} · ${FOOD.indexOf(item) >= 0 ? "侨都之味" : "侨都之景"}</p>` +
-    `<div class="fw-m-media">${netComment(item)}${src ? `<img src="${src}" alt="${item.name}${b.alt}"${auto}>${b.tag}` : `<span class="fw-ph big">${item.name.slice(0, 1)}</span>`}</div>` +
+    `<div class="fw-m-media">${netComment(item)}${ph}${src ? `<img src="${src}" alt="${item.name}${b.alt}"${auto}>${b.tag}` : ""}</div>` +
     `<p class="fw-m-detail">${item.detail}</p>` +
     `<p class="fw-m-tip"><b>怎么去 / 怎么吃</b>${item.tip}</p>` +
     `<button type="button" class="btn fw-checkin${checked ? " on" : ""}" data-checkin="${id}">${checked ? "已打卡 ✓" : "我去过"}</button>`;
@@ -1473,6 +1492,20 @@ if (kwInput) {
 /* 选地点 → 长图区跟着预选好，但要点"生成"才画 */
 const pickSel = document.querySelector("#posterPick");
 if (pickSel) pickSel.addEventListener("change", () => { if (!document.querySelector("#posterOut").hidden) drawPoster(); });
+
+/* 美景照片预热：页面闲下来之后先把头几张缩略图拉下来，不抢美食首屏的带宽。
+   缩略图 URL 和卡片里写的完全一样，拉过一次卡片就直接命中缓存。 */
+function warmSceneryImgs() {
+  SCENERY.slice(0, 4).forEach((it) => {
+    const l = document.createElement("link");
+    l.rel = "preload";
+    l.as = "image";
+    l.href = SCENERY_DIR + "thumb/" + it.id + ".jpg";
+    document.head.appendChild(l);
+  });
+}
+if ("requestIdleCallback" in window) requestIdleCallback(warmSceneryImgs, { timeout: 2500 });
+else setTimeout(warmSceneryImgs, 1200);
 
 /* ---------- 启动 ---------- */
 fillPosterSelect();
