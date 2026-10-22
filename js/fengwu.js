@@ -1,6 +1,6 @@
 /* ============================================================
    fengwu.js —— 「侨都风物」页的全部数据与交互
-   ┌─ 1. FOOD / SCENERY：美食与美景图鉴的数据（★ 想加条目、改文案只动这两个数组 ★）
+   ┌─ 1. FOOD / SCENERY：美食与美景图鉴的数据（★ 加条目、改文案、改照片路径都只动这两个数组 ★）
    ├─ 2. QUIZ：侨都知多少小测的题目与答案
    ├─ 3. ROUTES / ROUTE_RULES：路线推荐器（编者写的几天 × 偏好，加上自动规划的分组规则）
    ├─ 4. 渲染：筛选、卡片、详情弹层、"我去过"打卡（存浏览器本地，不需要后端）
@@ -20,16 +20,16 @@
      line   —— 卡片上的一句话（20 字上下最好）
      detail —— 弹层里的详情，两三句
      tip    —— 实用提示（怎么去、什么时候去、怎么点）
-     img    —— 配图路径，两种写法：
+     img    —— ★ 照片路径就写在这一条里，每条都写死，页面不按文件名猜 ★
                美食：填 "images/fengwu/<条目id>.jpg"。那批是 AIGC 水彩插画，图上会自动压「AI 生成示意图」角标。
-               美景：一律留空 ""，页面自己去 images/scenery/ 找同名照片 —— 先拿条目 id 当文件名试，
-                     再拿卡片上那个中文名试。所以照片丢进那个文件夹就会显示，不用回来改这里；
-                     还没放照片的条目仍是描金占位块，不会出破图图标。
-                     47 条该叫什么名，写在 images/scenery/README.md 里。
+               美景：填 "images/scenery/<条目id>.jpg"。那批是真实照片，
+                     46 条各叫什么名、放了没，清单在 images/scenery/README.md（那份清单不上线）。
+               换照片两条路：① 改这一条的 img 路径；② 按原文件名同名覆盖目录里的文件（代码不用动）。
+               路径写错或文件不在，这一格就退回描金占位块，不会出破图图标。
+               加图或换图之后跑一次 python tools/make-thumbs.py 生成缩略图，再 python tools/sync-deploy.py 同步发布。
                两边都建议 4:3 横构图，宽 800–1200、单张 200KB 以内。
-     realImg —— 可选。这条的配图是真实照片时写 realImg: true，角标和 alt 里的字样会自动去掉；
-               不写就默认按 AIGC 示意图标注。美景那种 img 留空、从 images/scenery/ 自动找到的照片
-               本来就当真照片处理，不用另外写这个字段。
+     realImg —— 这条的配图是真实照片就写 realImg: true，角标和 alt 里的「AI 生成示意图」字样自动去掉；
+               不写就按 AIGC 示意图标注。现状：美景 46 条全写了（真实照片），美食 28 条全没写（AI 插画）。
    ⚠ 文案口径：这一节是"稳妥概述"，凡是年份、称号、数量、片名这类硬事实，
       旁边都用「待核实」标了出来。评奖前请逐条对官方资料（江门市政府网、
       各区政府网、世界遗产名录等），核实完把注释里的"待核实"去掉。
@@ -244,9 +244,16 @@ const FOOD = [
   }
 ];
 
+/* ============================================================
+   美景 46 条。★ 每条的照片路径就写在这一条的 img 字段里 ★
+   img: "images/scenery/<条目id>.jpg" —— 文件都在 images/scenery/ 下、文件名 = 条目 id；
+   realImg: true —— 这批是真实照片，所以不压「AI 生成示意图」角标（美食那 28 条不写这个字段）。
+   换照片：改这一条的 img，或同名覆盖 images/scenery/ 里的文件；
+   改完跑 python tools/make-thumbs.py（缩略图）→ python tools/sync-deploy.py（同步）→ 发布两条链接。
+   ============================================================ */
 const SCENERY = [
   {
-    id: "pjiang-baisha", name: "白沙公园—陈白沙纪念馆", town: "蓬江", img: "",
+    id: "pjiang-baisha", name: "白沙公园—陈白沙纪念馆", town: "蓬江", img: "images/scenery/pjiang-baisha.jpg", realImg: true,
     line: "为明代学者陈献章留的一座园子，嘉会楼和古榕还在。",
     detail: "陈白沙纪念馆一带以明代学者陈献章（白沙先生）为主题，含白沙祠等建筑，旁边的白沙公园里有嘉会楼与老榕树。"
           + "这一片是江门城区少见的“能坐着看书”的绿地：院子不大，古建树多，讲解牌把白沙先生的生平、茅龙笔书法一路串起来。",
@@ -254,7 +261,7 @@ const SCENERY = [
     // 待核实：纪念馆与公园的开放与闭馆时间、是否免费预约、钓台故址的现存格局
   },
   {
-    id: "pjiang-changdi", name: "长堤—启明里", town: "蓬江", img: "",
+    id: "pjiang-changdi", name: "长堤—启明里", town: "蓬江", img: "images/scenery/pjiang-changdi.jpg", realImg: true,
     line: "骑楼老街加百年侨村，晚上最有生活气。",
     detail: "长堤风貌街沿西江铺开，骑楼、老商号和小吃摊在同一条街上；"
           + "附近的启明里是蓬江的老侨村，青砖民居、窄巷和侨批主题的展陈如今是散步与拍照的地方。",
@@ -262,7 +269,7 @@ const SCENERY = [
     // 待核实：启明里内各馆的正式名称与开放时间
   },
   {
-    id: "pjiang-chaolian", name: "潮连公园—洪圣公园", town: "蓬江", img: "",
+    id: "pjiang-chaolian", name: "潮连公园—洪圣公园", town: "蓬江", img: "images/scenery/pjiang-chaolian.jpg", realImg: true,
     line: "西江边上的岛，两个公园一个靠山一个临水。",
     detail: "潮连是西江中的一座岛，属蓬江区。潮连公园有登山路径和观景台，洪圣公园由原天后庙一带扩建而来，临江视野开阔。"
           + "岛上节奏比城区慢，老村、祠堂和江堤连成一片；傍晚在江边看货船来往是这里最日常的一道景。",
@@ -270,7 +277,7 @@ const SCENERY = [
     // 待核实：洪圣公园与天后庙的沿革关系、潮连岛上其他古迹的准确名称
   },
   {
-    id: "pjiang-chishi", name: "叱石风景区", town: "蓬江", img: "",
+    id: "pjiang-chishi", name: "叱石风景区", town: "蓬江", img: "images/scenery/pjiang-chishi.jpg", realImg: true,
     line: "杜阮一带的石山，被列为“岭南百景”，可以坐缆车上山。",
     detail: "叱石在蓬江区杜阮镇，山上有奇石、摩崖题刻和寺观建筑，松林成片，旧时列入“岭南百景”，也进过“新会八景”（作“叱石松涛”）。"
           + "景区设有观光缆车直达山顶，步行上下山则要看体力；天气好时山顶能望到远处的丘陵和水田。",
@@ -278,7 +285,7 @@ const SCENERY = [
     // 待核实：“岭南百景”的说法出处、摩崖题刻与山上寺观的名称与年代、缆车是否仍在运营
   },
   {
-    id: "pjiang-donghu", name: "东湖公园", town: "蓬江", img: "",
+    id: "pjiang-donghu", name: "东湖公园", town: "蓬江", img: "images/scenery/pjiang-donghu.jpg", realImg: true,
     line: "市中心的一片活水湖面，园里桥比楼多，傍晚全是散步的人。",
     detail: "东湖公园在江门老城中心，是一座以湖体和绿化为主的老牌公园，园内有若干座桥把水面分成几段。"
           + "对游客来说它更像一个落脚点：看完骑楼街走这里歇脚、绕湖一圈，晚上灯光起来之后是本地人一天里最松的时候。",
@@ -286,7 +293,7 @@ const SCENERY = [
     // 待核实：建园年份、园内各桥与景点的正式名称（正文一律不写数字）
   },
   {
-    id: "pjiang-ganzhichang", name: "江门甘蔗化工厂旧址", town: "蓬江", img: "",
+    id: "pjiang-ganzhichang", name: "江门甘蔗化工厂旧址", town: "蓬江", img: "images/scenery/pjiang-ganzhichang.jpg", realImg: true,
     line: "曾经号称“亚洲第一糖厂”，如今是留下来的工业遗产。",
     detail: "江门甘蔗化工厂是江门近代工业的代表，曾被称为“亚洲第一糖厂”，现列入国家工业遗产名录。"
           + "厂区遗存以工业建筑与构筑物为主，和骑楼街、博物馆一起构成江门另一种“老”：不是侨乡的老，是工厂的老。",
@@ -295,7 +302,7 @@ const SCENERY = [
     // 待核实：建厂年份、“亚洲第一糖厂”的说法出处、列入国家工业遗产的批次与目前开放情况
   },
   {
-    id: "pjiang-liangxi", name: "良溪古村", town: "蓬江", img: "",
+    id: "pjiang-liangxi", name: "良溪古村", town: "蓬江", img: "images/scenery/pjiang-liangxi.jpg", realImg: true,
     line: "被称为“后珠玑巷”的老村，族谱和祠堂比房子更完整。",
     detail: "良溪古村在蓬江区棠下镇，村中罗氏大宗祠纪念先祖罗贵，砖木结构带岭南做法。"
           + "珠三角不少族谱把南迁路线接到珠玑巷，良溪一带的说法被称为“后珠玑巷”，村里保存了多处古迹与传统习俗。",
@@ -303,7 +310,7 @@ const SCENERY = [
     // 待核实：“后珠玑巷”这一说法的来源与提法者、罗贵其人与南迁叙事的史料依据、村中文保级别
   },
   {
-    id: "pjiang-qunxing", name: "群星公园", town: "蓬江", img: "",
+    id: "pjiang-qunxing", name: "群星公园", town: "蓬江", img: "images/scenery/pjiang-qunxing.jpg", realImg: true,
     line: "前身是一座水库，现在是中心城区三大“绿肺”之一。",
     detail: "群星公园在蓬江区，由原水库及周边山林改造而来，水面被山体环住，步道绕湖一圈。"
           + "市区里能听到虫鸣的地方不多，这里是常被本地人提起的一个；周末人多，工作日清晨最安静。",
@@ -311,7 +318,7 @@ const SCENERY = [
     // 待核实：“中心城区三大绿肺”这一说法的出处、公园正式面积与环湖步道长度
   },
   {
-    id: "pjiang-ximao", name: "席帽山森林公园", town: "蓬江", img: "",
+    id: "pjiang-ximao", name: "席帽山森林公园", town: "蓬江", img: "images/scenery/pjiang-ximao.jpg", realImg: true,
     line: "城里的一座低山，免费开放，山顶是天然观景台。",
     detail: "席帽山森林公园在蓬江区，山不高、步道成熟，是本地人日常爬山遛弯的地方，山顶能望见城区与西江方向。"
           + "这类“城市山林”没有景区化的设施，好处是随时能去、不用门票；日出日落两个时段人最少。",
@@ -319,7 +326,7 @@ const SCENERY = [
     // 待核实：所属区县与正式名称、山顶观景方向的具体描述
   },
   {
-    id: "pjiang-xingguang", name: "星光公园", town: "蓬江", img: "",
+    id: "pjiang-xingguang", name: "星光公园", town: "蓬江", img: "images/scenery/pjiang-xingguang.jpg", realImg: true,
     line: "把五邑籍的演艺名人做成一条可走的名人道。",
     detail: "星光公园以五邑籍演艺、文化界人物为展示主题，是侨乡“名人多”这件事的另一种讲法，和博物馆里的华侨史互为补充。"
           + "园内以雕像、铭牌和绿化为主，适合带小孩边走边认人；对不熟粤语娱乐圈的人来说更像一次散步。",
@@ -327,7 +334,7 @@ const SCENERY = [
     // 待核实：园内展示哪些人物、落成时间与是否收费
   },
   {
-    id: "pjiang-xuding", name: "墟顶老街", town: "蓬江", img: "",
+    id: "pjiang-xuding", name: "墟顶老街", town: "蓬江", img: "images/scenery/pjiang-xuding.jpg", realImg: true,
     line: "江门最早的那截街市，地名还留着“墟”字。",
     detail: "墟顶一带被视为江门的发源地，旧时街市格局在地名上留了痕迹，和长堤风貌街连成一片。"
           + "这里没有修复一新的门面，多为还在使用的老铺面与窄巷，适合顺着走一段，看地名怎么活下来。",
@@ -335,7 +342,7 @@ const SCENERY = [
     // 待核实：“江门发源地”的提法出处、老街现存建筑年代与保护范围
   },
   {
-    id: "pjiang-yuanshanhu", name: "园山湖公园", town: "蓬江", img: "",
+    id: "pjiang-yuanshanhu", name: "园山湖公园", town: "蓬江", img: "images/scenery/pjiang-yuanshanhu.jpg", realImg: true,
     line: "滨江新区的新湖，晚上有音乐喷泉。",
     detail: "园山湖公园在江门滨江新区，是以水面和绿地为主的新建城市公园，配有音乐喷泉等设施。"
           + "这一片是江门往西江方向扩展的新城区，楼新、路宽，和老城骑楼街是两副面孔；带小孩的家庭常来这里。",
@@ -343,7 +350,7 @@ const SCENERY = [
     // 待核实：喷泉场次与开放时间、公园正式名称与所在片区边界
   },
   {
-    id: "jh-baishuidai", name: "江海白水带", town: "江海", img: "",
+    id: "jh-baishuidai", name: "江海白水带", town: "江海", img: "images/scenery/jh-baishuidai.jpg", realImg: true,
     line: "城市东面的山林步道，夏天比城里凉，能望见江门城区。",
     detail: "白水带是江海区的一片城市山林，步道串起树林、溪流与观景处，"
           + "是本地人傍晚跑步、周末带小孩爬山常去的地方。",
@@ -352,7 +359,7 @@ const SCENERY = [
     // 待核实：园内具体景点名（塔、瀑布等）先不写，查到再补进 detail
   },
   {
-    id: "jh-changlang", name: "江海长廊生态园", town: "江海", img: "",
+    id: "jh-changlang", name: "江海长廊生态园", town: "江海", img: "images/scenery/jh-changlang.jpg", realImg: true,
     line: "城里的一片农田乐园，看得到作物也摸得到动物。",
     detail: "长廊生态园在江海区，是集生态观光、农耕体验、动物互动与研学营地为一体的都市农业园区，列为 A 级旅游景区。"
           + "适合带小孩待半天：田块、温室和互动区都在一处，不用长途奔波；对只想看风景的人来说这里偏游乐。",
@@ -360,7 +367,7 @@ const SCENERY = [
     // 待核实：园区面积、门票与开放区域、评级批次
   },
   {
-    id: "jh-yundao", name: "江海云道", town: "江海", img: "",
+    id: "jh-yundao", name: "江海云道", town: "江海", img: "images/scenery/jh-yundao.jpg", realImg: true,
     line: "架在半空的一条步道，把四座公园串起来。",
     detail: "江海云道起于釜山天桥一带，是一段架高的步行道，把儿童公园、釜山公园、体育公园、白水带公园连成一线。"
           + "道上设有登山塔等节点，走起来比地面步道多一层视野，是市区里少见的“从树冠高度看公园”的体验。",
@@ -368,7 +375,7 @@ const SCENERY = [
     // 待核实：云道准确长度、出入口数量与位置、是否全程无障碍
   },
   {
-    id: "xinhui-gudou", name: "古兜山海温泉", town: "新会", img: "",
+    id: "xinhui-gudou", name: "古兜山海温泉", town: "新会", img: "images/scenery/xinhui-gudou.jpg", realImg: true,
     line: "崖门山海之间的一片度假区，泡汤和看海能同一天。",
     detail: "古兜一带背山面海，温泉度假设施建在山坳与海岸之间，"
           + "本地常把它安排成两天一夜：第一天海边和古镇，第二天上山泡汤。",
@@ -377,7 +384,7 @@ const SCENERY = [
     // 待核实："一地两泉"之类的宣传说法不要照抄，只写能证实的地理特征
   },
   {
-    id: "xinhui-guifeng", name: "新会圭峰山", town: "新会", img: "",
+    id: "xinhui-guifeng", name: "新会圭峰山", town: "新会", img: "images/scenery/xinhui-guifeng.jpg", realImg: true,
     line: "城里就能上山，山腰有寺，山上看得见新会城区。",
     detail: "圭峰山是新会城北的一片山体绿地，林荫步道、山顶观景处和山腰的寺庙组成当地人周末爬山、扫墓、野餐的地方。"
           + "秋天山下是柑田，路上能闻到陈皮季的果香。",
@@ -385,7 +392,7 @@ const SCENERY = [
     // 待核实：景区级别说法（"国家森林公园"/"省级风景名胜区"分别核实），寺名（一般称玉台寺）
   },
   {
-    id: "xinhui-jingmei", name: "京梅功夫侨村", town: "新会", img: "",
+    id: "xinhui-jingmei", name: "京梅功夫侨村", town: "新会", img: "images/scenery/xinhui-jingmei.jpg", realImg: true,
     line: "一个把咏春的说法写进自己村史的古村。",
     detail: "京梅村在新会崖门镇一带，以“功夫侨村”为旅游主题，列为 A 级旅游景区，村内保留祠堂、古井、旧巷与武术相关的展陈。"
           + "这里的看点是村落本身而不是表演：巷道、祠堂和墙上关于咏春的说法，构成侨乡“武术随人出海”的一条证据链。",
@@ -393,7 +400,7 @@ const SCENERY = [
     // 待核实：京梅与咏春源流的关系说法（各地表述不一）、村内文保点名称、评级年份
   },
   {
-    id: "xinhui-kuibo", name: "葵博园与葵湖", town: "新会", img: "",
+    id: "xinhui-kuibo", name: "葵博园与葵湖", town: "新会", img: "images/scenery/xinhui-kuibo.jpg", realImg: true,
     line: "新会种葵、做葵扇的老行当，被收进了一座园子。",
     detail: "新会历史上以蒲葵与葵扇为大宗手工业，“葵湖春晓”旧时列进新会八景。圭峰山一带设有葵博园，展示葵树、葵扇工艺与相关科普。"
           + "看点和“寻美江门”非遗那条线是同一件事：从一棵葵树到一把扇子，中间是几道工序和一整个行当。",
@@ -401,7 +408,7 @@ const SCENERY = [
     // 待核实：葵博园的正式名称、位置与开放情况、“葵湖春晓”所指的具体水面
   },
   {
-    id: "xinhui-shibansha", name: "石板沙疍家风情岛", town: "新会", img: "",
+    id: "xinhui-shibansha", name: "石板沙疍家风情岛", town: "新会", img: "images/scenery/xinhui-shibansha.jpg", realImg: true,
     line: "西江中的一座沙洲岛，水上人家的吃法还留着。",
     detail: "石板沙属新会，是一座江心岛，以疍家（水上人家）风情为旅游主题，列为 A 级旅游景区。"
           + "岛上以河鲜、渔家生活与江岸风光为主，节奏很慢；把它当作“坐船上岛吃一顿”的短途更合适。",
@@ -409,7 +416,7 @@ const SCENERY = [
     // 待核实：所属镇、上岛码头与班次、是否收门票与岛上项目收费
   },
   {
-    id: "xinhui-xiaoniaotiantang", name: "小鸟天堂", town: "新会", img: "",
+    id: "xinhui-xiaoniaotiantang", name: "小鸟天堂", town: "新会", img: "images/scenery/xinhui-xiaoniaotiantang.jpg", realImg: true,
     line: "一棵水榕长成一片“林”，巴金把它写进了课文。",
     detail: "天马村河心的一棵水榕独木成林，枝桠伸到水面上，晨昏时白鹭等水鸟归巢绕树飞。"
           + "巴金 1933 年的游记《鸟的天堂》让这里被全国读者记住。",
@@ -418,7 +425,7 @@ const SCENERY = [
     // 待核实：游记发表年份与"写入语文课本"的准确表述
   },
   {
-    id: "xinhui-yamen", name: "崖门与宋元崖门海战遗址", town: "新会", img: "",
+    id: "xinhui-yamen", name: "崖门与宋元崖门海战遗址", town: "新会", img: "images/scenery/xinhui-yamen.jpg", realImg: true,
     line: "珠江水系的一条出海口，最后一次大规模水战发生在这里。",
     detail: "崖门位于新会南部，是潭江等水系汇入崖门海道的海口一带，宋末元军在此与宋室水军决战，是“崖门览胜”所指的景观。"
           + "现在这一带有与水战相关的纪念性建筑和渔港景观，渔港停船密集，傍晚海面光线最好。",
@@ -426,7 +433,7 @@ const SCENERY = [
     // 待核实：海战的具体年份与地点范围、现存纪念建筑的名称与建成年代、是否收费
   },
   {
-    id: "xinhui-yinhuwan", name: "银湖湾湿地", town: "新会", img: "",
+    id: "xinhui-yinhuwan", name: "银湖湾湿地", town: "新会", img: "images/scenery/xinhui-yinhuwan.jpg", realImg: true,
     line: "围垦与潮滩留下的水网，冬天全是鸟。",
     detail: "银湖湾在新会南部沿海，有大片潮滩、鱼塘与红树林复绿地带，是水鸟停歇与觅食的场所，观鸟季以冬季为主。"
           + "这里属于“看之前要先懂一点”的景观：滩涂、水道与鸟群变化多，但没有景区化的观景设施。",
@@ -435,7 +442,7 @@ const SCENERY = [
     // 待核实：银湖湾湿地的正式名称与保护级别、是否有对公众开放的观鸟点与红树林面积
   },
   {
-    id: "xinhui-yutai", name: "圭峰山玉台寺", town: "新会", img: "",
+    id: "xinhui-yutai", name: "圭峰山玉台寺", town: "新会", img: "images/scenery/xinhui-yutai.jpg", realImg: true,
     line: "岭南四大名刹之一，藏在圭峰山半山腰。",
     detail: "玉台寺在新会区北郊圭峰山南半山腰，相传始建于唐代，由僧一行（张遂）开山，历来被誉为岭南四大丛林古刹之一（另三座为韶关南华寺、潮州开元寺、肇庆鼎湖山庆云寺），是五邑一带最大的佛教圣地。"
           + "寺院顺山势而建，规模不算大，胜在林木与山径；旧时殿宇曾在 1939 年前后遭毁，现建筑多为后来修复重建。",
@@ -444,7 +451,7 @@ const SCENERY = [
     // 待核实：始建年份与“唐建和间”的原文读法、僧一行开山的说法依据、被毁与重修的具体年代
   },
   {
-    id: "xinhui-ziyun", name: "圭峰山紫云观", town: "新会", img: "",
+    id: "xinhui-ziyun", name: "圭峰山紫云观", town: "新会", img: "images/scenery/xinhui-ziyun.jpg", realImg: true,
     line: "山上另一处宗教建筑，是迁址复建的道观。",
     detail: "圭峰山上有两处常被并提的寺观：佛教的玉台寺与道教的紫云观。紫云观为迁址后复建，依山势布局。"
           + "对普通游客来说它更像圭峰山步道上的一个停顿点；有意看宗教建筑的话，和玉台寺连着看能对比两种格局。",
@@ -452,7 +459,7 @@ const SCENERY = [
     // 待核实：紫云观的迁址与复建时间、原址位置、是否常年开放
   },
   {
-    id: "taishan-beifeng", name: "北峰山森林公园", town: "台山", img: "",
+    id: "taishan-beifeng", name: "北峰山森林公园", town: "台山", img: "images/scenery/taishan-beifeng.jpg", realImg: true,
     line: "台山城区背后的山林，步道和溪谷都在里面。",
     detail: "北峰山森林公园在台山市，以山林、溪谷和徒步线路为主，是本地人爬山溯溪的常去地，也常被排进两日游的第一天。"
           + "这类山林没有标志性大景，好处是凉快、人少、随时可走；雨后溪水大，溯溪要另做安排。",
@@ -460,7 +467,7 @@ const SCENERY = [
     // 待核实：主要步道与景点名称（正文不写长度数字）。级别与正式名称已由 2026-10-19 他自己的实拍定下：入口巨石与树干竖牌都写「北峰山国家森林公园」
   },
   {
-    id: "taishan-chuandao", name: "台山川岛", town: "台山", img: "",
+    id: "taishan-chuandao", name: "台山川岛", town: "台山", img: "images/scenery/taishan-chuandao.jpg", realImg: true,
     line: "南海上两座岛，长沙滩、防护林和海上日出。",
     detail: "上川岛、下川岛都从台山北部的码头坐船上岛，岛上有开阔沙滩、海岸防护林和渔村。"
           + "外海水色比近岸清透，旺季时岛上住宿紧张，赶日落和第二天清晨的海最值。",
@@ -468,7 +475,7 @@ const SCENERY = [
     // 待核实：登船码头名称与班次、各沙滩是否需要门票
   },
   {
-    id: "taishan-fuyue", name: "浮月村洋楼", town: "台山", img: "",
+    id: "taishan-fuyue", name: "浮月村洋楼", town: "台山", img: "images/scenery/taishan-fuyue.jpg", realImg: true,
     line: "稻田尽头十几栋风格各异的洋楼，是台山新八景之一。",
     detail: "浮月村在台山市斗山镇，原名浮溪村，因村内十余幢建筑风格各异的华侨洋楼（碉楼）出名，曾评为“台山新八景”之一。"
           + "洋楼多由出洋谋村的华侨回乡所建，部分长期空置；村前是开阔稻田，秋收前后稻色变化最出片。",
@@ -477,7 +484,7 @@ const SCENERY = [
     // 待核实：洋楼准确栋数（报道有 15 座与 20 座两说）、列入市保与省保的年份
   },
   {
-    id: "taishan-haikou", name: "海口埠", town: "台山", img: "",
+    id: "taishan-haikou", name: "海口埠", town: "台山", img: "images/scenery/taishan-haikou.jpg", realImg: true,
     line: "侨批上岸的老码头，如今是一条骑楼街。",
     detail: "海口埠在台山台城一带，曾是潭江水路上的侨乡码头，出洋的人从这里离开、侨汇与家书从这里上岸，列为 A 级旅游景区。"
           + "现存街面以骑楼为主，兼有侨批、华侨历史的展陈；把“下南洋”这件事讲成一个具体的岸，而不是一个抽象名词。",
@@ -485,7 +492,7 @@ const SCENERY = [
     // 待核实：海口埠的始建年代、现存骑楼的年代与保护范围。展陈名称已由 2026-10-19 他自己的实拍定下：同一栋骑楼门楣刻「海口埠」、楼下木牌「台山银信博物馆」（银信就是侨批）；正文没写馆名，要不要写进去等他点头
   },
   {
-    id: "taishan-meijia", name: "梅家大院", town: "台山", img: "",
+    id: "taishan-meijia", name: "梅家大院", town: "台山", img: "images/scenery/taishan-meijia.jpg", realImg: true,
     line: "骑楼围成一个侨村，广场中间是球场。",
     detail: "端芬镇的梅家大院由华侨集资建于上世纪二三十年代，几十间骑楼围合出一块平整广场，"
           + "走进村要先过一道楼。因为风貌保存完整，多部电影电视剧在这里取过景。",
@@ -494,7 +501,7 @@ const SCENERY = [
     // 待核实：建成年份、房屋间数、具体取景片名（不确认就别写片名）
   },
   {
-    id: "taishan-naqin", name: "那琴半岛海岸", town: "台山", img: "",
+    id: "taishan-naqin", name: "那琴半岛海岸", town: "台山", img: "images/scenery/taishan-naqin.jpg", realImg: true,
     line: "花岗岩把海岸雕成一片奇石，栈道贴着山脊走。",
     detail: "台山北陡镇一带的海岸以巨石、礁群出名，长年被海蚀磨出圆润的形状。"
           + "景区把步道修在山脊与礁石之间，退潮时可以走到礁盘边看海蚀形态。",
@@ -502,7 +509,7 @@ const SCENERY = [
     // 待核实：是否收费、开放路段、景区级别（正式名称已按江门市文广旅体局官方页核为「那琴半岛地质海洋公园」，含浪琴湾、庙湾、柑果湾、白马湾、峡湾 5 个海湾、海岸线 6000 多米；级别官方页标 A 级旅游景区、第三方平台标 4A，两边口径不一）
   },
   {
-    id: "taishan-wufeng", name: "五丰村东南亚风情区", town: "台山", img: "",
+    id: "taishan-wufeng", name: "五丰村东南亚风情区", town: "台山", img: "images/scenery/taishan-wufeng.jpg", realImg: true,
     line: "一个把东南亚归侨生活留在村里的地方。",
     detail: "五丰村在台山市，是东南亚归侨聚居的村落，以“东南亚风情”为旅游主题，列为 A 级旅游景区。"
           + "看点在归侨带来的饮食与居住习惯：南洋风格的房屋、东南亚小吃和村史讲述，是侨乡“人回来”的那一半故事。",
@@ -510,7 +517,7 @@ const SCENERY = [
     // 待核实：五丰村的评级年份与村内可参观项目的正式名称。归侨来源与归属：2026-10-19 他自己的实拍里村牌用中文＋马来文＋越南文三行对照、铜牌顶行「台山市海宴华侨农场」，至少含印尼与越南方向；完整来源构成仍未核实。正文没写这些，要不要补等他点头
   },
   {
-    id: "kaiping-chikan", name: "赤坎华侨古镇", town: "开平", img: "",
+    id: "kaiping-chikan", name: "赤坎华侨古镇", town: "开平", img: "images/scenery/kaiping-chikan.jpg", realImg: true,
     line: "潭江边的骑楼长街，老码头与侨商字号都在这条街上。",
     detail: "赤坎镇以骑楼老街出名，廊柱沿街面铺开，过去是侨墟和水路码头，"
           + "华侨把南洋与西式的装饰手法带回这条街。近年按古镇景区整修后开放，街区内有侨批、华侨历史的展陈。",
@@ -519,7 +526,7 @@ const SCENERY = [
     // 待核实：整修后的开放范围、门票与展陈名称，老街准确长度（此处不写数字）
   },
   {
-    id: "kaiping-dashali", name: "大沙里欢茶谷", town: "开平", img: "",
+    id: "kaiping-dashali", name: "大沙里欢茶谷", town: "开平", img: "images/scenery/kaiping-dashali.jpg", realImg: true,
     line: "茶田坡地上的营地，把采茶做成了能玩的东西。",
     detail: "大沙里在开平市大沙镇一带，以茶田与山地景观为主的旅游区，列为 A 级旅游景区，有茶事体验、露营与亲子项目。"
           + "这一带属于开平的山地片区，和碉楼水乡的平坦视野是两种江门：坡地、水库与茶园。",
@@ -527,7 +534,7 @@ const SCENERY = [
     // 待核实：景区正式名称与经营主体（正文不写品牌宣传语）、可体验项目与门票。2026-10-19 他自己的实拍只确认了园内有一处红字刻「陆羽广场」的树根造型景点，地名与经营主体仍未核实
   },
   {
-    id: "kaiping-diaolou", name: "开平碉楼与村落", town: "开平", img: "",
+    id: "kaiping-diaolou", name: "开平碉楼与村落", town: "开平", img: "images/scenery/kaiping-diaolou.jpg", realImg: true,
     line: "水田之间的多层楼群，2007 年列入世界遗产名录。",
     detail: "开平现存碉楼千余座，把中国传统民居的格局和西式柱廊、穹顶、铁艺合在一起，"
           + "多数是清末民初华侨回乡为防盗匪所建。自力村、锦江里、马降龙、立园是最常被走的几处，"
@@ -536,7 +543,7 @@ const SCENERY = [
     // 待核实：入选年份（2007 第 31 届世界遗产大会）与现存碉楼准确数量
   },
   {
-    id: "kaiping-jinjiangli", name: "锦江里与瑞石楼", town: "开平", img: "",
+    id: "kaiping-jinjiangli", name: "锦江里与瑞石楼", town: "开平", img: "images/scenery/kaiping-jinjiangli.jpg", realImg: true,
     line: "开平现存最高的碉楼在这个黄氏华侨村里。",
     detail: "锦江里在开平市蚬冈镇，紧靠潭江西岸，是世界文化遗产村落之一。村中瑞石楼楼高约 28 米，被称为“开平碉楼第一楼”，楼层高、外观装饰华美。"
           + "碉楼群四周山峦环抱、田陌纵横，欧式细部集中在这几栋楼上，是看“华侨想把什么盖回家”最直观的一处。",
@@ -545,7 +552,7 @@ const SCENERY = [
     // 待核实：瑞石楼准确高度、建成年份与是否开放入内
   },
   {
-    id: "kaiping-lichun", name: "立园", town: "开平", img: "",
+    id: "kaiping-lichun", name: "立园", town: "开平", img: "images/scenery/kaiping-lichun.jpg", realImg: true,
     line: "华侨给自己造的园林，前园后宅，中西混在一处。",
     detail: "立园在开平市，由华侨叶氏所建，把传统园艺、西洋建筑与江南水乡布局合在一起，是中国园林里少见的混合做法，属开平碉楼与村落世界遗产片区常走的一处。"
           + "园内有大牌坊、桥、堤、亭与居住楼群，装饰细部大量取自西式构件；和自力村的防御性碉楼对照着看，能看出华侨盖楼两种不同的心思。",
@@ -554,7 +561,7 @@ const SCENERY = [
     // 待核实：建园年份与园主姓名（正文只写“叶氏”）、准确保护级别与所属遗产地关系
   },
   {
-    id: "kaiping-majianglong", name: "马降龙村落群", town: "开平", img: "",
+    id: "kaiping-majianglong", name: "马降龙村落群", town: "开平", img: "images/scenery/kaiping-majianglong.jpg", realImg: true,
     line: "碉楼长在竹林里，是世界遗产的遗产地之一。",
     detail: "马降龙在开平市百合镇一带，由数个自然村连成村落群，碉楼群被竹林与潭江岸线环抱，列入开平碉楼与村落世界文化遗产的遗产地。"
           + "这里比自力村安静，观景台能把竹林、村庄和江面一起收进来；秋天芦苇与竹林的颜色最好看。",
@@ -563,7 +570,7 @@ const SCENERY = [
     // 待核实：马降龙所含自然村数量、观景台位置与是否收费
   },
   {
-    id: "heshan-dayanshan", name: "鹤山大雁山森林公园", town: "鹤山", img: "",
+    id: "heshan-dayanshan", name: "鹤山大雁山森林公园", town: "鹤山", img: "images/scenery/heshan-dayanshan.jpg", realImg: true,
     line: "沙坪城区北边的一座山，被称为“广佛西出第一景”。",
     detail: "大雁山在鹤山市沙坪城区北部，是广东大雁山森林公园的主体，山道、湖景与登高观景是主要内容。"
           + "近年它被当作“千里步道”沿线的招牌景区来推介，周末节假日从广州、佛山自驾来的车不少。",
@@ -572,7 +579,7 @@ const SCENERY = [
     // 待核实：“广佛西出第一景”的说法出处、园内各景点正式名称、门票与缆车情况
   },
   {
-    id: "heshan-gulao", name: "鹤山古劳水乡", town: "鹤山", img: "",
+    id: "heshan-gulao", name: "鹤山古劳水乡", town: "鹤山", img: "images/scenery/heshan-gulao.jpg", realImg: true,
     line: "河涌当街巷，船曾经就是门前的路。",
     detail: "古劳镇是珠三角典型的水乡，村落之间河涌交错，榕树、石桥和临水老屋还在。"
           + "这里是咏春宗师梁赞的故里，水乡与拳师两个话题都够走半天。",
@@ -581,7 +588,7 @@ const SCENERY = [
     // 待核实：梁赞故里说法、是否开发为景区及收费、泛舟项目现状
   },
   {
-    id: "enping-aofeng", name: "鳌峰山公园", town: "恩平", img: "",
+    id: "enping-aofeng", name: "鳌峰山公园", town: "恩平", img: "images/scenery/enping-aofeng.jpg", realImg: true,
     line: "城区边上的一座山公园，恩平人爬的山。",
     detail: "鳌峰山在恩平城区一带，是本地人日常登山健身的城市山林，山上有观景与休憩设施。"
           + "这类山没有门票和大景，价值在于能看到恩平城区全貌；傍晚是最好时段。",
@@ -589,7 +596,7 @@ const SCENERY = [
     // 待核实：公园正式名称与范围、山上各建筑名称。2026-10-19 他自己的实拍只拍到山顶一块蓝底打卡牌（上行「我在恩平等你」、下行「鳌峰山顶 S／N」），山名与"山顶有一处停脚点"算对上，园名与范围仍未核实
   },
   {
-    id: "enping-fengru", name: "冯如故里", town: "恩平", img: "",
+    id: "enping-fengru", name: "冯如故里", town: "恩平", img: "images/scenery/enping-fengru.jpg", realImg: true,
     line: "中国飞机设计先驱的出生地，故居和广场都在村里。",
     detail: "冯如故里在恩平市牛江镇一带，保留清代冯如故居与冯如广场，列为爱国主义教育基地。"
           + "首页名人墙上的冯如就出自这里；把故居、村貌与展陈连起来看，能明白“侨乡出飞机师”这件事的来路。",
@@ -597,7 +604,7 @@ const SCENERY = [
     // 待核实：故居具体村落名称、建筑年代与保护级别、广场与展馆的正式名称。2026-10-19 他自己的实拍只拍到景区草坡上一架旧客机打卡装置（顶牌「冯如故里，逐梦蓝天」，另有箭头牌「下一站·飞机山」），故居建筑、广场与展馆都没进画面，所以这三项一个都没答掉
   },
   {
-    id: "enping-wenquan", name: "恩平温泉", town: "恩平", img: "",
+    id: "enping-wenquan", name: "恩平温泉", town: "恩平", img: "images/scenery/enping-wenquan.jpg", realImg: true,
     line: "珠三角少见的温泉带，秋冬泡汤、夏天玩水。",
     detail: "恩平一带温泉资源集中，多家温泉度假酒店依泉眼而建，池群做成山地园林的样子，"
           + "是江门人秋冬周末度假的常规去处。",
@@ -605,7 +612,7 @@ const SCENERY = [
     // 待核实："中国温泉之乡"称号与获评年份、温泉集中的具体镇
   },
   {
-    id: "enping-xiangshui", name: "响水龙潭森林公园", town: "恩平", img: "",
+    id: "enping-xiangshui", name: "响水龙潭森林公园", town: "恩平", img: "images/scenery/enping-xiangshui.jpg", realImg: true,
     line: "省级森林公园，溪流一路跌成几处瀑布。",
     detail: "响水龙潭省级森林公园位于恩平大人山脉东南侧，公园内溪流众多、形成多处瀑布，以响水龙潭为代表，“仙人脚印”“鸡公石”等景点另有民间传说。"
           + "恩平不只有温泉，这类山林溪谷是本地人夏天去得最多的地方；雨后水大时瀑布最壮观。",
@@ -613,7 +620,7 @@ const SCENERY = [
     // 待核实：公园级别与批复名称、各景点名称与位置、是否收费与开放路段
   },
   {
-    id: "enping-xiema", name: "歇马举人村", town: "恩平", img: "",
+    id: "enping-xiema", name: "歇马举人村", town: "恩平", img: "images/scenery/enping-xiema.jpg", realImg: true,
     line: "一个把“读书”当村业的古村，滨着锦江河。",
     detail: "歇马村在恩平市圣堂镇，滨临锦江河，村史可上溯元代至正年间。该村因明清两代培养出大量科举功名人士而被称为“举人村”，现为中国历史文化名村、A 级旅游景区。"
           + "村内以祠堂、古巷、功名牌匾与家风展陈为主，布局讲究“读书进学”的寓意；对研究侨乡教育传统的人来说信息量比一般古村大。",
@@ -621,7 +628,7 @@ const SCENERY = [
     // 待核实：功名人士与举人准确人数（报道有 670 余名 / 680 余名、举人 285 人等不同说法）、始建年代的具体年号
   },
   {
-    id: "enping-yunli", name: "云礼石头村", town: "恩平", img: "",
+    id: "enping-yunli", name: "云礼石头村", town: "恩平", img: "images/scenery/enping-yunli.jpg", realImg: true,
     line: "房子、围墙、路面都用石头砌的小村。",
     detail: "云礼石头村在恩平那吉镇一带，因村内民居、围墙与道路大量就地取材用石块砌筑而得名，属小众乡村景观。"
           + "这一带是恩平的山区，村子小而安静，看点就是石头工艺与山村环境；没有景区化服务，期待越少越满意。",
@@ -791,39 +798,30 @@ function saveCheckin(id, on) {
   return list;
 }
 
-/* ---------- 照片：卡片用缩略图，详情弹层用原图 ---------- */
-/* 美景的 img 全留空，照片文件名对上就自动显示：先试条目 id，再试卡片上那个中文名。
-   一张都没放也不会出破图 —— 加载失败时先换另一种命名重试，再退到原图，最后退回描金占位块。
-   ★ 缩略图由 tools/make-thumbs.py 生成（512×384 的 4:3），放在 <图片目录>/thumb/ 下。
-     卡片那格只有 146~217 CSS px 宽，直接塞原图（一张 160~200 KB）慢到看不出照片。 */
-const SCENERY_DIR = "images/scenery/";
-const SCENERY_IDS = new Set(SCENERY.map((x) => x.id));
+/* ---------- 照片：路径全部写死在上面两个数组的 img 字段里，这里只负责把路径变成 <img> ---------- */
+/* ★ 想改某条照片的位置，去 FOOD / SCENERY 里改那一条的 img，这一段不用动。
+   规则只有两条：卡片（kind="thumb"）先拉 thumb/ 下的同名缩略图、拉不到再退原图；
+   详情弹层（kind="full"）只拉原图。缩略图由 tools/make-thumbs.py 生成（512×384 的 4:3）。
+   卡片那格只有 146~217 CSS px 宽，直接塞原图（一张 160~200 KB）慢到看不出照片。 */
 
 /* 原图路径 → 同名缩略图路径：images/fengwu/x.jpg → images/fengwu/thumb/x.jpg */
 function thumbPath(src) {
   return src.replace(/^(.*\/)([^/]+)$/, "$1thumb/$2");
 }
 
-/* 一张图按顺序能试的路径：先缩略图（卡片用），再原图（详情用）。
-   缩略图没生成就自动用原图；原图也没有就退回描金占位块。 */
+/* 这一条能试的路径，全部由条目自己的 img 推出来（不再按文件名猜）：
+   kind="thumb" → [缩略图, 原图]；kind="full" → [原图]；img 没写 → []（这一格显示描金占位块）。
+   加载失败时 sceneryImgFail() 按这个顺序往下退一格，退完还没有就撤掉 <img>。 */
 function imgCandidates(item, kind) {
   const out = [];
-  const add = (u) => { if (u && out.indexOf(u) < 0) out.push(u); };
   if (item.img) {
-    if (kind === "thumb") add(thumbPath(item.img));
-    add(item.img);
-  } else if (SCENERY_IDS.has(item.id)) {
-    if (kind === "thumb") {
-      add(SCENERY_DIR + "thumb/" + item.id + ".jpg");
-      add(SCENERY_DIR + "thumb/" + item.name + ".jpg");
-    }
-    add(SCENERY_DIR + item.id + ".jpg");
-    add(SCENERY_DIR + item.name + ".jpg");
+    if (kind === "thumb") out.push(thumbPath(item.img));
+    out.push(item.img);
   }
   return out;
 }
 
-/* 渲染用的一张图：数据里填了就用填的；美景那种留空的用自动找的第一个 */
+/* 真正写进 <img src=""> 的那一个路径：取上面列表的第一个；img 没写就返回空串 */
 function imgOf(item, kind) {
   return imgCandidates(item, kind)[0] || "";
 }
@@ -867,11 +865,11 @@ function netComment(item) {
 }
 
 /* ---------- 配图来源角标 ---------- */
-/* 美食那批配图是 AIGC 生成的水彩插画，图上必须写明来源，不冒充实拍。
-   风景照片是真的：img 留空、从 images/scenery/ 自动找到的那批一律不压角标；
-   要是哪天给某条填了写死的路径又确实是照片，在那一条里加 realImg: true 就行。 */
+/* 美食那批配图是 AIGC 生成的水彩插画，图上必须写明来源，不冒充实拍；
+   美景那批是真实照片，条目里都写了 realImg: true，所以不压角标。
+   ★ 只认 realImg 这一个字段：真实照片就在条目里加，AI 图就别加。 */
 function imgBadge(item) {
-  return item.realImg || !item.img
+  return item.realImg
     ? { alt: "", tag: "" }
     : { alt: "（AI 生成示意图）", tag: '<span class="fw-ai">AI 生成示意图</span>' };
 }
@@ -1463,13 +1461,15 @@ const pickSel = document.querySelector("#posterPick");
 if (pickSel) pickSel.addEventListener("change", () => { if (!document.querySelector("#posterOut").hidden) drawPoster(); });
 
 /* 美景照片预热：页面闲下来之后先把头几张缩略图拉下来，不抢美食首屏的带宽。
-   缩略图 URL 和卡片里写的完全一样，拉过一次卡片就直接命中缓存。 */
+   缩略图 URL 由那一条的 img 经 thumbPath() 推出来，和卡片里写的完全一样，拉过一次卡片就直接命中缓存。 */
 function warmSceneryImgs() {
   SCENERY.slice(0, 4).forEach((it) => {
+    const src = imgOf(it, "thumb");
+    if (!src) return;
     const l = document.createElement("link");
     l.rel = "preload";
     l.as = "image";
-    l.href = SCENERY_DIR + "thumb/" + it.id + ".jpg";
+    l.href = src;
     document.head.appendChild(l);
   });
 }
