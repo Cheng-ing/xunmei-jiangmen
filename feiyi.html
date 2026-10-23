@@ -28,7 +28,7 @@
     </ul>
   </nav>
 
-  <!-- ▼ 页头引言 + 信封区 -->
+  <!-- ▼ 页头引言 + 信封区（三封信由页面底部的 FEIYI_LETTERS 数组渲染进 #envGrid） -->
   <section class="section" style="text-align:center;">
     <h2 class="section-title env-space">非遗传承人 · 三封手写的信</h2>
     <div class="title-ornament"></div>
@@ -40,7 +40,7 @@
     <div class="env-grid" id="envGrid"></div>
   </section>
 
-  <!-- ▼ 轮播图（换图 <img> 即可） -->
+  <!-- ▼ 轮播图（5 张，与 jiangmen.html 同款组件；换图改 .slide 里的 <img>） -->
   <section class="section">
     <h2 class="section-title">手艺流光</h2>
     <div class="title-ornament"></div>
@@ -59,7 +59,7 @@
     </div>
   </section>
 
-  <!-- ▼ 页间互链 -->
+  <!-- ▼ 页间互链：上一题材 / 下一题材 -->
   <section class="section page-links" style="text-align:center;">
     <a class="btn" href="qiaobao.html">← 上一站 · 优秀侨胞</a>
     <a class="btn" href="gongjiang.html" style="margin-left:12px;">下一站 · 能工巧匠 →</a>
@@ -107,6 +107,6 @@
   </script>
   <script src="js/common.js"></script>
   <script src="js/carousel.js"></script>
-  <script>renderEnvelopes("#envGrid", FEIYI_LETTERS);</script>
+  <script>renderEnvelopes("#envGrid", FEIYI_LETTERS);</script> <!-- 把文案渲染成信封 -->
 </body>
 </html>

@@ -1,16 +1,16 @@
-/* ============================================
+/* ============================================================
    carousel.css —— 轮播图组件（五个页面各一组，每组 5 张）
-   图片路径在各页面 .carousel 里的 .slide img 改；
+   图片路径在各页面 .carousel 里的 .slide img 改，本文件只管外观；
    每张幻灯片自带渐变兜底背景，图还没加载完时也有画面。
-   ============================================ */
+   ============================================================ */
 
+/* ---------- 1. 外框与轨道：所有幻灯片横向排一排，靠 translateX 切换 ---------- */
 .carousel {
   position: relative; max-width: 1080px; margin: 0 auto;
   border-radius: var(--radius); overflow: hidden;
   box-shadow: var(--shadow);
   background: var(--ink-2);
 }
-/* 轨道：所有幻灯片横向排一排，靠 translateX 切换 */
 .carousel-track {
   display: flex; height: clamp(300px, 46vw, 500px);
   transition: transform .7s cubic-bezier(.65, .05, .25, 1); /* 切换速度可改 */
@@ -18,13 +18,13 @@
 .slide { position: relative; flex: 0 0 100%; }
 .slide img { width: 100%; height: 100%; object-fit: cover; }
 
-/* 无图片时的渐变兜底画面（5 张各不相同，纯装饰） */
+/* ---------- 2. 无图片时的渐变兜底画面（5 张各不相同，纯装饰） ---------- */
 .slide.ph0 { background: linear-gradient(135deg, #2b4a6f, #7fa8c9); }
 .slide.ph1 { background: linear-gradient(135deg, #6e3b2e, #c98a5b); }
 .slide.ph2 { background: linear-gradient(135deg, #38503f, #8fae72); }
 .slide.ph3 { background: linear-gradient(135deg, #4a3b6e, #9a86c4); }
 .slide.ph4 { background: linear-gradient(135deg, #6e2b3a, #c96a72); }
-/* 底部渐变遮罩 + 字幕 */
+/* ---------- 3. 底部渐变遮罩 + 字幕 ---------- */
 .slide .caption {
   position: absolute; left: 0; right: 0; bottom: 0; padding: 44px 30px 22px;
   background: linear-gradient(transparent, rgba(10, 15, 22, .82));
@@ -33,7 +33,7 @@
 .slide .caption b { font-family: var(--font-title); font-size: 20px; letter-spacing: 3px; color: var(--gold); display: block; margin-bottom: 4px; }
 .slide .caption span { font-size: 14px; opacity: .85; }
 
-/* 左右箭头 */
+/* ---------- 4. 左右箭头 ---------- */
 .carousel .arrow {
   position: absolute; top: 50%; transform: translateY(-50%);
   width: 44px; height: 44px; border-radius: 50%;
@@ -45,7 +45,7 @@
 .carousel .arrow.prev { left: 16px; }
 .carousel .arrow.next { right: 16px; }
 
-/* 底部圆点 */
+/* ---------- 5. 底部圆点 ---------- */
 .carousel .dots { position: absolute; bottom: 12px; left: 0; right: 0;
   display: flex; justify-content: center; gap: 10px; z-index: 3; }
 .carousel .dots i {
@@ -54,19 +54,17 @@
 }
 .carousel .dots i.on { background: var(--gold); transform: scale(1.25); }
 
-/* 进度条（自动轮播时间可视化，去掉也很简单：删 .progress 即可） */
+/* ---------- 6. 进度条：把自动轮播的时间画出来（不想要就删 .progress 这一块） ---------- */
 .carousel .progress { position: absolute; left: 0; bottom: 0; height: 3px;
   width: 0; background: var(--gold); z-index: 4; }
 .carousel .progress.run { animation: prog var(--dur, 5s) linear forwards; }
 @keyframes prog { from { width: 0; } to { width: 100%; } }
 
-/* ============================================================
-   移动端（≤720px）
+/* ---------- 7. 移动端（≤720px）：按竖屏重定高度、缩箭头、压字幕 ----------
    实测依据：原来轨道高度 clamp() 的下限是 300px，而手机上宽度只有 351px，
    等于把 16:9 的插画硬裁成接近正方形，画面两头全丢了；
    两个 44px 箭头在 351px 宽里合计吃掉 120px。
-   这里按竖屏重定高度、缩箭头、压字幕，并让整块可以左右滑（JS 里本来就有触摸滑动）。
-   ============================================================ */
+   左右滑动手势由 js/carousel.js 提供，这里只改尺寸。 */
 @media (max-width: 720px) {
   .carousel-track { height: clamp(180px, 52vw, 250px); }
   .slide .caption { padding: 26px 16px 32px; }
