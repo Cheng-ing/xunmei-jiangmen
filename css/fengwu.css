@@ -296,7 +296,7 @@
 .pf-tip { margin-top: 10px; font-size: 12.5px; line-height: 1.8; color: rgba(233, 226, 211, .55); }
 .pf-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
 
-/* ---------- 8. 说明小字（口径、来源、待核实都写在这里） ---------- */
+/* ---------- 8. 说明小字（路线那段口径说明） ---------- */
 .fw-note {
   max-width: 860px; margin: 26px auto 0; padding: 14px 18px; text-align: left;
   font-size: 12.5px; line-height: 1.85; color: rgba(233, 226, 211, .55);
