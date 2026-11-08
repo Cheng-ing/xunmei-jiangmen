@@ -112,7 +112,7 @@
   </section>
 
   <!-- ▼ 本页收尾：薪火相传（写一句话 + 点亮一盏灯）
-       点亮状态与那句话存在浏览器 localStorage，键名 xunmei-xinhuo，逻辑在 js/xinhuo.js -->
+       留言逐条累积在浏览器 localStorage，键名 xunmei-xinhuo；写完从弹窗里回看，逻辑在 js/xinhuo.js -->
   <section class="section hook-section" id="xinhuo" aria-labelledby="xinhuoTitle">
     <h2 class="section-title" id="xinhuoTitle">薪火相传</h2>
     <div class="title-ornament"></div>
@@ -128,10 +128,21 @@
         <textarea id="xinhuoText" maxlength="40" rows="3" placeholder="例如：把家乡讲给更多人听。"></textarea>
         <div class="xinhuo-row">
           <button class="btn" type="submit">点亮这盏灯</button>
-          <button class="xinhuo-reset" type="button" id="xinhuoReset" hidden>重写</button>
+          <button class="xinhuo-view" type="button" id="xinhuoView" hidden>看看这盏灯下的留言</button>
         </div>
         <p class="xinhuo-status" id="xinhuoStatus" role="status"></p>
       </form>
+    </div>
+
+    <!-- 留言弹窗：固定高度的列表，条数再多也只在框里滚动，不把页面撑长 -->
+    <div class="xinhuo-modal" id="xinhuoModal" hidden>
+      <div class="xinhuo-modal-mask" data-xinhuo-close></div>
+      <div class="xinhuo-modal-body" role="dialog" aria-modal="true" aria-labelledby="xinhuoModalTitle">
+        <button class="xinhuo-modal-close" type="button" id="xinhuoModalClose" data-xinhuo-close aria-label="关闭">×</button>
+        <h3 class="xinhuo-modal-title" id="xinhuoModalTitle">这盏灯下留下的话</h3>
+        <p class="xinhuo-modal-sub" id="xinhuoModalSub"></p>
+        <ol class="xinhuo-list" id="xinhuoList"></ol>
+      </div>
     </div>
     <noscript><p class="xinhuo-status" style="text-align:center;">启用 JavaScript 后可以点亮这盏灯。</p></noscript>
   </section>

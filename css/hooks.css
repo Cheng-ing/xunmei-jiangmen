@@ -5,7 +5,7 @@
    3. 非遗传承人：葵扇五道工序
    4. 能工巧匠：三张工具卡（<details> 展开）
    5. 模范人物：消防员的一天
-   6. 薪火相传：点灯的样式（存储逻辑在 js/xinhuo.js）
+   6. 薪火相传：点灯与留言弹窗（存储逻辑在 js/xinhuo.js）
    四个页面共用本文件，断点与全站一致（720px）。
    ============================================================ */
 
@@ -193,14 +193,80 @@
   box-shadow: 0 0 0 3px rgba(201, 168, 106, .15);
 }
 .xinhuo-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; }
-.xinhuo-reset {
-  padding: 0; border: 0; background: none; font-size: 12.5px; letter-spacing: 1px;
-  color: rgba(233, 226, 211, .55);
+.xinhuo-view {
+  padding: 0; border: 0; background: none; cursor: pointer;
+  font-size: 12.5px; letter-spacing: 1px; color: rgba(233, 226, 211, .55);
   text-decoration: underline; text-underline-offset: 3px;
 }
-.xinhuo-reset:hover { color: var(--gold); }
+.xinhuo-view:hover { color: var(--gold); }
 .xinhuo-status { min-height: 1.8em; margin-top: 12px; font-size: 13px; line-height: 1.8; color: rgba(233, 226, 211, .65); }
 .xinhuo-status.ok { color: var(--gold); }
+
+/* 留言弹窗：遮罩铺满视口，面板固定宽度，列表固定高度（条数再多也只在框里滚动） */
+.xinhuo-modal {
+  position: fixed; inset: 0; z-index: 120;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.xinhuo-modal[hidden] { display: none; }
+.xinhuo-modal-mask {
+  position: absolute; inset: 0;
+  background: rgba(4, 8, 13, .74);
+  backdrop-filter: blur(3px);
+}
+.xinhuo-modal-body {
+  position: relative; width: min(560px, 100%);
+  padding: 26px clamp(18px, 3vw, 28px) 24px;
+  border: 1px solid rgba(201, 168, 106, .38); border-radius: var(--radius);
+  background: radial-gradient(130% 130% at 50% 0%, rgba(166, 58, 43, .16), #101a26 60%);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .55);
+  animation: xinhuo-modal-in .3s ease-out;
+}
+.xinhuo-modal-close {
+  position: absolute; top: 10px; right: 10px;
+  width: 34px; height: 34px; border: 0; border-radius: 50%;
+  background: transparent; color: rgba(201, 168, 106, .8);
+  font-size: 22px; line-height: 1; cursor: pointer;
+}
+.xinhuo-modal-close:hover { color: var(--gold); background: rgba(201, 168, 106, .12); }
+.xinhuo-modal-title {
+  font-family: var(--font-title); font-weight: 400;
+  font-size: 22px; letter-spacing: 4px; color: var(--gold); text-align: center;
+}
+.xinhuo-modal-sub {
+  margin: 8px 0 16px; text-align: center;
+  font-size: 12.5px; letter-spacing: 1px; color: rgba(233, 226, 211, .55);
+}
+.xinhuo-list {
+  list-style: none; margin: 0; padding-right: 6px;
+  height: min(52vh, 380px);
+  overflow-y: auto; overscroll-behavior: contain;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.xinhuo-list li {
+  padding: 14px 16px; border-radius: 10px;
+  border: 1px solid rgba(201, 168, 106, .22);
+  background: rgba(9, 14, 21, .48);
+}
+.xinhuo-list p { font-size: 14.5px; line-height: 1.9; color: rgba(233, 226, 211, .88); overflow-wrap: anywhere; }
+.xinhuo-list span {
+  display: block; margin-top: 8px;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 11.5px; letter-spacing: 1px; color: rgba(201, 168, 106, .7);
+}
+.xinhuo-list li.is-new { animation: xinhuo-flow .55s ease-out; }
+.xinhuo-list .xinhuo-empty {
+  border-style: dashed; text-align: center;
+  font-size: 13px; color: rgba(233, 226, 211, .55);
+}
+@keyframes xinhuo-modal-in {
+  from { opacity: 0; transform: translateY(10px); }
+}
+@keyframes xinhuo-flow {
+  from { opacity: 0; transform: translateY(14px); }
+}
+/* 弹窗打开时锁住页面滚动，和首页英雄墙弹层用同一个类名 */
+body.modal-open { overflow: hidden; }
 
 /* ---------- 7. 移动端（≤720px） ---------- */
 @media (max-width: 720px) {
@@ -229,10 +295,18 @@
   .xinhuo-lamp .lamp-body { left: 9px; right: 9px; top: 36px; bottom: 12px; }
   .xinhuo-lamp .flame { top: 62px; }
   .xinhuo-form textarea { min-height: 84px; font-size: 14px; }
+
+  .xinhuo-modal { padding: 14px; }
+  .xinhuo-modal-body { padding: 22px 16px 18px; }
+  .xinhuo-modal-title { font-size: 20px; letter-spacing: 3px; }
+  .xinhuo-list { height: min(58vh, 400px); }
+  .xinhuo-list li { padding: 12px 14px; }
+  .xinhuo-list p { font-size: 13.5px; }
 }
 
-/* 系统设置里关掉动效时，火苗不再闪 */
+/* 系统设置里关掉动效时，火苗和弹窗都不再动 */
 @media (prefers-reduced-motion: reduce) {
   .xinhuo-lamp.lit .flame { animation: none; }
   .tool-card, .xinhuo-lamp .flame, .xinhuo-lamp::after { transition: none; }
+  .xinhuo-modal-body, .xinhuo-list li.is-new { animation: none; }
 }
