@@ -9,9 +9,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>模范人物 · 寻美江门</title>
+  <!-- 搜索摘要与分享卡片 -->
+  <meta name="description" content="走近扎根海岛教育的梁伟忠、危急时刻救人的消防员李建与照护亲人、服务社区的谭爱玲。读三封点灯人的信，在江门的日常故事中看见责任、善意与精神传承。">
+  <meta name="theme-color" content="#16202e">
+  <meta property="og:title" content="模范人物 · 寻美江门">
+  <meta property="og:description" content="走近扎根海岛教育的梁伟忠、危急时刻救人的消防员李建与照护亲人、服务社区的谭爱玲。读三封点灯人的信，在江门的日常故事中看见责任、善意与精神传承。">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="寻美江门 · 侨都薪火">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:image" content="https://cheng-ing.github.io/xunmei-jiangmen/images/share-cover.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="赤坎骑楼老街黄昏插画，上书寻美江门·侨都薪火">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="模范人物 · 寻美江门">
+  <meta name="twitter:description" content="走近扎根海岛教育的梁伟忠、危急时刻救人的消防员李建与照护亲人、服务社区的谭爱玲。读三封点灯人的信，在江门的日常故事中看见责任、善意与精神传承。">
+  <meta name="twitter:image" content="https://cheng-ing.github.io/xunmei-jiangmen/images/share-cover.jpg">
+  <meta name="twitter:image:alt" content="赤坎骑楼老街黄昏插画，上书寻美江门·侨都薪火">
+  <!-- 站点图标：矢量与 PNG 备用 -->
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="images/favicon.png" type="image/png" sizes="32x32">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/envelope.css">
   <link rel="stylesheet" href="css/carousel.css">
+  <link rel="stylesheet" href="css/hooks.css">
 </head>
 <body>
 
@@ -40,23 +62,78 @@
     <div class="env-grid" id="envGrid"></div>
   </section>
 
-  <!-- ▼ 轮播图（5 张，与 jiangmen.html 同款组件；换图改 .slide 里的 <img>） -->
+  <!-- 换图：覆盖下方 JPG 原图后运行 python tools/optimize-carousel.py，更新两档 WebP。 -->
   <section class="section">
     <h2 class="section-title">城与光</h2>
     <div class="title-ornament"></div>
     <p class="section-sub">五帧画面，品一座城的岁月与荣光</p>
     <div class="carousel" data-interval="5000">
       <div class="carousel-track">
-        <div class="slide ph0"><img src="images/照片/模范人物/m1.jpg" alt="巡堤：暴雨夜堤围上的手电光"><div class="caption"><b>堤长巡夜</b><span>潭江堤围上的老支书，年年汛期走在最前面</span></div></div>
-        <div class="slide ph1"><img src="images/照片/模范人物/m2.jpg" alt="乡村教师：侨乡村小的午后课堂"><div class="caption"><b>乡村教师</b><span>侨乡村小三尺讲台，一站就是三十年</span></div></div>
-        <div class="slide ph2"><img src="images/照片/模范人物/m3.jpg" alt="归雁兴村：老祠堂里的乡村直播间"><div class="caption"><b>归雁兴村</b><span>返乡青年把旧祠堂改成直播间，土特产飞向全国</span></div></div>
-        <div class="slide ph3"><img src="images/照片/模范人物/m4.jpg" alt="志愿服务：老街巷口的红马甲"><div class="caption"><b>志愿红马甲</b><span>侨都社区的志愿者队伍，把邻里缝得密密实实</span></div></div>
-        <div class="slide ph4"><img src="images/照片/模范人物/m5.jpg" alt="少年传薪：非遗研学课堂上的孩子"><div class="caption"><b>少年传薪</b><span>非遗研学课堂上的孩子，是精神的下一棒</span></div></div>
+        <div class="slide ph0"><picture><source type="image/webp" srcset="images/照片/模范人物/m1-640.webp 640w, images/照片/模范人物/m1-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px"><img src="images/照片/模范人物/m1.jpg" alt="巡堤：暴雨夜堤围上的手电光" width="1600" height="914" loading="eager" decoding="async"></picture><div class="caption"><b>堤长巡夜</b><span>潭江堤围上的老支书，年年汛期走在最前面</span></div></div>
+        <div class="slide ph1"><picture><source type="image/webp" srcset="images/照片/模范人物/m2-640.webp 640w, images/照片/模范人物/m2-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px"><img src="images/照片/模范人物/m2.jpg" alt="乡村教师：侨乡村小的午后课堂" width="1600" height="914" loading="lazy" decoding="async"></picture><div class="caption"><b>乡村教师</b><span>侨乡村小三尺讲台，一站就是三十年</span></div></div>
+        <div class="slide ph2"><picture><source type="image/webp" srcset="images/照片/模范人物/m3-640.webp 640w, images/照片/模范人物/m3-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px"><img src="images/照片/模范人物/m3.jpg" alt="归雁兴村：老祠堂里的乡村直播间" width="1600" height="914" loading="lazy" decoding="async"></picture><div class="caption"><b>归雁兴村</b><span>返乡青年把旧祠堂改成直播间，土特产飞向全国</span></div></div>
+        <div class="slide ph3"><picture><source type="image/webp" srcset="images/照片/模范人物/m4-640.webp 640w, images/照片/模范人物/m4-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px"><img src="images/照片/模范人物/m4.jpg" alt="志愿服务：老街巷口的红马甲" width="1600" height="914" loading="lazy" decoding="async"></picture><div class="caption"><b>志愿红马甲</b><span>侨都社区的志愿者队伍，把邻里缝得密密实实</span></div></div>
+        <div class="slide ph4"><picture><source type="image/webp" srcset="images/照片/模范人物/m5-640.webp 640w, images/照片/模范人物/m5-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px"><img src="images/照片/模范人物/m5.jpg" alt="少年传薪：非遗研学课堂上的孩子" width="1600" height="914" loading="lazy" decoding="async"></picture><div class="caption"><b>少年传薪</b><span>非遗研学课堂上的孩子，是精神的下一棒</span></div></div>
       </div>
       <button class="arrow prev" aria-label="上一张">‹</button>
       <button class="arrow next" aria-label="下一张">›</button>
       <div class="dots"></div><div class="progress"></div>
     </div>
+  </section>
+
+  <!-- ▼ 本页专属模块：消防员的一天
+       按消防员岗位的公开日常整理，写的是岗位节奏，不是李建本人的作息记录。 -->
+  <section class="section hook-section" aria-labelledby="fireDayTitle">
+    <h2 class="section-title" id="fireDayTitle">消防员的一天</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">警铃随时会把一天切成几段 —— 这是岗位上常见的节奏</p>
+    <ol class="day-line">
+      <li class="reveal">
+        <span>天未亮</span>
+        <div><b>装备过手</b><p>战斗服、空气呼吸器、水带，一件件检查。装备不认人，只认有没有检查过。</p></div>
+      </li>
+      <li class="reveal">
+        <span>上午</span>
+        <div><b>体能和操法</b><p>负重登楼、水带操、破拆训练，按岗位标准走，练的是到场之后那几分钟。</p></div>
+      </li>
+      <li class="reveal">
+        <span>午后</span>
+        <div><b>警铃一响</b><p>从接警到登车按秒计；到了现场，先救人、再控火，分工在车上就已经分好。</p></div>
+      </li>
+      <li class="reveal">
+        <span>夜里</span>
+        <div><b>复盘</b><p>把当天的警情摆上桌，哪一步快了、哪一步慢了，讲清楚再睡。</p></div>
+      </li>
+    </ol>
+    <details class="hook-note">
+      <summary>这份时间表怎么来的</summary>
+      <p>按消防员岗位的公开日常整理，不是李建本人的作息记录。</p>
+    </details>
+  </section>
+
+  <!-- ▼ 本页收尾：薪火相传（写一句话 + 点亮一盏灯）
+       点亮状态与那句话存在浏览器 localStorage，键名 xunmei-xinhuo，逻辑在 js/xinhuo.js -->
+  <section class="section hook-section" id="xinhuo" aria-labelledby="xinhuoTitle">
+    <h2 class="section-title" id="xinhuoTitle">薪火相传</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">十二封信读到这里。留下一句话，点亮一盏灯</p>
+    <div class="xinhuo-box">
+      <div class="xinhuo-lamp" id="xinhuoLamp" aria-hidden="true">
+        <span class="lamp-top"></span>
+        <span class="lamp-body"></span>
+        <span class="flame"></span>
+      </div>
+      <form class="xinhuo-form" id="xinhuoForm">
+        <label for="xinhuoText">写给下一位读者的一句话（只存本机，不会上传）</label>
+        <textarea id="xinhuoText" maxlength="40" rows="3" placeholder="例如：把家乡讲给更多人听。"></textarea>
+        <div class="xinhuo-row">
+          <button class="btn" type="submit">点亮这盏灯</button>
+          <button class="xinhuo-reset" type="button" id="xinhuoReset" hidden>重写</button>
+        </div>
+        <p class="xinhuo-status" id="xinhuoStatus" role="status"></p>
+      </form>
+    </div>
+    <noscript><p class="xinhuo-status" style="text-align:center;">启用 JavaScript 后可以点亮这盏灯。</p></noscript>
   </section>
 
   <!-- ▼ 页间互链：闭环回江门总览；风物页排在四个题材之后，所以这里给"下一站" -->
@@ -108,6 +185,7 @@
   </script>
   <script src="js/common.js"></script>
   <script src="js/carousel.js"></script>
+  <script src="js/xinhuo.js"></script>
   <script>renderEnvelopes("#envGrid", MOFAN_LETTERS);</script> <!-- 把文案渲染成信封 -->
 </body>
 </html>

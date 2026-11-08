@@ -9,9 +9,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>优秀侨胞 · 寻美江门</title>
+  <!-- 搜索摘要与分享卡片 -->
+  <meta name="description" content="拆开三封跨海的信，读陈宜禧兴建新宁铁路、李月美投身南侨机工、陈经纶捐资兴学的故事。沿着侨批、碉楼与侨校的画卷，感受五邑侨胞心系家国的根脉。">
+  <meta name="theme-color" content="#16202e">
+  <meta property="og:title" content="优秀侨胞 · 寻美江门">
+  <meta property="og:description" content="拆开三封跨海的信，读陈宜禧兴建新宁铁路、李月美投身南侨机工、陈经纶捐资兴学的故事。沿着侨批、碉楼与侨校的画卷，感受五邑侨胞心系家国的根脉。">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="寻美江门 · 侨都薪火">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:image" content="https://cheng-ing.github.io/xunmei-jiangmen/images/share-cover.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="赤坎骑楼老街黄昏插画，上书寻美江门·侨都薪火">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="优秀侨胞 · 寻美江门">
+  <meta name="twitter:description" content="拆开三封跨海的信，读陈宜禧兴建新宁铁路、李月美投身南侨机工、陈经纶捐资兴学的故事。沿着侨批、碉楼与侨校的画卷，感受五邑侨胞心系家国的根脉。">
+  <meta name="twitter:image" content="https://cheng-ing.github.io/xunmei-jiangmen/images/share-cover.jpg">
+  <meta name="twitter:image:alt" content="赤坎骑楼老街黄昏插画，上书寻美江门·侨都薪火">
+  <!-- 站点图标：矢量与 PNG 备用 -->
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="images/favicon.png" type="image/png" sizes="32x32">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/envelope.css">
   <link rel="stylesheet" href="css/carousel.css">
+  <link rel="stylesheet" href="css/hooks.css">
 </head>
 <body>
 
@@ -40,23 +62,59 @@
     <div class="env-grid" id="envGrid"></div>
   </section>
 
-  <!-- ▼ 轮播图（5 张，与 jiangmen.html 同款组件；换图改 .slide 里的 <img>） -->
+  <!-- 换图：覆盖下方 JPG 原图后运行 python tools/optimize-carousel.py，更新两档 WebP。 -->
   <section class="section">
     <h2 class="section-title">侨影流光</h2>
     <div class="title-ornament"></div>
     <p class="section-sub">五帧画面，书一纸侨魂的征途与根脉</p>
     <div class="carousel" data-interval="5000">
       <div class="carousel-track">
-        <div class="slide ph0"><img src="images/照片/优秀侨胞/q1.jpg" alt="墟街启航：少年登船远行"><div class="caption"><b>墟街启航</b><span>三十三墟街，多少少年从这里走向世界</span></div></div>
-        <div class="slide ph1"><img src="images/照片/优秀侨胞/q2.jpg" alt="侨批万里：泛黄家书与算盘"><div class="caption"><b>侨批万里</b><span>银信合封，一句"平安"抵万金</span></div></div>
-        <div class="slide ph2"><img src="images/照片/优秀侨胞/q3.jpg" alt="碉楼守望：自力村碉楼群"><div class="caption"><b>碉楼守望</b><span>自力村碉楼群，是家书也是界碑</span></div></div>
-        <div class="slide ph3"><img src="images/照片/优秀侨胞/q4.jpg" alt="侨兴学堂：老侨校教室"><div class="caption"><b>侨兴学堂</b><span>侨胞出资兴学，重教成为侨都底色</span></div></div>
-        <div class="slide ph4"><img src="images/照片/优秀侨胞/q5.jpg" alt="归来仍是少年：新一代侨胞回到江门"><div class="caption"><b>归来仍是少年</b><span>新一代侨胞回到大湾区，续写新侨批</span></div></div>
+        <div class="slide ph0"><picture><source type="image/webp" srcset="images/照片/优秀侨胞/q1-640.webp 640w, images/照片/优秀侨胞/q1-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px"><img src="images/照片/优秀侨胞/q1.jpg" alt="墟街启航：少年登船远行" width="1600" height="914" loading="eager" decoding="async"></picture><div class="caption"><b>墟街启航</b><span>三十三墟街，多少少年从这里走向世界</span></div></div>
+        <div class="slide ph1"><picture><source type="image/webp" srcset="images/照片/优秀侨胞/q2-640.webp 640w, images/照片/优秀侨胞/q2-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px"><img src="images/照片/优秀侨胞/q2.jpg" alt="侨批万里：泛黄家书与算盘" width="1600" height="914" loading="lazy" decoding="async"></picture><div class="caption"><b>侨批万里</b><span>银信合封，一句"平安"抵万金</span></div></div>
+        <div class="slide ph2"><picture><source type="image/webp" srcset="images/照片/优秀侨胞/q3-640.webp 640w, images/照片/优秀侨胞/q3-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px"><img src="images/照片/优秀侨胞/q3.jpg" alt="碉楼守望：自力村碉楼群" width="1600" height="914" loading="lazy" decoding="async"></picture><div class="caption"><b>碉楼守望</b><span>自力村碉楼群，是家书也是界碑</span></div></div>
+        <div class="slide ph3"><picture><source type="image/webp" srcset="images/照片/优秀侨胞/q4-640.webp 640w, images/照片/优秀侨胞/q4-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px"><img src="images/照片/优秀侨胞/q4.jpg" alt="侨兴学堂：老侨校教室" width="1600" height="914" loading="lazy" decoding="async"></picture><div class="caption"><b>侨兴学堂</b><span>侨胞出资兴学，重教成为侨都底色</span></div></div>
+        <div class="slide ph4"><picture><source type="image/webp" srcset="images/照片/优秀侨胞/q5-640.webp 640w, images/照片/优秀侨胞/q5-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px"><img src="images/照片/优秀侨胞/q5.jpg" alt="归来仍是少年：新一代侨胞回到江门" width="1600" height="914" loading="lazy" decoding="async"></picture><div class="caption"><b>归来仍是少年</b><span>新一代侨胞回到大湾区，续写新侨批</span></div></div>
       </div>
       <button class="arrow prev" aria-label="上一张">‹</button>
       <button class="arrow next" aria-label="下一张">›</button>
       <div class="dots"></div><div class="progress"></div>
     </div>
+  </section>
+
+  <!-- ▼ 本页专属模块：侨批时间线
+       侨批 = 银信合一。2013 年"侨批档案"入选联合国教科文组织《世界记忆名录》；
+       1941—1945 年海路中断后改走东兴汇路，据五邑侨批与地方志公开记述整理。 -->
+  <section class="section hook-section" aria-labelledby="qiaopiTitle">
+    <h2 class="section-title" id="qiaopiTitle">一纸侨批，半部侨史</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">银信合封，漂洋过海 —— 五个时间点，看侨批如何把家与国连在一起</p>
+    <ol class="qiaopi-line">
+      <li class="reveal">
+        <time>19 世纪中后期</time>
+        <b>银信合一</b>
+        <p>五邑人出洋谋生，家书里夹着银钱，托往返南洋的"水客"随身带回。一封批，就是一家人的生计。</p>
+      </li>
+      <li class="reveal">
+        <time>清末民初</time>
+        <b>批局成网</b>
+        <p>侨批局在五邑与南洋、美洲之间铺开网络。侨汇修碉楼、办侨校、起骑楼，侨乡的轮廓就是这样长出来的。</p>
+      </li>
+      <li class="reveal">
+        <time>1941—1945</time>
+        <b>烽火送批</b>
+        <p>香港沦陷、海路中断，侨批改走东兴汇路，绕道广西入境。送批人冒着战火，把银信送到家门口。</p>
+      </li>
+      <li class="reveal">
+        <time>20 世纪 70 年代</time>
+        <b>批局退场</b>
+        <p>侨批业务逐步由中国银行接办，民办批局完成使命，退出历史舞台。</p>
+      </li>
+      <li class="reveal">
+        <time>2013 年</time>
+        <b>世界记忆</b>
+        <p>"侨批档案"入选联合国教科文组织《世界记忆名录》，一纸家书成了人类共同的记忆。</p>
+      </li>
+    </ol>
   </section>
 
   <!-- ▼ 页间互链：上一题材 / 下一题材 -->

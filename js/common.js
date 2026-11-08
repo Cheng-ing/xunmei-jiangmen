@@ -1,5 +1,5 @@
 /* ============================================================
-   common.js —— 全站通用脚本（除 index.html 外的六个页面都引它）
+   common.js —— 全站通用脚本（除首页外的六个页面都引它）
    1) renderEnvelopes()：把页面底部的文案数组渲染成"可撕开的信封"
    2) 信封工具条：全部拆开 / 一键还原
    3) 滚动入场动画（配合 .reveal 类）
@@ -22,7 +22,7 @@ function renderEnvelopes(selector, letters) {
 
   box.innerHTML = letters.map((m) => `
     <!-- 一封可撕开的信：点击任意位置撕开 -->
-    <div class="envelope" role="button" tabindex="0" aria-label="撕开这封信">
+    <div class="envelope" role="button" tabindex="0" aria-label="撕开这封信" aria-expanded="false">
       <div class="envelope-back"></div>
       <div class="letter">
         <h4>${m.title}</h4>
@@ -39,8 +39,11 @@ function renderEnvelopes(selector, letters) {
   box.querySelectorAll(".envelope").forEach((env) => {
     const toggle = () => {
       env.classList.toggle("opened");
+      const opened = env.classList.contains("opened");
+      env.setAttribute("aria-expanded", String(opened));
+      env.setAttribute("aria-label", opened ? "还原这封信" : "撕开这封信");
       const tip = env.querySelector(".env-tip");
-      if (tip) tip.textContent = env.classList.contains("opened") ? "点击还原" : "点击撕开";
+      if (tip) tip.textContent = opened ? "点击还原" : "点击撕开";
       /* 手机上信纸是在信封下方展开的，展开位置可能已经偏出屏幕，
          所以展开后把这一封信滚到屏幕上方；桌面端升起效果在原位，不需要。 */
       if (env.classList.contains("opened") && isNarrow()) {
@@ -58,7 +61,12 @@ function renderEnvelopes(selector, letters) {
 document.querySelectorAll(".env-tools .btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     const open = btn.dataset.action === "open-all";
-    document.querySelectorAll(".envelope").forEach((e) => e.classList.toggle("opened", open));
+    document.querySelectorAll(".envelope").forEach((env) => {
+      env.classList.toggle("opened", open);
+      env.setAttribute("aria-expanded", String(open));
+      env.setAttribute("aria-label", open ? "还原这封信" : "撕开这封信");
+      env.querySelector(".env-tip").textContent = open ? "点击还原" : "点击撕开";
+    });
   });
 });
 

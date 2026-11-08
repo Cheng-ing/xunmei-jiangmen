@@ -1,0 +1,238 @@
+/* ============================================================
+   hooks.css —— 四个题材页各自的差异化模块 + 模范人物页的"薪火相传"
+   1. 通用：区块、折叠说明
+   2. 优秀侨胞：侨批时间线
+   3. 非遗传承人：葵扇五道工序
+   4. 能工巧匠：三张工具卡（<details> 展开）
+   5. 模范人物：消防员的一天
+   6. 薪火相传：点灯的样式（存储逻辑在 js/xinhuo.js）
+   四个页面共用本文件，断点与全站一致（720px）。
+   ============================================================ */
+
+/* ---------- 1. 通用 ---------- */
+/* 钩子模块接在轮播之后，上下留白比普通 .section 小一点 */
+.hook-section { padding-top: 18px; }
+
+/* 折叠式来源说明：默认只露一行标题，点开才看说明 */
+.hook-note {
+  max-width: 680px; margin: 20px auto 0; text-align: center;
+  font-size: 12.5px; line-height: 1.9; color: rgba(233, 226, 211, .55);
+}
+.hook-note summary {
+  display: inline-block; cursor: pointer; list-style: none;
+  color: rgba(201, 168, 106, .8); letter-spacing: 1px;
+  border-bottom: 1px dashed rgba(201, 168, 106, .35); padding-bottom: 2px;
+}
+.hook-note summary::-webkit-details-marker { display: none; }
+.hook-note p { margin-top: 10px; }
+
+/* ---------- 2. 侨批时间线 ---------- */
+.qiaopi-line {
+  list-style: none; position: relative;
+  max-width: 880px; margin: 0 auto; padding-left: 34px;
+}
+/* 左侧一条渐隐的线，把五个时间点串起来 */
+.qiaopi-line::before {
+  content: ""; position: absolute; left: 10px; top: 8px; bottom: 10px; width: 1px;
+  background: linear-gradient(180deg, rgba(201, 168, 106, .7), rgba(201, 168, 106, .08));
+}
+.qiaopi-line li { position: relative; padding-bottom: 26px; }
+.qiaopi-line li:last-child { padding-bottom: 0; }
+.qiaopi-line li::before {
+  content: ""; position: absolute; left: -29px; top: 8px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--gold); box-shadow: 0 0 0 4px rgba(201, 168, 106, .14);
+}
+.qiaopi-line time {
+  display: block; font-family: ui-monospace, Consolas, monospace;
+  font-size: 12.5px; letter-spacing: 1px; color: rgba(201, 168, 106, .85);
+}
+.qiaopi-line b {
+  display: block; margin: 4px 0 6px;
+  font-family: var(--font-title); font-weight: 400;
+  font-size: 20px; letter-spacing: 3px; color: var(--paper);
+}
+.qiaopi-line p { max-width: 680px; font-size: 14px; line-height: 1.95; color: rgba(233, 226, 211, .72); }
+
+/* ---------- 3. 葵扇五道工序 ---------- */
+.step-list {
+  list-style: none; max-width: 980px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px;
+}
+.step-list li {
+  display: flex; gap: 14px; padding: 18px 20px;
+  background: rgba(9, 14, 21, .35);
+  border: 1px solid rgba(201, 168, 106, .22); border-radius: var(--radius);
+}
+.step-no {
+  flex: 0 0 auto; font-family: var(--font-title);
+  font-size: 30px; line-height: 1; color: rgba(201, 168, 106, .45);
+}
+.step-list b {
+  display: block; margin-bottom: 6px;
+  font-family: var(--font-title); font-weight: 400;
+  font-size: 19px; letter-spacing: 2px; color: var(--paper);
+}
+.step-list p { font-size: 13.5px; line-height: 1.9; color: rgba(233, 226, 211, .72); }
+
+/* ---------- 4. 工具卡 ---------- */
+.tool-grid {
+  max-width: 1040px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;
+}
+.tool-card {
+  background: rgba(9, 14, 21, .38);
+  border: 1px solid rgba(201, 168, 106, .25); border-radius: var(--radius);
+  transition: border-color .25s, background .25s;
+}
+.tool-card[open] { border-color: var(--gold); background: rgba(201, 168, 106, .07); }
+.tool-card summary {
+  position: relative; cursor: pointer; list-style: none;
+  display: flex; flex-direction: column; gap: 8px; padding: 20px;
+}
+.tool-card summary::-webkit-details-marker { display: none; }
+/* 右上角的"展开 / 收起"提示 */
+.tool-card summary::after {
+  content: "展开"; position: absolute; right: 20px; top: 22px;
+  font-size: 12px; letter-spacing: 1px; color: rgba(201, 168, 106, .8);
+}
+.tool-card[open] summary::after { content: "收起"; }
+.tool-card svg { width: 44px; height: 44px; color: var(--gold); }
+.tool-card b {
+  font-family: var(--font-title); font-weight: 400;
+  font-size: 19px; letter-spacing: 2px; color: var(--paper);
+}
+.tool-card summary span { font-size: 12px; letter-spacing: 1.2px; color: rgba(201, 168, 106, .8); }
+.tool-card p {
+  margin: 0 20px 20px; padding-top: 14px;
+  font-size: 13.5px; line-height: 1.9; color: rgba(233, 226, 211, .75);
+  border-top: 1px dashed rgba(201, 168, 106, .22);
+}
+
+/* ---------- 5. 消防员的一天 ---------- */
+.day-line { list-style: none; max-width: 820px; margin: 0 auto; }
+.day-line li {
+  display: grid; grid-template-columns: 96px 1fr; gap: 20px;
+  padding: 18px 0; border-bottom: 1px solid rgba(201, 168, 106, .16);
+}
+.day-line li:last-child { border-bottom: 0; padding-bottom: 0; }
+.day-line span {
+  padding-top: 3px; font-family: ui-monospace, Consolas, monospace;
+  font-size: 12.5px; letter-spacing: 1px; color: rgba(201, 168, 106, .85);
+}
+.day-line b {
+  display: block; margin-bottom: 6px;
+  font-family: var(--font-title); font-weight: 400;
+  font-size: 19px; letter-spacing: 2px; color: var(--paper);
+}
+.day-line p { font-size: 14px; line-height: 1.9; color: rgba(233, 226, 211, .72); }
+
+/* ---------- 6. 薪火相传 ---------- */
+.xinhuo-box {
+  max-width: 760px; margin: 0 auto; padding: 28px clamp(18px, 3vw, 36px);
+  display: grid; grid-template-columns: 150px 1fr; gap: 28px; align-items: center;
+  border: 1px solid rgba(201, 168, 106, .3); border-radius: var(--radius);
+  background: radial-gradient(130% 130% at 15% 0%, rgba(166, 58, 43, .16), rgba(9, 14, 21, .5) 62%);
+}
+/* 灯：外框用描金细线，火苗由 JS 加 .lit 点亮 */
+.xinhuo-lamp { position: relative; width: 110px; height: 150px; margin: 0 auto; }
+.xinhuo-lamp::before {
+  content: ""; position: absolute; left: 50%; top: -14px; width: 1px; height: 22px;
+  background: rgba(201, 168, 106, .5);
+}
+.xinhuo-lamp::after {
+  content: ""; position: absolute; left: -20px; right: -20px; top: 20px; bottom: -10px;
+  border-radius: 50%; pointer-events: none; transition: background .6s;
+}
+.xinhuo-lamp.lit::after {
+  background: radial-gradient(closest-side, rgba(255, 190, 90, .28), transparent 70%);
+}
+.xinhuo-lamp .lamp-top {
+  position: absolute; left: 30px; right: 30px; top: 30px; height: 12px;
+  border: 1px solid rgba(201, 168, 106, .55); border-radius: 4px;
+  background: rgba(9, 14, 21, .6);
+}
+.xinhuo-lamp .lamp-body {
+  position: absolute; left: 12px; right: 12px; top: 42px; bottom: 14px;
+  border: 1px solid rgba(201, 168, 106, .55); border-radius: 9px 9px 14px 14px;
+  background: linear-gradient(180deg, rgba(9, 14, 21, .85), rgba(29, 42, 61, .9));
+  box-shadow: inset 0 0 22px rgba(0, 0, 0, .65);
+}
+.xinhuo-lamp .flame {
+  position: absolute; left: 50%; top: 74px; width: 26px; height: 40px;
+  transform: translateX(-50%) scale(.55); transform-origin: 50% 100%;
+  border-radius: 50% 50% 44% 44%;
+  background: radial-gradient(circle at 50% 72%, #fff7dc 0, #ffd27a 34%, #e8873a 68%, rgba(232, 135, 58, 0) 72%);
+  opacity: .18; transition: opacity .5s, transform .5s, box-shadow .5s;
+  pointer-events: none;
+}
+.xinhuo-lamp.lit .flame {
+  opacity: 1; transform: translateX(-50%) scale(1);
+  box-shadow: 0 0 30px rgba(255, 190, 90, .55);
+  animation: flicker 2.8s ease-in-out infinite;
+}
+@keyframes flicker {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
+  35% { transform: translateX(-51%) scale(1.06, .96); opacity: .92; }
+  70% { transform: translateX(-49%) scale(.95, 1.05); opacity: 1; }
+}
+
+.xinhuo-form label {
+  display: block; margin-bottom: 8px;
+  font-size: 13px; letter-spacing: 2px; color: rgba(201, 168, 106, .85);
+}
+.xinhuo-form textarea {
+  width: 100%; min-height: 92px; resize: vertical;
+  padding: 12px 14px; border-radius: 10px;
+  border: 1px solid rgba(201, 168, 106, .3); background: rgba(9, 14, 21, .55);
+  color: var(--paper); font-family: var(--font-body); font-size: 14px; line-height: 1.8;
+}
+.xinhuo-form textarea::placeholder { color: rgba(233, 226, 211, .35); }
+.xinhuo-form textarea:focus {
+  outline: none; border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 168, 106, .15);
+}
+.xinhuo-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; }
+.xinhuo-reset {
+  padding: 0; border: 0; background: none; font-size: 12.5px; letter-spacing: 1px;
+  color: rgba(233, 226, 211, .55);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.xinhuo-reset:hover { color: var(--gold); }
+.xinhuo-status { min-height: 1.8em; margin-top: 12px; font-size: 13px; line-height: 1.8; color: rgba(233, 226, 211, .65); }
+.xinhuo-status.ok { color: var(--gold); }
+
+/* ---------- 7. 移动端（≤720px） ---------- */
+@media (max-width: 720px) {
+  .hook-section { padding-top: 6px; }
+  .qiaopi-line { padding-left: 26px; }
+  .qiaopi-line::before { left: 6px; }
+  .qiaopi-line li::before { left: -25px; }
+  .qiaopi-line b { font-size: 18px; letter-spacing: 2px; }
+  .qiaopi-line p { font-size: 13.5px; line-height: 1.9; }
+
+  .step-list { grid-template-columns: 1fr; gap: 10px; }
+  .step-list li { padding: 14px 16px; }
+  .step-no { font-size: 26px; }
+
+  .tool-grid { grid-template-columns: 1fr; gap: 10px; }
+  .tool-card summary { padding: 16px; }
+  .tool-card p { margin: 0 16px 16px; padding-top: 12px; }
+
+  .day-line li { grid-template-columns: 70px 1fr; gap: 14px; padding: 14px 0; }
+  .day-line b { font-size: 18px; }
+  .day-line p { font-size: 13.5px; }
+
+  .xinhuo-box { grid-template-columns: 1fr; gap: 12px; padding: 22px 18px 20px; }
+  .xinhuo-lamp { width: 92px; height: 128px; }
+  .xinhuo-lamp .lamp-top { left: 24px; right: 24px; top: 26px; }
+  .xinhuo-lamp .lamp-body { left: 9px; right: 9px; top: 36px; bottom: 12px; }
+  .xinhuo-lamp .flame { top: 62px; }
+  .xinhuo-form textarea { min-height: 84px; font-size: 14px; }
+}
+
+/* 系统设置里关掉动效时，火苗不再闪 */
+@media (prefers-reduced-motion: reduce) {
+  .xinhuo-lamp.lit .flame { animation: none; }
+  .tool-card, .xinhuo-lamp .flame, .xinhuo-lamp::after { transition: none; }
+}

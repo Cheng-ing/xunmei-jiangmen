@@ -84,13 +84,15 @@ function buildLookup() {
       const dy = ((py + 0.5) / N) * 2 - 1;
       const ρ2 = dx * dx + dy * dy;
       if (ρ2 > 1) continue;            // 圆外不写 → 缓冲里保持透明
-      const ρ = Math.sqrt(ρ2), c = Math.asin(ρ);
-      const sinc = ρ, cosc = Math.sqrt(1 - ρ2), yUp = -dy;
-      /* 反算纬度 φ 与经度偏移 Δλ（都与中央经线无关 → 只需算一次） */
-      let sinφ = cosc * Math.sin(φ0) + yUp * sinc * Math.cos(φ0);
+      const ρ = Math.sqrt(ρ2), sinc = ρ, cosc = Math.sqrt(1 - ρ2), yUp = -dy;
+      /* 反算纬度 φ 与经度偏移 Δλ（都与中央经线无关 → 只需算一次）。
+         正射投影的逆变换要按 ρ 归一化：球面上一点在圆内的投影半径是 sin c，
+         直接拿投影坐标当单位向量，会把球心附近的经纬度算小，贴图与打点随之错位。 */
+      const ρe = ρ || 1e-9;
+      let sinφ = cosc * Math.sin(φ0) + yUp * sinc / ρe * Math.cos(φ0);
       sinφ = Math.max(-1, Math.min(1, sinφ));
       const φ = Math.asin(sinφ);
-      const dλ = Math.atan2(dx * sinc, cosc * Math.cos(φ0) - yUp * sinc * Math.sin(φ0));
+      const dλ = Math.atan2(dx * sinc, ρ * cosc * Math.cos(φ0) - yUp * sinc * Math.sin(φ0));
       mapX[i] = (((dλ + Math.PI) / (2 * Math.PI)) * texW) | 0;
       mapY[i] = (((Math.PI / 2 - φ) / Math.PI) * texH) | 0;
       if (mapY[i] >= texH) mapY[i] = texH - 1;

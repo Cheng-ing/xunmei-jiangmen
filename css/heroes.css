@@ -85,6 +85,11 @@
   gap: clamp(14px, 2vw, 22px);
   max-width: 1180px; margin: 0 auto;
 }
+/* 照片墙下方的小字来源说明 */
+.photo-source-note {
+  margin: 22px auto 0; text-align: center;
+  font-size: 12px; letter-spacing: 1px; color: rgba(233, 226, 211, .45);
+}
 .hero-card {
   position: relative;                /* 给右上角的序号做定位父级 */
   display: flex; flex-direction: column; gap: 12px;

@@ -99,8 +99,8 @@
 /* 配图是 AIGC 生成的示意图，角标压在图左下角，避免被当成实拍照片 */
 .fw-ai {
   position: absolute; left: 8px; bottom: 8px; z-index: 2;
-  padding: 2px 7px; border-radius: 3px;
-  font-size: 10.5px; letter-spacing: .5px; line-height: 1.6;
+  padding: 2px 7px; border-radius: 3px; white-space: nowrap;
+  font-size: 10.5px; letter-spacing: .3px; line-height: 1.6;
   color: rgba(246, 239, 226, .92); background: rgba(9, 14, 21, .62);
   border: 1px solid rgba(246, 239, 226, .22);
 }
@@ -130,8 +130,10 @@
   padding: 5vh 5vw; background: rgba(9, 14, 21, .8); backdrop-filter: blur(6px);
 }
 .fw-modal[hidden] { display: none; }   /* flex 会盖掉 hidden，必须显式关掉 */
+.fw-wrap.modal-open { overflow: hidden; }
+.fw-storage-note { margin-top: 12px; color: var(--gold); font-size: 13px; }
 .fw-modal-body {
-  width: min(620px, 100%); max-height: 86vh; overflow-y: auto;
+  width: min(620px, 100%); max-height: 86vh; overflow-y: auto; overscroll-behavior: contain;
   scrollbar-width: thin; scrollbar-color: rgba(201, 168, 106, .6) transparent;
   padding: clamp(20px, 3.4vw, 34px); text-align: center;
   background: linear-gradient(180deg, rgba(246, 239, 226, .07), rgba(22, 32, 46, .9));
@@ -288,8 +290,8 @@
 .pf-form input { flex: 0 1 240px; }
 .pf-form option { background: var(--ink); }   /* 下拉列表在 Windows 上默认是白底黑字，跟着深色页走更协调 */
 .pf-out { text-align: center; }
-#posterCanvas {
-  width: min(320px, 74vw); display: block; margin: 0 auto 16px;
+#posterImage {
+  width: min(320px, 74vw); height: auto; display: block; margin: 0 auto 16px;
   border: 1px solid rgba(201, 168, 106, .45); border-radius: 6px;
   box-shadow: var(--shadow);
 }
@@ -334,8 +336,11 @@
   .fw-town { font-size: 10.5px; letter-spacing: 1px; }
   .fw-ph { font-size: 38px; }
   .fw-checked { font-size: 10px; padding: 2px 7px; right: 8px; top: 8px; }
-  /* 窄屏图槽只有 150px 上下，角标跟着缩一点才不压住画面 */
-  .fw-ai { font-size: 9.5px; padding: 1px 6px; left: 6px; bottom: 6px; }
+  /* 窄屏图槽只有 150px 上下，角标铺成一条通栏，字才放得下 */
+  .fw-ai {
+    left: 6px; right: 6px; bottom: 6px; text-align: center;
+    font-size: 9px; letter-spacing: .2px; padding: 1px 2px;
+  }
 
   .fw-modal { padding: 0; }
   .fw-modal-body {
@@ -362,7 +367,7 @@
   .rt-custom { gap: 10px; }
 
   .pf-form select, .pf-form input { flex: 1 1 100%; }
-  #posterCanvas { width: 78vw; }
+  #posterImage { width: 78vw; }
 }
 
 /* ---------- 10. 无障碍：系统"减少动效"时卡片不再上浮 ---------- */

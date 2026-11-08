@@ -24,8 +24,8 @@
                美食：填 "images/fengwu/<条目id>.jpg"，那批是 AIGC 水彩插画。
                美景：填 "images/scenery/<条目id>.jpg"，那批是真实照片（32 张本站实拍 + 14 张网络自由版权图，
                      后者的作者与许可证写在每条的 credit / creditFile 字段里）。
-     realImg —— 写了就不压「AI 生成示意图」角标、alt 里也不带这几个字（判断在 imgBadge()）。
-               现状：74 条全写了，整页没有 AI 角标；美食那 28 张其实是 AIGC 水彩插画。
+     realImg —— 真实照片才写：写了就不压角标、alt 里也不带那行字（判断在 imgBadge()）。
+               现状：美食 28 条都没写 → 每张图压「本图 AI 生成，仅作示意」；美景全部写了 → 不压角标。
    ------------------------------------------------------------ */
 
 /* 区县筛选的顺序，"全部"是第 0 项 */
@@ -33,179 +33,179 @@ const FENGWU_TOWNS = ["全部", "蓬江", "江海", "新会", "台山", "开平"
 
 const FOOD = [
   {
-    id: "pjiang-langua", name: "杜阮凉瓜", town: "蓬江", img: "images/fengwu/pjiang-langua.jpg", realImg: true,
+    id: "pjiang-langua", name: "杜阮凉瓜", town: "蓬江", img: "images/fengwu/pjiang-langua.jpg",
     line: "杜阮镇的凉瓜粒大肉厚，苦味过后有回甘。",
     detail: "杜阮凉瓜（苦瓜）是蓬江区杜阮镇出名的本地蔬菜，瘤粒饱满、肉厚核少，"
           + "本地做法有凉瓜排骨汤、酿凉瓜和冰镇蘸酱，夏天饭馆几乎家家有。",
     tip: "怕苦挑颜色偏浅黄、瘤粒宽的，苦味相对轻一点。"
   },
   {
-    id: "hetang-congcai", name: "荷塘冲菜", town: "蓬江", img: "images/fengwu/hetang-congcai.jpg", realImg: true,
+    id: "hetang-congcai", name: "荷塘冲菜", town: "蓬江", img: "images/fengwu/hetang-congcai.jpg",
     line: "荷塘镇腌出来的那口脆菜，咸里带酸，配白粥最老实。",
     detail: "冲菜用芥菜一类的青菜晒到半干再腌制，蓬江区荷塘镇一带做得出名，颜色偏黄绿、咬下去脆。家常做法是拿它炒五花肉、蒸肉末，或者切一点进白粥。",
     tip: "腌制品咸，下锅前先用清水冲一遍、菜本身少放盐；当配菜别当主菜。"
   },
   {
-    id: "waihai-mian", name: "外海面", town: "江海", img: "images/fengwu/waihai-mian.jpg", realImg: true,
+    id: "waihai-mian", name: "外海面", town: "江海", img: "images/fengwu/waihai-mian.jpg",
     line: "外海街道压出来的竹升蛋面，细得像线，捞起来不带汤水。",
     detail: "外海面出自江海区外海街道，过去是墟镇面店的手艺：面团用竹升一类工具反复压打，擀薄后切成细面，煮好过冷河再捞，面身爽弹、根根分明。本地吃面讲究汤、面分开，靠的是这一手压面功夫。",
     tip: "面店多半午市最热闹，去晚了容易卖完；想要汤面不糊，点的时候说一句“汁另上”。"
   },
   {
-    id: "gujing-shae", name: "古井烧鹅", town: "新会", img: "images/fengwu/gujing-shae.jpg", realImg: true,
+    id: "gujing-shae", name: "古井烧鹅", town: "新会", img: "images/fengwu/gujing-shae.jpg",
     line: "荔枝木明火烤的脆皮烧鹅，新会酒席上的头一道硬菜。",
     detail: "古井镇靠崖门水道，烧鹅用本地养的肥鹅，腌好后挂进炉里以荔枝木一类硬柴明火烤，"
           + "出来皮脆、肉带汁，斩件时那层油亮的脆皮最见功夫。镇上的烧鹅一条街饭馆连铺，半只一只都点得。",
     tip: "想要烧鹅汁捞饭先问一句有没有；周末中午排队，改晚市或提前一点去。"
   },
   {
-    id: "xinhui-chenpi", name: "新会陈皮入馔", town: "新会", img: "images/fengwu/xinhui-chenpi.jpg", realImg: true,
+    id: "xinhui-chenpi", name: "新会陈皮入馔", town: "新会", img: "images/fengwu/xinhui-chenpi.jpg",
     line: "一瓣陈皮放进汤里、糖水里，柑香把整道菜压住。",
     detail: "新会陈皮是茶枝柑的果皮晒干陈化而成，存放年头越长香气越沉。本地人拿它煲汤、焖肉、"
           + "做陈皮红豆沙，也直接泡水喝；柑香里带一点药香，是侨乡味觉的一张名片。",
     tip: "买整皮去新会的陈皮店或陈皮村；散装、年份说不清的别当“老皮”价钱买。"
   },
   {
-    id: "xinhui-niurouwan", name: "新会牛肉丸", town: "新会", img: "images/fengwu/xinhui-niurouwan.jpg", realImg: true,
+    id: "xinhui-niurouwan", name: "新会牛肉丸", town: "新会", img: "images/fengwu/xinhui-niurouwan.jpg",
     line: "手打出来的牛肉丸，咬开带汁，配一碗粗面就是一顿。",
     detail: "新会一带的牛肉丸靠反复摔打打出弹性，煮好后外皮弹、内里带汁，常见吃法是牛肉丸汤配粗面或河粉，也直接下火锅。",
     tip: "看汤便知丸子好坏：好丸子的汤不该浑浊；打包外卖先问一句是不是现煮。"
   },
   {
-    id: "xinhui-tianshuiluobo", name: "新会甜水萝卜", town: "新会", img: "images/fengwu/xinhui-tianshuiluobo.jpg", realImg: true,
+    id: "xinhui-tianshuiluobo", name: "新会甜水萝卜", town: "新会", img: "images/fengwu/xinhui-tianshuiluobo.jpg",
     line: "围垦水田边长的水萝卜，生吃不辣、煲汤带一点甜。",
     detail: "新会一带是冲积平原，水土偏淡，种出来的水萝卜个头大、纤维少，本地人冬天拿它煲汤、焖羊肉、切丝做馅，是时令家常菜。",
     tip: "季节菜，冬天最当造；挑拿在手里沉的，糠心的少。"
   },
   {
-    id: "xinhui-hechong", name: "新会禾虫", town: "新会", img: "images/fengwu/xinhui-hechong.jpg", realImg: true,
+    id: "xinhui-hechong", name: "新会禾虫", town: "新会", img: "images/fengwu/xinhui-hechong.jpg",
     line: "水田里收上来的禾虫，本地人拿它煎蛋、蒸猪肉。",
     detail: "禾虫是稻田里长出的一类环节动物，秋收前后随水从田里收上来。新会一带水田多，本地做法有禾虫煎蛋、禾虫蒸肉、瓦钵焗禾虫，咸鲜里带一点草药气，是季节性的重口好菜。",
     tip: "一年就那一茬，见到再点；吐沙处理不干净会有泥味，挑做得久的店。"
   },
   {
-    id: "xinhui-liangguo", name: "新会陈皮凉果", town: "新会", img: "images/fengwu/xinhui-liangguo.jpg", realImg: true,
+    id: "xinhui-liangguo", name: "新会陈皮凉果", town: "新会", img: "images/fengwu/xinhui-liangguo.jpg",
     line: "陈皮做的梅、姜、桔饼，侨乡人带出省的手信。",
     detail: "新会除了把陈皮入汤入菜，也拿它做凉果饼食：陈皮梅、陈皮姜、陈皮桔饼一类，甜里带回甘的柑香。过去华侨出洋时带一罐在路上吃，是侨乡手信里常见的一样。",
     tip: "当糖果吃就好；买散装先问一句用的是不是新会皮，两者价钱差得远。"
   },
   {
-    id: "taishan-huangshanfan", name: "台山黄鳝饭", town: "台山", img: "images/fengwu/taishan-huangshanfan.jpg", realImg: true,
+    id: "taishan-huangshanfan", name: "台山黄鳝饭", town: "台山", img: "images/fengwu/taishan-huangshanfan.jpg",
     line: "鳝肉撕成丝和米饭同焗，锅底那层饭焦最抢手。",
     detail: "台山一带的做法：黄鳝蒸熟去骨、撕成丝，与米饭一起回锅焗干水汽，"
           + "饭粒分明又不硬，鳝香吃进米里。镇上饭馆多用当季鳝鱼，一人点一份刚好两人吃。",
     tip: "想要饭焦（锅巴）可以让师傅多焗一会儿；配一碗鲫鱼或猪骨汤不腻。"
   },
   {
-    id: "taishan-shenghao", name: "台山生蚝与都斛海鲜", town: "台山", img: "images/fengwu/taishan-shenghao.jpg", realImg: true,
+    id: "taishan-shenghao", name: "台山生蚝与都斛海鲜", town: "台山", img: "images/fengwu/taishan-shenghao.jpg",
     line: "镇海湾外的咸淡水养出肥蚝，都斛的海鲜摊排成一条街。",
     detail: "台山海岸线长、近海养殖多，生蚝以都斛、川岛一带出名，常见炭烧、蒜蓉蒸和蚝烙三种做法。"
           + "都斛镇上的海鲜市场可以现买、再拿到附近饭馆加工，是本地人吃海鲜的常规操作。",
     tip: "“市场买 + 饭馆加工”先问清加工费；休渔期以养殖和冰鲜为主，别信“今日现捕”。"
   },
   {
-    id: "taishan-qingxie", name: "台山青蟹", town: "台山", img: "images/fengwu/taishan-qingxie.jpg", realImg: true,
+    id: "taishan-qingxie", name: "台山青蟹", town: "台山", img: "images/fengwu/taishan-qingxie.jpg",
     line: "咸淡水交汇的海湾养出的青蟹，带膏时最抢手。",
     detail: "台山海岸一带有咸淡水交汇的海湾与围垦水域，青蟹在这一带长大，本地常见做法是姜葱炒、清蒸和煮粥，母蟹带膏的时候更受追捧。",
     tip: "挑蟹腿硬实、拿在手里沉的；休渔期以养殖为主，别信“野生现捞”的说法。"
   },
   {
-    id: "taishan-wencun-yusheng", name: "台山鱼生", town: "台山", img: "images/fengwu/taishan-wencun-yusheng.jpg", realImg: true,
+    id: "taishan-wencun-yusheng", name: "台山鱼生", town: "台山", img: "images/fengwu/taishan-wencun-yusheng.jpg",
     line: "鲜活淡水鱼切到透光，拌十几种配料吃。",
     detail: "台山一带有吃鱼生的老吃法：鲜活淡水鱼放血起肉、片成薄片，拌花生、芝麻、姜丝、柠檬叶丝一类配料，用花生油或酱油提味，吃的是一口鲜和脆。",
     tip: "生食淡水鱼有寄生虫风险，孕妇、小孩、肠胃弱的人别吃；要吃就挑处理规范的老店。"
   },
   {
-    id: "guanghai-xianyu", name: "广海咸鱼", town: "台山", img: "images/fengwu/guanghai-xianyu.jpg", realImg: true,
+    id: "guanghai-xianyu", name: "广海咸鱼", town: "台山", img: "images/fengwu/guanghai-xianyu.jpg",
     line: "广海渔港腌晒的咸鱼，咸香重，最下饭。",
     detail: "台山广海镇是老渔港，过去鲜鱼多、冰少，就靠盐腌日晒存下来，咸鱼回来蒸肉、煎香、煲仔饭上放一片，是本地家常味的底子。",
     tip: "咸度不低，蒸之前冲一遍水、整桌菜就少放盐；别当常规菜天天吃。"
   },
   {
-    id: "chuandao-xiajiang", name: "川岛虾酱", town: "台山", img: "images/fengwu/chuandao-xiajiang.jpg", realImg: true,
+    id: "chuandao-xiajiang", name: "川岛虾酱", town: "台山", img: "images/fengwu/chuandao-xiajiang.jpg",
     line: "小虾加盐捣烂发酵的一勺酱，炒通菜、蒸肉都靠它提味。",
     detail: "川岛一带的渔家把小杂虾加盐捣烂发酵成虾酱，气味冲、咸鲜重，本地常用来炒通菜（蕹菜）、蒸猪肉，或兑进蘸料里。",
     tip: "一次只放半勺，放了它就不再另加盐；开封后冷藏、尽快吃完。"
   },
   {
-    id: "taishan-manyu", name: "台山鳗鱼", town: "台山", img: "images/fengwu/taishan-manyu.jpg", realImg: true,
+    id: "taishan-manyu", name: "台山鳗鱼", town: "台山", img: "images/fengwu/taishan-manyu.jpg",
     line: "咸淡水养出的鳗鱼，鲜吃之外更多是晒成鳗干。",
     detail: "台山海岸线长、滩涂多，鳗鱼的养殖和捕捞都有规模；除鲜食之外，本地把鳗鱼剖开腌晒成干，蒸来下饭、煲粥提鲜。",
     tip: "鳗干偏咸，蒸之前泡一会儿；买的时候挑肉色透亮的，发暗发黄的别要。"
   },
   {
-    id: "kaiping-magang-e", name: "开平马冈鹅", town: "开平", img: "images/fengwu/kaiping-magang-e.jpg", realImg: true,
+    id: "kaiping-magang-e", name: "开平马冈鹅", town: "开平", img: "images/fengwu/kaiping-magang-e.jpg",
     line: "马冈镇的本地鹅，肉紧、皮下脂肪薄，烧卤都撑得住。",
     detail: "马冈鹅是开平马冈镇一带的地方鹅种，当地有烧鹅、白切、醉鹅等做法，"
           + "侨乡村落的宴席和墟镇老店里都常见它。",
     tip: "看碉楼那天把午饭放在马冈镇或赤坎，顺路；晚市去容易售罄。"
   },
   {
-    id: "kaiping-doufujiao", name: "开平豆腐角", town: "开平", img: "images/fengwu/kaiping-doufujiao.jpg", realImg: true,
+    id: "kaiping-doufujiao", name: "开平豆腐角", town: "开平", img: "images/fengwu/kaiping-doufujiao.jpg",
     line: "酿过的豆腐煎到两面结壳，老街下午的零嘴。",
     detail: "豆腐角是把豆腐切块、中间酿入鱼胶或肉馅，煎至金黄后再淋汁或略焖，"
           + "外皮带一点脆、里面还是嫩的。开平、台山的老街店铺都做得出来。",
     tip: "刚出锅最好吃；配一碗濑粉或白粥就能当一顿饭。"
   },
   {
-    id: "chikan-yazhou", name: "赤坎鸭粥", town: "开平", img: "images/fengwu/chikan-yazhou.jpg", realImg: true,
+    id: "chikan-yazhou", name: "赤坎鸭粥", town: "开平", img: "images/fengwu/chikan-yazhou.jpg",
     line: "鸭汤熬到绵的粥，鸭肉拆件另蘸姜葱。",
     detail: "开平赤坎一带的鸭粥是把鸭煮到刚熟、拆件后铺在粥面上，粥底用鸭汤熬出米浆，鸭肉蘸姜葱吃，鸭骨再回锅继续熬粥。",
     tip: "粥店开得晚的多，去之前先问有没有留鸭；一份粥两个人分刚好。"
   },
   {
-    id: "kaiping-niujiaopi", name: "开平牛脚皮", town: "开平", img: "images/fengwu/kaiping-niujiaopi.jpg", realImg: true,
+    id: "kaiping-niujiaopi", name: "开平牛脚皮", town: "开平", img: "images/fengwu/kaiping-niujiaopi.jpg",
     line: "牛蹄慢熬到胶质化开，晾凉凝成一块再切件。",
     detail: "牛脚皮是开平一带宴席和小店里的老菜：牛蹄去骨长时间熬煮，胶质溶进汤里，晾凉后自然凝成整块，吃时切件，可以凉拌也可以回锅焖，口感弹而不硬。",
     tip: "冷盘更稳妥，夏天别在室温放太久；牙口不好就挑焖得软一点的。"
   },
   {
-    id: "heshan-gulao-mian", name: "鹤山古劳蛋面", town: "鹤山", img: "images/fengwu/heshan-gulao-mian.jpg", realImg: true,
+    id: "heshan-gulao-mian", name: "鹤山古劳蛋面", town: "鹤山", img: "images/fengwu/heshan-gulao-mian.jpg",
     line: "水乡老面店压出来的竹升蛋面，面身细、蛋香重。",
     detail: "古劳镇是珠三角水乡，河涌之间留着不少做面、晒面的老铺。"
           + "竹升压打出来的蛋面爽弹，配腩汁或猪手汁是本地吃法。",
     tip: "逛完古劳水乡再吃一碗，顺路；一份面加一件云吞是常见点法。"
   },
   {
-    id: "heshan-donggu-jiangyou", name: "鹤山东古酱油", town: "鹤山", img: "images/fengwu/heshan-donggu-jiangyou.jpg", realImg: true,
+    id: "heshan-donggu-jiangyou", name: "鹤山东古酱油", town: "鹤山", img: "images/fengwu/heshan-donggu-jiangyou.jpg",
     line: "鹤山老酱园缸晒出来的酱油，五邑厨房的底味。",
     detail: "东古酱油出自鹤山，走的是缸晒发酵的老路子，本地人蒸鱼、调汤、捞面都用它，也常被当成侨乡味道带出省外。",
     tip: "看标签上“氨基酸态氮”那栏，数值高鲜味相对足；生抽调味、老抽上色，别买混。"
   },
   {
-    id: "heshan-hongcha", name: "鹤山红茶", town: "鹤山", img: "images/fengwu/heshan-hongcha.jpg", realImg: true,
+    id: "heshan-hongcha", name: "鹤山红茶", town: "鹤山", img: "images/fengwu/heshan-hongcha.jpg",
     line: "珠三角山地做出来的红茶，甜润、带一点薯香。",
     detail: "鹤山在珠三角一带算是有种茶、制红茶传统的产区，山地气候湿润，做出的红茶汤色偏深、口感甜润，本地也拿它入茶点。",
     tip: "第一泡别闷太久；想试先买小样，别一次囤整箱。"
   },
   {
-    id: "enping-lecai", name: "恩平簕菜", town: "恩平", img: "images/fengwu/enping-lecai.jpg", realImg: true,
+    id: "enping-lecai", name: "恩平簕菜", town: "恩平", img: "images/fengwu/enping-lecai.jpg",
     line: "带刺的野生藤芽，炒过之后先苦后甘。",
     detail: "簕菜是恩平一带采野生嫩芽入馔的蔬菜，清炒、做汤、焙成簕菜茶都有。"
           + "它的味道是典型的“回甘”，第一次吃的人多半会记住这个口感。",
     tip: "怕苦先从簕菜瘦肉汤开始，比清炒柔和。"
   },
   {
-    id: "enping-lecha", name: "恩平簕菜茶", town: "恩平", img: "images/fengwu/enping-lecha.jpg", realImg: true,
+    id: "enping-lecha", name: "恩平簕菜茶", town: "恩平", img: "images/fengwu/enping-lecha.jpg",
     line: "把簕菜嫩芽焙成茶，苦尽甘来那口回甘还在。",
     detail: "簕菜在恩平除了入菜，也采嫩芽焙制成代用茶，冲出来汤色偏黄绿、入口微苦、回甘明显，本地人夏天和秋冬都有人日常泡着喝。",
     tip: "头泡别闷太久，苦味会重；当普通茶饮喝就好，别信任何“降三高”的功效说法。"
   },
   {
-    id: "enping-laifen", name: "恩平濑粉", town: "恩平", img: "images/fengwu/enping-laifen.jpg", realImg: true,
+    id: "enping-laifen", name: "恩平濑粉", town: "恩平", img: "images/fengwu/enping-laifen.jpg",
     line: "米浆漏出来的短粉条，全靠一碗汤头撑着。",
     detail: "濑粉用米浆制成，恩平、开平一带都吃。汤底多用猪骨、虾米、头菜，"
           + "面上撒鸡蛋丝、花生和葱花，粉软汤鲜，是本地常见的早餐。",
     tip: "早市的小店最热闹，现煮现卖；加一份猪手或卤蛋更顶饱。"
   },
   {
-    id: "enping-shaobing", name: "恩平烧饼", town: "恩平", img: "images/fengwu/enping-shaobing.jpg", realImg: true,
+    id: "enping-shaobing", name: "恩平烧饼", town: "恩平", img: "images/fengwu/enping-shaobing.jpg",
     line: "炉壁上贴出来的薄饼，芝麻咸香，墟日一袋一袋提。",
     detail: "恩平烧饼是本地墟镇常见的传统饼食：面团包馅或压扁后贴进炉壁烤，出炉薄脆、带芝麻香，逢年过节和走亲戚时买得多。",
     tip: "趁热最脆，回软了干锅小火焙一下；密封能放几天，别冷藏。"
   },
   {
-    id: "enping-shankengl", name: "恩平山坑螺", town: "恩平", img: "images/fengwu/enping-shankengl.jpg", realImg: true,
+    id: "enping-shankengl", name: "恩平山坑螺", town: "恩平", img: "images/fengwu/enping-shankengl.jpg",
     line: "山沟溪坑里的小螺，紫苏辣椒一炒，嗦着吃。",
     detail: "恩平山地溪沟多，山坑螺是当地常见的一道小食：养净吐沙后与紫苏、蒜、辣椒同炒，夜宵摊和农家菜馆都点得到。",
     tip: "一定要炒透、不生食；点之前问清吐沙处理了几次，沙多就换一家。"
@@ -584,7 +584,7 @@ const QUIZ = [
     why: "“中国侨都”，本站的“侨都薪火”就是从这里来的。" },
   { q: "中国第一位飞机设计师、飞行家冯如是哪里人？",
     opts: ["开平", "恩平", "新会", "台山"], a: 1,
-    why: "恩平人冯如，首页名人墙里那张戴帽青年照就是他（事迹出处见 js/heroes.js 的注释）。" },
+    why: "冯如是恩平人，首页名人墙介绍了他的航空探索事迹。" },
   { q: "赤坎华侨古镇紧挨着哪条江？",
     opts: ["西江", "潭江", "北江", "东江"], a: 1,
     why: "潭江。赤坎过去是靠潭江水路起来的侨墟码头。" }
@@ -682,7 +682,7 @@ const FENGWU_CFG = {
   maxWish: 24,          // 长图里"心愿"最多几个字
   posterW: 750,         // 分享长图宽
   posterH: 1334,        // 分享长图高（约 9:16，手机上长按保存刚好）
-  posterLine: "世界那么大 江门这么美 欢迎常来江门",  // 长图底部那行标语（原来放的是网址）
+  posterLine: "世界那么大 江门这么美 欢迎常来江门",  // 长图底部那行标语
   storageCheckin: "xunmei-fengwu-checkin",   // localStorage 键：我去过的地方
   storageQuizBest: "xunmei-fengwu-quiz-best" // localStorage 键：小测历史最高分
 };
@@ -702,19 +702,21 @@ function lsGet(key, fallback) {
   catch (e) { return fallback; }   // 隐私模式或 file:// 下 localStorage 可能不可用，打卡记不住也不影响浏览
 }
 function lsSet(key, val) {
-  try { localStorage.setItem(key, val); } catch (e) {}
+  try { localStorage.setItem(key, val); return true; }
+  catch (e) { return false; }
 }
 function loadCheckins() {
-  try { return JSON.parse(lsGet(FENGWU_CFG.storageCheckin, "[]")) || []; }
-  catch (e) { return []; }
+  try {
+    const list = JSON.parse(lsGet(FENGWU_CFG.storageCheckin, "[]"));
+    return Array.isArray(list) ? [...new Set(list.filter((id) => typeof id === "string" && findFengwu(id)))] : [];
+  } catch (e) { return []; }
 }
 function saveCheckin(id, on) {
   const list = loadCheckins();
   const i = list.indexOf(id);
   if (on && i < 0) list.push(id);
   if (!on && i >= 0) list.splice(i, 1);
-  lsSet(FENGWU_CFG.storageCheckin, JSON.stringify(list));
-  return list;
+  return lsSet(FENGWU_CFG.storageCheckin, JSON.stringify(list));
 }
 
 /* ---------- 照片：路径全部写死在上面两个数组的 img 字段里，这里只负责把路径变成 <img> ---------- */
@@ -786,11 +788,12 @@ function netComment(item) {
 /* ---------- 配图来源角标 ---------- */
 /* 美食那批配图是 AIGC 生成的水彩插画，图上必须写明来源，不冒充实拍；
    美景那批是真实照片，条目里都写了 realImg: true，所以不压角标。
-   ★ 只认 realImg 这一个字段：真实照片就在条目里加，AI 图就别加。 */
+   ★ 只认 realImg 这一个字段：真实照片就在条目里加，AI 图就别加。
+   ★ 角标文字只改下面 imgBadge() 一处，卡片和详情弹层同时生效。 */
 function imgBadge(item) {
   return item.realImg
     ? { alt: "", tag: "" }
-    : { alt: "（AI 生成示意图）", tag: '<span class="fw-ai">AI 生成示意图</span>' };
+    : { alt: "（本图 AI 生成，仅作示意）", tag: '<span class="fw-ai">本图 AI 生成，仅作示意</span>' };
 }
 
 /* ---------- 一张卡（图 + 名字 + 区县 + 一句话） ---------- */
@@ -835,10 +838,12 @@ function renderCards() {
 }
 
 /* ---------- 详情弹层 ---------- */
+let detailTrigger = null;
 function openDetail(id) {
   const item = findFengwu(id);
   const modal = document.querySelector("#fwModal");
   if (!item || !modal) return;
+  if (modal.hidden) detailTrigger = document.activeElement;
   const checked = loadCheckins().indexOf(id) >= 0;
   const b = imgBadge(item);
   /* 详情这一格大，用原图；512 像素的缩略图铺不满 */
@@ -852,7 +857,8 @@ function openDetail(id) {
     `<div class="fw-m-media">${netComment(item)}${ph}${src ? `<img src="${src}" alt="${item.name}${b.alt}"${auto}>${b.tag}` : ""}</div>` +
     `<p class="fw-m-detail">${item.detail}</p>` +
     `<p class="fw-m-tip"><b>怎么去 / 怎么吃</b>${item.tip}</p>` +
-    `<button type="button" class="btn fw-checkin${checked ? " on" : ""}" data-checkin="${id}">${checked ? "已打卡 ✓" : "我去过"}</button>`;
+    `<button type="button" class="btn fw-checkin${checked ? " on" : ""}" data-checkin="${id}">${checked ? "已打卡 ✓" : "我去过"}</button>` +
+    `<p class="fw-storage-note" role="status" hidden></p>`;
   bindSceneryImgs(body);
   modal.hidden = false;
   document.body.classList.add("modal-open");
@@ -864,6 +870,8 @@ function closeModal() {
   if (!modal || modal.hidden) return;
   modal.hidden = true;
   document.body.classList.remove("modal-open");
+  if (detailTrigger?.isConnected) detailTrigger.focus({ preventScroll: true });
+  detailTrigger = null;
 }
 
 /* ---------- 小测 ---------- */
@@ -1227,18 +1235,20 @@ function drawPoster() {
   ctx.font = '24px "Microsoft YaHei", sans-serif';
   ctx.fillText(`寻美江门 · ${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`, W / 2, H - 74);
 
-  /* 画完把 canvas 露出来，同时给下载按钮挂上当前的文件名 */
+  // 使用普通图片承接画布内容，让支持图片长按菜单的手机浏览器可以保存。
+  const png = cv.toDataURL("image/png");
+  const image = document.querySelector("#posterImage");
+  image.src = png;
+  image.alt = `侨都风物分享长图：${item.name}，${wish}`;
   const wrap = document.querySelector("#posterOut");
   if (wrap) wrap.hidden = false;
   const dl = document.querySelector("#posterDl");
   if (dl) {
     dl.setAttribute("download", `侨都风物-${item.name}.png`);
-    /* 把画好的 canvas 直接变成 dataURL 给下载链接用；电脑上点"保存长图"，
-       手机上长按上面那张预览图保存（浏览器不允许 a[download] 在长按时生效）。 */
-    try { dl.href = cv.toDataURL("image/png"); } catch (e) {}
+    dl.href = png;
   }
   const tip = document.querySelector("#posterTip");
-  if (tip) tip.textContent = "手机上长按上面这张图可以保存；电脑点“保存长图”。";
+  if (tip) tip.textContent = "手机可尝试长按图片保存；若应用内无法保存，请用系统浏览器打开后点“保存长图”。";
 }
 
 /* ---------- 滚动入场：本页的卡片是动态生成的，所以要自己观察 ---------- */
@@ -1286,7 +1296,13 @@ document.addEventListener("click", (e) => {
   const ci = e.target.closest("[data-checkin]");
   if (ci) {
     const on = !loadCheckins().includes(ci.dataset.checkin);
-    saveCheckin(ci.dataset.checkin, on);
+    const note = document.querySelector(".fw-storage-note");
+    if (!saveCheckin(ci.dataset.checkin, on)) {
+      note.hidden = false;
+      note.textContent = "这次没有保存成功，请允许浏览器存储后再试。";
+      return;
+    }
+    note.hidden = true;
     ci.classList.toggle("on", on);
     ci.textContent = on ? "已打卡 ✓" : "我去过";
     const card = document.querySelector(`.fw-card[data-fwid="${ci.dataset.checkin}"]`);
@@ -1354,8 +1370,19 @@ document.addEventListener("click", (e) => {
 });
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeModal();
-  /* 详情打开时按回车不算关闭，其它键不动 —— 保持和首页名人弹层一样的手感 */
+  const modal = document.querySelector("#fwModal");
+  if (!modal || modal.hidden) return;
+  if (e.key === "Escape") { closeModal(); return; }
+  if (e.key !== "Tab") return;
+  const controls = [...modal.querySelectorAll('button:not(:disabled), a[href], input, select, textarea, [tabindex="0"]')];
+  const first = controls[0], last = controls[controls.length - 1];
+  if (e.shiftKey && (document.activeElement === first || !modal.contains(document.activeElement))) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && (document.activeElement === last || !modal.contains(document.activeElement))) {
+    e.preventDefault();
+    first.focus();
+  }
 });
 
 /* 关键词搜索：输入即筛，不用回车 */

@@ -1,0 +1,67 @@
+/* ---------- 1. 沙盘舞台：深蓝与描金，位置不表示真实地理关系 ---------- */
+#city3d { scroll-margin-top: 110px; }
+.city-heading { max-width: 1240px; margin: 0 auto 24px; }
+.city-eyebrow { color: var(--gold); text-align: center; font-size: 12px; letter-spacing: 5px; margin-bottom: 12px; }
+.city-heading .section-sub { margin-bottom: 0; line-height: 1.9; }
+.city-layout { max-width: 1240px; margin: auto; display: grid; grid-template-columns: minmax(0, 1fr) 268px; border: 1px solid rgba(201,168,106,.4); border-radius: 20px; overflow: hidden; background: #111e2b; box-shadow: 0 24px 60px #0003; }
+.city-view { position: relative; min-width: 0; height: 560px; background: radial-gradient(ellipse at 50% 44%, #264553, #111e2b 74%); overflow: hidden; }
+#cityCanvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+#cityCanvas:active { cursor: grabbing; }
+#cityCanvas:focus-visible { outline: 2px solid var(--gold); outline-offset: -4px; }
+.city-view-title { position: absolute; top: 22px; left: 24px; pointer-events: none; color: #e9e2d3b3; font-size: 12px; letter-spacing: 3px; }
+.city-view-title b { display: block; color: var(--paper); font-family: var(--font-title); font-size: 24px; letter-spacing: 5px; margin-bottom: 7px; }
+.city-stamp { position: absolute; top: 23px; right: 22px; padding: 7px 10px; border: 1px solid #c9a86a55; border-radius: 4px; color: var(--gold); font-size: 11px; letter-spacing: 2px; pointer-events: none; }
+#cityStatus { position: absolute; left: 18px; right: 18px; bottom: 72px; color: var(--paper); background: #111e2bee; border: 1px solid #c9a86a55; padding: 12px 16px; font-size: 13px; line-height: 1.7; border-radius: 10px; z-index: 4; }
+#cityStatus[hidden] { display: none; }
+.city-view noscript { position: absolute; left: 24px; right: 24px; top: 45%; color: var(--paper); line-height: 1.8; }
+
+/* ---------- 2. 操作按钮 ---------- */
+.city-controls { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 4px; max-width: calc(100% - 24px); padding: 5px; background: #10202ced; border: 1px solid #c9a86a44; border-radius: 12px; }
+.city-controls button { flex: 0 0 auto; width: 36px; height: 38px; border: 0; border-radius: 7px; color: var(--paper); background: transparent; font-size: 19px; }
+.city-controls button[data-city-action="reset"], .city-controls button[data-city-action="auto"] { width: auto; padding: 0 10px; font-size: 12px; white-space: nowrap; }
+.city-controls button:hover, .city-controls button[aria-pressed="true"] { color: var(--ink); background: var(--gold); }
+#city3d button:focus-visible, #city3d a:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+/* ---------- 3. 点选详情 ---------- */
+.city-detail { padding: 30px 24px; border-left: 1px solid #c9a86a33; color: var(--text-light); display: flex; flex-direction: column; align-items: flex-start; background: linear-gradient(150deg, #26334188, #162430); }
+.city-detail-top { display: flex; width: 100%; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+#cityNumber { font-size: 58px; line-height: 1; font-family: Georgia, serif; color: #c9a86a66; }
+#cityDistrict { color: var(--gold); font-size: 12px; letter-spacing: 3px; border: 1px solid #c9a86a55; padding: 6px 10px; border-radius: 4px; }
+#cityName { font-family: var(--font-title); font-size: 27px; font-weight: 400; color: var(--paper); line-height: 1.5; margin-bottom: 18px; }
+#cityStory { font-size: 14px; line-height: 2; color: #e9e2d3ba; min-height: 112px; }
+.city-detail .btn { margin-top: auto; padding: 10px 16px; font-size: 12px; letter-spacing: 1px; }
+.city-detail-note { font-size: 11px; line-height: 1.8; color: #e9e2d388; margin: 28px 0 20px; }
+.city-detail-note summary { cursor: pointer; color: var(--gold); }
+.city-detail-note p { margin-top: 8px; }
+
+/* ---------- 4. 窄屏：模型与详情上下排列 ---------- */
+@media (max-width: 1000px) {
+  .city-layout { grid-template-columns: minmax(0, 1fr) 228px; }
+  .city-detail { padding: 24px 18px; }
+  .city-view { height: 500px; }
+  .city-controls button { width: 30px; }
+}
+@media (max-width: 720px) {
+  .city-layout { grid-template-columns: minmax(0, 1fr); border-radius: 14px; }
+  .city-view { height: 400px; }
+  .city-view-title { top: 16px; left: 16px; font-size: 10px; }
+  .city-view-title b { font-size: 21px; margin-bottom: 5px; }
+  .city-stamp { top: 16px; right: 14px; font-size: 10px; padding: 5px 6px; }
+  .city-controls { gap: 1px; padding: 4px; bottom: 12px; }
+  .city-controls button { width: 29px; height: 40px; }
+  .city-controls button[data-city-action="reset"], .city-controls button[data-city-action="auto"] { padding: 0 8px; }
+  .city-detail { display: grid; grid-template-columns: 1fr auto; gap: 10px 14px; padding: 18px; border-left: 0; border-top: 1px solid #c9a86a33; }
+  .city-detail-top { grid-column: 2; grid-row: 1; width: auto; margin: 0; }
+  #cityNumber { display: none; }
+  #cityName { grid-column: 1; grid-row: 1; font-size: 23px; margin: 0; }
+  #cityStory { grid-column: 1 / -1; min-height: 0; font-size: 13px; line-height: 1.9; }
+  .city-detail-note { grid-column: 1; margin: 0; align-self: center; font-size: 10px; }
+  .city-detail .btn { grid-column: 2; margin: 0; padding: 9px 11px; font-size: 11px; }
+}
+@media (max-width: 360px) {
+  .city-controls button { width: 25px; }
+  .city-controls button[data-city-action="reset"], .city-controls button[data-city-action="auto"] { padding: 0 5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #city3d { scroll-behavior: auto; }
+}

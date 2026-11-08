@@ -22,3 +22,11 @@
 .entry-card h3 { font-family: var(--font-title); font-size: 21px; letter-spacing: 3px; color: var(--gold); margin-bottom: 8px; }
 .entry-card p  { font-size: 13px; line-height: 1.9; opacity: .8; }
 .entry-card .go { display: inline-block; margin-top: 14px; font-size: 13px; color: var(--red); background: rgba(246,239,226,.9); padding: 5px 14px; border-radius: 999px; }
+/* 四页读完的去处：直达模范人物页底部的点灯区 */
+.entry-loop { margin-top: 26px; text-align: center; }
+.entry-loop a {
+  display: inline-block; padding-bottom: 2px;
+  font-size: 13.5px; letter-spacing: 2px; color: var(--gold);
+  border-bottom: 1px dashed rgba(201, 168, 106, .45);
+}
+.entry-loop a:hover { color: var(--paper); border-color: var(--paper); }

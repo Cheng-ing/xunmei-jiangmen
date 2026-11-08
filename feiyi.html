@@ -9,9 +9,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>非遗传承人 · 寻美江门</title>
+  <!-- 搜索摘要与分享卡片 -->
+  <meta name="description" content="走近廖惠林的新会葵艺、张瑞亨的白沙茅龙笔与邝活发的泮村灯会。读三位非遗传承人的手写信，在葵扇、纱龙、飘色与醒狮画卷中，感受江门手艺的坚守与传承。">
+  <meta name="theme-color" content="#16202e">
+  <meta property="og:title" content="非遗传承人 · 寻美江门">
+  <meta property="og:description" content="走近廖惠林的新会葵艺、张瑞亨的白沙茅龙笔与邝活发的泮村灯会。读三位非遗传承人的手写信，在葵扇、纱龙、飘色与醒狮画卷中，感受江门手艺的坚守与传承。">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="寻美江门 · 侨都薪火">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:image" content="https://cheng-ing.github.io/xunmei-jiangmen/images/share-cover.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="赤坎骑楼老街黄昏插画，上书寻美江门·侨都薪火">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="非遗传承人 · 寻美江门">
+  <meta name="twitter:description" content="走近廖惠林的新会葵艺、张瑞亨的白沙茅龙笔与邝活发的泮村灯会。读三位非遗传承人的手写信，在葵扇、纱龙、飘色与醒狮画卷中，感受江门手艺的坚守与传承。">
+  <meta name="twitter:image" content="https://cheng-ing.github.io/xunmei-jiangmen/images/share-cover.jpg">
+  <meta name="twitter:image:alt" content="赤坎骑楼老街黄昏插画，上书寻美江门·侨都薪火">
+  <!-- 站点图标：矢量与 PNG 备用 -->
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="images/favicon.png" type="image/png" sizes="32x32">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/envelope.css">
   <link rel="stylesheet" href="css/carousel.css">
+  <link rel="stylesheet" href="css/hooks.css">
 </head>
 <body>
 
@@ -40,23 +62,57 @@
     <div class="env-grid" id="envGrid"></div>
   </section>
 
-  <!-- ▼ 轮播图（5 张，与 jiangmen.html 同款组件；换图改 .slide 里的 <img>） -->
+  <!-- 换图：覆盖下方 JPG 原图后运行 python tools/optimize-carousel.py，更新两档 WebP。 -->
   <section class="section">
     <h2 class="section-title">手艺流光</h2>
     <div class="title-ornament"></div>
     <p class="section-sub">五帧画面，赏一方匠人的匠心与流光</p>
     <div class="carousel" data-interval="5000">
       <div class="carousel-track">
-        <div class="slide ph0"><img src="images/照片/非遗传承人/f1.jpg" alt="葵扇生风：葵艺工坊挂满蒲扇"><div class="caption"><b>葵扇生风</b><span>新会葵艺：火画、焙花，一把蒲扇摇出百年商埠</span></div></div>
-        <div class="slide ph1"><img src="images/照片/非遗传承人/f2.jpg" alt="纱龙腾夜：夜色中的红色纱龙"><div class="caption"><b>纱龙腾夜</b><span>荷塘纱龙，四十余节龙身在夜色里翻涌</span></div></div>
-        <div class="slide ph2"><img src="images/照片/非遗传承人/f3.jpg" alt="飘色凌空：幼童凌虚立于色柜"><div class="caption"><b>飘色凌空</b><span>台山浮石飘色，幼童凌虚而立，力学与美学的暗语</span></div></div>
-        <div class="slide ph3"><img src="images/照片/非遗传承人/f4.jpg" alt="茅龙走笔：茅草为锋的毛笔与墨迹"><div class="caption"><b>茅龙走笔</b><span>白沙茅龙笔，以茅草为锋，写出岭南书脉</span></div></div>
-        <div class="slide ph4"><img src="images/照片/非遗传承人/f5.jpg" alt="醒狮叩堂：红金狮头特写"><div class="caption"><b>醒狮叩堂</b><span>岭南醒狮，狮头一抬，侨村的年就到了</span></div></div>
+        <div class="slide ph0"><picture><source type="image/webp" srcset="images/照片/非遗传承人/f1-640.webp 640w, images/照片/非遗传承人/f1-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px"><img src="images/照片/非遗传承人/f1.jpg" alt="葵扇生风：葵艺工坊挂满蒲扇" width="1600" height="914" loading="eager" decoding="async"></picture><div class="caption"><b>葵扇生风</b><span>新会葵艺：火画、焙花，一把蒲扇摇出百年商埠</span></div></div>
+        <div class="slide ph1"><picture><source type="image/webp" srcset="images/照片/非遗传承人/f2-640.webp 640w, images/照片/非遗传承人/f2-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px"><img src="images/照片/非遗传承人/f2.jpg" alt="纱龙腾夜：夜色中的红色纱龙" width="1600" height="914" loading="lazy" decoding="async"></picture><div class="caption"><b>纱龙腾夜</b><span>荷塘纱龙，四十余节龙身在夜色里翻涌</span></div></div>
+        <div class="slide ph2"><picture><source type="image/webp" srcset="images/照片/非遗传承人/f3-640.webp 640w, images/照片/非遗传承人/f3-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px"><img src="images/照片/非遗传承人/f3.jpg" alt="飘色凌空：幼童凌虚立于色柜" width="1600" height="914" loading="lazy" decoding="async"></picture><div class="caption"><b>飘色凌空</b><span>台山浮石飘色，幼童凌虚而立，力学与美学的暗语</span></div></div>
+        <div class="slide ph3"><picture><source type="image/webp" srcset="images/照片/非遗传承人/f4-640.webp 640w, images/照片/非遗传承人/f4-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px"><img src="images/照片/非遗传承人/f4.jpg" alt="茅龙走笔：茅草为锋的毛笔与墨迹" width="1600" height="914" loading="lazy" decoding="async"></picture><div class="caption"><b>茅龙走笔</b><span>白沙茅龙笔，以茅草为锋，写出岭南书脉</span></div></div>
+        <div class="slide ph4"><picture><source type="image/webp" srcset="images/照片/非遗传承人/f5-640.webp 640w, images/照片/非遗传承人/f5-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px"><img src="images/照片/非遗传承人/f5.jpg" alt="醒狮叩堂：红金狮头特写" width="1600" height="914" loading="lazy" decoding="async"></picture><div class="caption"><b>醒狮叩堂</b><span>岭南醒狮，狮头一抬，侨村的年就到了</span></div></div>
       </div>
       <button class="arrow prev" aria-label="上一张">‹</button>
       <button class="arrow next" aria-label="下一张">›</button>
       <div class="dots"></div><div class="progress"></div>
     </div>
+  </section>
+
+  <!-- ▼ 本页专属模块：一把葵扇的五道工序
+       按新会葵艺（国家级非遗，编号 Ⅶ-92）公开资料概括；不同作坊的步骤叫法与顺序略有差异。 -->
+  <section class="section hook-section" aria-labelledby="kuishanTitle">
+    <h2 class="section-title" id="kuishanTitle">一把葵扇，五道工序</h2>
+    <div class="title-ornament"></div>
+    <p class="section-sub">从圭峰山下的葵叶，到扇面上的火画</p>
+    <ol class="step-list">
+      <li class="reveal">
+        <span class="step-no" aria-hidden="true">01</span>
+        <div><b>采葵</b><p>选叶面完整、柔韧的蒲葵叶，按要做多大的扇子下料。</p></div>
+      </li>
+      <li class="reveal">
+        <span class="step-no" aria-hidden="true">02</span>
+        <div><b>晒葵</b><p>摊开晾晒，让叶色匀、叶身干；晒得不够会发霉，晒过头又容易脆。</p></div>
+      </li>
+      <li class="reveal">
+        <span class="step-no" aria-hidden="true">03</span>
+        <div><b>剪扇</b><p>修边、去梗，剪出扇形，再把扇面一点点压平。</p></div>
+      </li>
+      <li class="reveal">
+        <span class="step-no" aria-hidden="true">04</span>
+        <div><b>焙扇</b><p>在炭火上边烘边压，扇面平整了，色泽才温润。</p></div>
+      </li>
+      <li class="reveal">
+        <span class="step-no" aria-hidden="true">05</span>
+        <div><b>火画</b><p>用烧热的火笔在扇面烙画，靠温度高低和走笔快慢，分出焦、褐、浅三层颜色。</p></div>
+      </li>
+    </ol>
+    <details class="hook-note">
+      <summary>工序依据</summary>
+      <p>按新会葵艺公开资料概括，不同作坊的工序名称与先后顺序略有差异。</p>
+    </details>
   </section>
 
   <!-- ▼ 页间互链：上一题材 / 下一题材 -->
@@ -82,13 +138,13 @@
        邝活发 —— 开平市水口镇政府 http://www.kaiping.gov.cn/jmkpsskz/gkmlpt/content/3/3248/post_3248702.html
                   江门市文化广电旅游体育局 http://www.jiangmen.gov.cn/bmpd/jmswhgdlytyj/zwgk/gzdt/content/post_3264504.html
        注：荷塘纱龙目前只查到市级传承人（蓬江区政府网：李伯浩），国家级名录未见具名个人，
-           所以这一页没有写纱龙；想补的话请以蓬江区政府的公示为准。 -->   
+           所以这一页没有写纱龙；想补的话请以蓬江区政府的公示为准。 -->
   <script>
     const FEIYI_LETTERS = [
       {
         seal: "葵",
         title: "廖惠林：把葵艺接回手里",
-        body: "新会人，1956 年生，16 岁拜老工艺师赵文达学葵扇烙画。新会葵艺 2009 年列入国家级非物质文化遗产名录（编号 Ⅶ-92），他是这一项目的国家级代表性传承人；行业最冷的时候，他自筹资金重开葵艺作坊，创出竹箨画扇、三脊烙画扇，作品进了广东民间工艺博物馆。‘上千年的技艺，不能断在我手里。’",
+        body: "新会人，1956 年生，16 岁拜老工艺师赵文达学葵扇烙画。新会葵艺 2008 年列入国家级非物质文化遗产名录（编号 Ⅶ-92），他是这一项目的国家级代表性传承人；行业最冷的时候，他自筹资金重开葵艺作坊，创出竹箨画扇、三脊烙画扇，作品进了广东民间工艺博物馆。‘上千年的技艺，不能断在我手里。’",
         sign: "—— 事迹据中国非物质文化遗产网、光明网"
       },
       {

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- ============================================================
-     jiangmen.html —— 江门总览页：5 张轮播图 + 可撕开的寄语信封
+     jiangmen.html —— 江门总览页：轮播画卷、3D地标艺术沙盘与寄语信封
      + 四大题材入口（优秀侨胞 / 非遗传承人 / 能工巧匠 / 模范人物）
      ============================================================ -->
 <html lang="zh-CN">
@@ -8,10 +8,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>寻美江门 · 五邑侨都</title>
+  <!-- 搜索摘要与分享卡片 -->
+  <meta name="description" content="展开五邑侨都画卷，探索江门3D地标艺术沙盘，拆开三封寄往侨都的信。从碉楼骑楼、非遗手艺到人物故事与侨乡风物，开启寻美江门的文化之旅。">
+  <meta name="theme-color" content="#16202e">
+  <meta property="og:title" content="寻美江门 · 五邑侨都">
+  <meta property="og:description" content="展开五邑侨都画卷，探索江门3D地标艺术沙盘，拆开三封寄往侨都的信。从碉楼骑楼、非遗手艺到人物故事与侨乡风物，开启寻美江门的文化之旅。">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="寻美江门 · 侨都薪火">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:image" content="https://cheng-ing.github.io/xunmei-jiangmen/images/share-cover.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="赤坎骑楼老街黄昏插画，上书寻美江门·侨都薪火">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="寻美江门 · 五邑侨都">
+  <meta name="twitter:description" content="展开五邑侨都画卷，探索江门3D地标艺术沙盘，拆开三封寄往侨都的信。从碉楼骑楼、非遗手艺到人物故事与侨乡风物，开启寻美江门的文化之旅。">
+  <meta name="twitter:image" content="https://cheng-ing.github.io/xunmei-jiangmen/images/share-cover.jpg">
+  <meta name="twitter:image:alt" content="赤坎骑楼老街黄昏插画，上书寻美江门·侨都薪火">
+  <!-- 站点图标：矢量与 PNG 备用 -->
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="images/favicon.png" type="image/png" sizes="32x32">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/carousel.css">
   <link rel="stylesheet" href="css/envelope.css">
   <link rel="stylesheet" href="css/entries.css">
+  <link rel="stylesheet" href="css/city3d.css">
 </head>
 <body>
 
@@ -29,9 +51,7 @@
     </ul>
   </nav>
 
-  <!-- ▼ 第一部分：轮播图（5 张）
-       · 换图：把每张 .slide 里注释掉的 <img> 放开，图片放 images/ 目录
-       · 改停留时长：data-interval="5000"（毫秒） -->
+  <!-- 换图：覆盖下方 JPG 原图后运行 python tools/optimize-carousel.py；data-interval 设置轮播间隔（毫秒）。 -->
   <section class="section">
     <h2 class="section-title">侨都画卷</h2>
     <div class="title-ornament"></div>
@@ -40,33 +60,48 @@
     <div class="carousel" data-interval="5000">
       <div class="carousel-track">
 
-        <!-- 幻灯片 1（图片已就位；换图只需替换 images/照片/寻美江门/slide1.jpg） -->
+        <!-- 幻灯片 1：原图 images/照片/寻美江门/slide1.jpg，WebP 为生成的响应式副本。 -->
         <div class="slide ph0">
-          <img src="images/照片/寻美江门/slide1.jpg" alt="侨都印记：赤坎骑楼老街黄昏">
+          <picture>
+            <source type="image/webp" srcset="images/照片/寻美江门/slide1-640.webp 640w, images/照片/寻美江门/slide1-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px">
+            <img src="images/照片/寻美江门/slide1.jpg" alt="侨都印记：赤坎骑楼老街黄昏" width="1600" height="914" loading="eager" decoding="async" fetchpriority="high">
+          </picture>
           <div class="caption"><b>侨都印记</b><span>450 万五邑籍华侨华人分布在全球 140 多个国家和地区</span></div>
         </div>
 
         <!-- 幻灯片 2 -->
         <div class="slide ph1">
-          <img src="images/照片/寻美江门/slide2.jpg" alt="帆樯三岛：潭江晨雾中的帆船与碉楼">
+          <picture>
+            <source type="image/webp" srcset="images/照片/寻美江门/slide2-640.webp 640w, images/照片/寻美江门/slide2-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px">
+            <img src="images/照片/寻美江门/slide2.jpg" alt="帆樯三岛：潭江晨雾中的帆船与碉楼" width="1600" height="914" loading="lazy" decoding="async">
+          </picture>
           <div class="caption"><b>帆樯三岛</b><span>赤坎、潭江与崖门，把离别与归来都写进了碉楼与骑楼</span></div>
         </div>
 
         <!-- 幻灯片 3 -->
         <div class="slide ph2">
-          <img src="images/照片/寻美江门/slide3.jpg" alt="非遗薪火：葵艺匠人绘制葵扇">
+          <picture>
+            <source type="image/webp" srcset="images/照片/寻美江门/slide3-640.webp 640w, images/照片/寻美江门/slide3-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px">
+            <img src="images/照片/寻美江门/slide3.jpg" alt="非遗薪火：葵艺匠人绘制葵扇" width="1600" height="914" loading="lazy" decoding="async">
+          </picture>
           <div class="caption"><b>非遗薪火</b><span>新会葵艺、台山浮石飘色、荷塘纱龙……手艺在指尖一代代相传</span></div>
         </div>
 
         <!-- 幻灯片 4 -->
         <div class="slide ph3">
-          <img src="images/照片/寻美江门/slide4.jpg" alt="匠心如琢：新会陈皮晒场">
+          <picture>
+            <source type="image/webp" srcset="images/照片/寻美江门/slide4-640.webp 640w, images/照片/寻美江门/slide4-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px">
+            <img src="images/照片/寻美江门/slide4.jpg" alt="匠心如琢：新会陈皮晒场" width="1600" height="914" loading="lazy" decoding="async">
+          </picture>
           <div class="caption"><b>匠心如琢</b><span>从一把蒲扇到一座侨校，能工巧匠把日子打磨成作品</span></div>
         </div>
 
         <!-- 幻灯片 5 -->
         <div class="slide ph4">
-          <img src="images/照片/寻美江门/slide5.jpg" alt="精神长河：侨批化作飞鸟掠过侨都夜色">
+          <picture>
+            <source type="image/webp" srcset="images/照片/寻美江门/slide5-640.webp 640w, images/照片/寻美江门/slide5-1280.webp 1280w" sizes="(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 90vw, 1080px">
+            <img src="images/照片/寻美江门/slide5.jpg" alt="精神长河：侨批化作飞鸟掠过侨都夜色" width="1600" height="914" loading="lazy" decoding="async">
+          </picture>
           <div class="caption"><b>精神长河</b><span>爱国、开放、勤劳、重教——侨都精神在新一代身上继续生长</span></div>
         </div>
 
@@ -75,6 +110,36 @@
       <button class="arrow next" aria-label="下一张">›</button>
       <div class="dots"></div>
       <div class="progress"></div>
+    </div>
+  </section>
+
+  <!-- 地标名称与模型在 js/city3d.js 中集中配置，沙盘不表示真实比例或方位。 -->
+  <section class="section" id="city3d" aria-labelledby="cityTitle">
+    <div class="city-heading">
+      <p class="city-eyebrow">一城山水 · 十二处风物</p>
+      <h2 class="section-title" id="cityTitle">把侨都，放在掌心</h2>
+      <div class="title-ornament"></div>
+      <p class="section-sub">转一转，看看骑楼后的江河；点一处，走近心里的江门</p>
+    </div>
+    <div class="city-layout">
+      <div class="city-view">
+        <canvas id="cityCanvas" tabindex="0" aria-label="江门地标艺术3D沙盘，可拖动旋转，或用下方按钮复位、环游"></canvas>
+        <div class="city-view-title" aria-hidden="true"><b>侨都微缩记</b>山水之间，自有归处</div>
+        <span class="city-stamp">3D · 艺术沙盘</span>
+        <p id="cityStatus" role="status">正在准备沙盘…</p>
+        <noscript>启用 JavaScript 后可旋转沙盘；也可以前往侨都风物，浏览江门的美食与美景。</noscript>
+        <div class="city-controls" role="group" aria-label="沙盘视角控制">
+          <button type="button" data-city-action="reset">复位</button>
+          <button type="button" data-city-action="auto" aria-pressed="false">环游</button>
+        </div>
+      </div>
+      <aside class="city-detail" aria-label="选中的地标意象" aria-live="polite" aria-atomic="true">
+        <div class="city-detail-top"><span id="cityNumber" aria-hidden="true">05</span><span id="cityDistrict">开平</span></div>
+        <h3 id="cityName">开平碉楼</h3>
+        <p id="cityStory">高低错落的塔楼、层层窗洞与楼顶柱亭，把侨乡碉楼的中西交融化作掌心里的微缩意象。</p>
+        <details class="city-detail-note"><summary>关于这座沙盘</summary><p>以江门地标为灵感的艺术创作，非实景模型；位置、比例与建筑细节均为艺术化表达。</p></details>
+        <a class="btn" href="fengwu.html#listing">去看侨都风物 →</a>
+      </aside>
     </div>
   </section>
 
@@ -110,13 +175,15 @@
         <span class="no">肆</span><h3>模范人物</h3><p>一盏灯点亮另一盏灯，精神就这样传了下去。</p><span class="btn" style="margin-top:14px">拆信阅读 →</span>
       </a>
     </div>
+    <!-- 四页都读完的人，来这里接一棒 -->
+    <p class="entry-loop"><a href="mofan.html#xinhuo">读完十二封信，去点亮一盏灯 →</a></p>
   </section>
 
   <!-- ▼ 第四部分：侨都风物入口（美食、美景、路线、分享长图都在 fengwu.html） -->
   <section class="section" style="text-align:center;">
     <h2 class="section-title">侨都风物</h2>
     <div class="title-ornament"></div>
-    <p class="section-sub">人物之外，这块地方还有十味吃食、一片山海 · 可以测一测、排两天路线</p>
+    <p class="section-sub">人物之外，还有 28 味吃食、46 处风景 · 测一测乡土知识，排一段自己的旅程</p>
     <a class="btn" href="fengwu.html">去吃、去看、去走一趟 →</a>
   </section>
 
@@ -153,6 +220,7 @@
   </script>
   <script src="js/common.js"></script>
   <script src="js/carousel.js"></script>
+  <script src="js/city3d.js"></script>
   <script>renderEnvelopes("#envGrid", JIANGMEN_LETTERS);</script> <!-- 把文案渲染成信封 -->
 </body>
 </html>

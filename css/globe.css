@@ -10,11 +10,17 @@
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 26px; padding: 40px 5vw 70px; text-align: center;
 }
-.hero h1 {
-  font-family: var(--font-title); font-size: clamp(30px, 5vw, 54px);
-  letter-spacing: 6px; color: var(--paper);
-}
+.hero h1 { font-family: var(--font-title); font-size: clamp(30px, 5vw, 54px); letter-spacing: 6px; color: var(--paper); }
 .hero h1 em { font-style: normal; color: var(--gold); }
+/* 标题下的一句话主张：告诉第一次来的人这站在讲什么 */
+.hero .hero-lead {
+  font-family: var(--font-title); font-size: clamp(15px, 1.9vw, 19px);
+  letter-spacing: 3px; color: rgba(233, 226, 211, .82);
+}
+/* 首屏按钮组：第一个填色，作为"从一封信开始"的主入口 */
+.hero-cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.hero-cta .btn.primary { background: var(--gold); color: var(--ink); font-weight: 700; }
+.hero-cta .btn.primary:hover { background: #e2c78e; }
 .hero .hint { color: rgba(233, 226, 211, .6); font-size: 14px; letter-spacing: 2px; }
 /* 地球下方的小字读数：当前中央经线与江门是否可见，由 globe3d.js 写入 */
 .hero .readout {
@@ -22,7 +28,7 @@
   font-family: ui-monospace, Consolas, monospace;
 }
 
-/* ---------- 2. 星空点缀（纯装饰，可整块删除） ---------- */
+/* ---------- 2. 星空点缀 ---------- */
 .starfield { position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background-image:
     radial-gradient(1.6px 1.6px at 12% 22%, rgba(255,255,255,.5), transparent),
@@ -118,6 +124,7 @@
 @media (max-width: 720px) {
   .hero { min-height: 0; gap: 16px; padding: 20px 14px 34px; }
   .hero h1 { font-size: 26px; letter-spacing: 3px; }
+  .hero .hero-lead { font-size: 13px; letter-spacing: 1.5px; }
   .hero .hint { font-size: 12.5px; letter-spacing: 1px; }
   .hero .readout { font-size: 11px; }
   .stage-row { gap: 20px; }

@@ -10,13 +10,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>寻美江门 · 侨都薪火 | 首页</title>
+  <!-- 搜索摘要与分享卡片 -->
+  <meta name="description" content="从世界看见江门，走进五邑侨都的人物故事与山海风物。通过互动地球、人物志和主题画卷，认识优秀侨胞、非遗传承人、能工巧匠与模范人物，感受侨都薪火相传。">
+  <meta name="theme-color" content="#16202e">
+  <meta property="og:title" content="寻美江门 · 侨都薪火 | 首页">
+  <meta property="og:description" content="从世界看见江门，走进五邑侨都的人物故事与山海风物。通过互动地球、人物志和主题画卷，认识优秀侨胞、非遗传承人、能工巧匠与模范人物，感受侨都薪火相传。">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="寻美江门 · 侨都薪火">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:image" content="https://cheng-ing.github.io/xunmei-jiangmen/images/share-cover.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="赤坎骑楼老街黄昏插画，上书寻美江门·侨都薪火">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="寻美江门 · 侨都薪火 | 首页">
+  <meta name="twitter:description" content="从世界看见江门，走进五邑侨都的人物故事与山海风物。通过互动地球、人物志和主题画卷，认识优秀侨胞、非遗传承人、能工巧匠与模范人物，感受侨都薪火相传。">
+  <meta name="twitter:image" content="https://cheng-ing.github.io/xunmei-jiangmen/images/share-cover.jpg">
+  <meta name="twitter:image:alt" content="赤坎骑楼老街黄昏插画，上书寻美江门·侨都薪火">
+  <!-- 站点图标：矢量与 PNG 备用 -->
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="images/favicon.png" type="image/png" sizes="32x32">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/globe.css">
   <link rel="stylesheet" href="css/heroes.css">
 </head>
 <body>
 
-<!-- 星空背景装饰（可删） -->
+<!-- 星空背景装饰 -->
   <div class="starfield"></div>
 
   <!-- ▼ 顶部导航：全站每个页面都放同一份，当前页链接加 .active -->
@@ -39,6 +60,14 @@
     <div class="hero-montage" id="heroMontage"></div>
 
     <h1>从世界，<em>看见江门</em></h1>
+    <!-- 一句话说明这站讲什么：四个题材、十二封信、一条侨都精神线索 -->
+    <p class="hero-lead">十二封信，读一座侨都的家国心</p>
+
+    <!-- 主入口：从第一封信开始读；想先逛江门的走 3D 沙盘。放在地球上方，首屏就能看到。 -->
+    <div class="hero-cta">
+      <a class="btn primary" href="qiaobao.html">从一封信开始 →</a>
+      <a class="btn" href="jiangmen.html#city3d">漫游 3D 侨都 →</a>
+    </div>
 
     <!-- 左：旋转地球　右：江门真实行政边界详图（两块画布由 globe3d.js 同步绘制） -->
     <div class="stage-row">
@@ -60,7 +89,6 @@
     <p class="hint">点击地球，开启寻美之旅 ✈　·　点击背景照片，看人物介绍</p>
     <!-- 实时读数：当前中央经线 / 江门是否正对镜头 -->
     <p class="readout" id="readout">正在载入地球影像…</p>
-    <a class="btn" href="jiangmen.html">直接进入</a>
   </section>
 
   <!-- ▼ 英雄墙：江门历代名人，卡片由 js/heroes.js 的 HEROES 数组生成，点一下弹出介绍 -->
@@ -69,7 +97,8 @@
     <div class="title-ornament"></div>
     <p class="section-sub">从明代大儒到革命英烈 —— 点一个人物，看他的故事</p>
     <div class="hero-wall-grid" id="heroWall"></div>
-
+    <!-- 11 位名人的照片取自公开网络资料，统一在照片墙下方说明，卡片上不再逐张标注 -->
+    <p class="photo-source-note">人物照片来自公开网络资料</p>
   </section>
 
   <!-- ▼ 介绍浮层：内容由 heroes.js 注入，这里只放骨架（默认 hidden） -->
