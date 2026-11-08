@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">寻美江门：侨都碉楼</title>
+  <!-- 夜空蓝底、描金碉楼与侨都红 -->
+  <rect width="64" height="64" rx="14" fill="#16202e"/>
+  <circle cx="50" cy="14" r="5" fill="#a63a2b"/>
+  <path d="M16 53V24H22V17H28V11H36V17H42V24H48V53Z" fill="#c9a86a"/>
+  <path d="M22 29H28V35H22ZM36 29H42V35H36ZM27 41H37V53H27Z" fill="#16202e"/>
+  <path d="M12 54H52" stroke="#c9a86a" stroke-width="3" stroke-linecap="round"/>
+</svg>
