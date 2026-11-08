@@ -60,6 +60,10 @@
 /* ---------- 3. 顶部"待撕条"：上边缘是锯齿，撕开后飞走 ---------- */
 .torn-strip {
   position: absolute; top: 0; left: 0; right: 0; height: 15%;
+  /* 撕开后这条会向上飞出信封，飞出后虽然看不见（opacity:0），
+     但仍会挡住飞行轨迹上的点击 —— 工具条"一键还原"就被它盖着点不中。
+     它只负责动画，点击统一交给信封本体，所以干脆不参与命中。 */
+  pointer-events: none;
   border-radius: 8px 8px 0 0;
   background: repeating-linear-gradient(175deg, var(--red) 0 14px, #8e3022 14px 28px); /* 侨都红撕拉条 */
   /* 用遮罩把顶边裁成锯齿（6% 宽 = 一个齿） */
