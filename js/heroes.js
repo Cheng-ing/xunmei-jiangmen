@@ -2,8 +2,8 @@
    heroes.js —— 首页"江门历代名人"：背景照片带 + 3D 环廊 + 点击弹介绍
    1) HEROES 数组：唯一需要修改的地方（照片文件名 + 介绍文案）
    2) 背景照片带：把同一批照片虚化后铺在地球后面
-   3) 3D 环廊：11 位名人围成一圈，可拖动 / 按钮 / 方向键旋转
-   4) 点击弹出介绍
+   3) 3D 环廊：11 位名人围成一圈，自动旋转，可拖动 / 按钮 / 方向键
+   4) 点击卡片：先转到正位，再弹出介绍
 
    照片怎么放：把真实照片按下面 file 字段的名字放进 images/照片/历代名人/
    例如 images/照片/历代名人/liang-qichao.jpg —— 文件名对上就自动显示，
@@ -184,7 +184,7 @@ function renderMontage() {
   }
 }
 
-/* ---------- 2. 3D 环廊：人物围成一圈，可拖动 / 按钮 / 方向键旋转 ----------
+/* ---------- 2. 3D 环廊：人物围成一圈，自动旋转 + 拖动 / 按钮 / 方向键 ----------
    结构：.ring-stage（透视） > .ring（preserve-3d，整体 rotateY） > 若干 .ring-card。
    每张卡片先 rotateY(等分角) 再 translateZ(半径)，就像围着圆桌摆座位。
    转到正对镜头的那张加 .is-front：放大提亮，计数同步成“3 / 11”。 */
@@ -225,18 +225,22 @@ function renderRing() {
       `<h3>${h.name}</h3>` +
       `<p class="meta">${h.years} · ${h.place}</p>`;
     face.prepend(makePhoto(h, `${h.name}（${h.years}）`));
+    /* 点任意一张：先把它转到正位，介绍由 document 委托统一弹出 */
+    face.addEventListener("click", () => goto(i));
     card.append(face);
     ring.append(card);
   });
 
   /* —— 旋转状态 —— */
   let angle = 0;              // 环当前角度（度，越大越向右转）
-  let front = 0;              // 正对镜头的人物下标
+  let front = 0;              // 正对镜头的人物下标（paint 里按角度推，自转时也跟着走）
   const cards = ring.querySelectorAll(".ring-card");
   const count = document.querySelector(HERO_CFG.countSelector);
+  const modalBox = document.querySelector(HERO_CFG.modalSelector);
 
   function paint() {
     ring.style.transform = `rotateY(${angle}deg)`;
+    front = ((Math.round(-angle / step) % n) + n) % n;
     cards.forEach((card, i) => {
       /* 这张牌相对镜头的角度：转到 ±半张角 以内就算正对 */
       let rel = (i * step + angle) % 360;
@@ -247,10 +251,10 @@ function renderRing() {
     if (count) count.textContent = `${front + 1} / ${n}`;
   }
 
-  /* 转到第 i 张，走最近的方向 */
+  /* 转到第 i 张，走最近的方向；手动操作后停一会儿再恢复自转 */
   function goto(i) {
-    front = ((i % n) + n) % n;
-    const target = -front * step;
+    idle();
+    const target = -(((i % n) + n) % n) * step;
     /* 把当前角度折到 target 附近 ±180 以内，避免倒转一大圈 */
     let diff = (target - angle) % 360;
     if (diff > 180) diff -= 360;
@@ -270,19 +274,25 @@ function renderRing() {
 
   /* —— 拖动旋转：按下跟手，松手吸附到最近一张 ——
      拖过 8px 就判定为拖动，松手那一次 click 会被拦掉，
-     否则会"转了一下又弹出介绍"。 */
+     否则会"转了一下又弹出介绍"。
+     注意：setPointerCapture 只能在确认拖动之后再调 —— 一按下就抓指针
+     会把这次点击劫持到舞台上，卡片按钮永远收不到 click，
+     介绍就弹不出来了。 */
   let dragging = false, moved = false, startX = 0, startAngle = 0, radius = 0;
   stage.addEventListener("pointerdown", (e) => {
     dragging = true; moved = false;
     startX = e.clientX; startAngle = angle;
     radius = parseFloat(getComputedStyle(ring).getPropertyValue("--ring-r")) || 300;
     stage.classList.add("dragging");   /* 按住时关掉过渡，环才跟手 */
-    stage.setPointerCapture(e.pointerId);
+    idle();
   });
   stage.addEventListener("pointermove", (e) => {
     if (!dragging) return;
     const dx = e.clientX - startX;
-    if (Math.abs(dx) > 8) moved = true;
+    if (!moved && Math.abs(dx) > 8) {
+      moved = true;
+      stage.setPointerCapture(e.pointerId);   /* 拖出舞台也要继续跟手 */
+    }
     /* 整个环宽 2πr 对应 360°，横向拖 1px 转的角度 = 360 / (2πr) */
     angle = startAngle + dx * 360 / (2 * Math.PI * radius);
     paint();
@@ -299,6 +309,31 @@ function renderRing() {
   stage.addEventListener("click", (e) => {
     if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; }
   }, true);
+
+  /* —— 自动旋转：没人碰时环自己慢慢转 ——
+     鼠标悬停、按住拖动、介绍弹层打开时暂停，手动操作停 4 秒后继续；
+     系统开了"减弱动态效果"就不自转。 */
+  const AUTO_SPEED = 5;              // 度/秒，一圈约 72 秒
+  const AUTO_IDLE_MS = 4000;         // 手动操作后停多久恢复自转
+  const autoOK = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let hovering = false, resumeAt = 0, lastT = 0;
+  function idle(ms = AUTO_IDLE_MS) {
+    resumeAt = performance.now() + ms;
+    stage.classList.remove("auto");   /* 恢复 .6s 过渡，按钮/点击的旋转才有动画 */
+  }
+  stage.addEventListener("pointerenter", () => { hovering = true; stage.classList.remove("auto"); });
+  stage.addEventListener("pointerleave", () => { hovering = false; idle(1500); });
+  function tick(t) {
+    requestAnimationFrame(tick);
+    if (!autoOK || hovering) { lastT = 0; return; }
+    if (dragging || (modalBox && !modalBox.hidden) || t < resumeAt) { lastT = 0; return; }
+    if (!lastT) lastT = t;
+    stage.classList.add("auto");      /* 自转时不要 .6s 过渡，否则环永远在追目标 */
+    angle += AUTO_SPEED * (t - lastT) / 1000;
+    lastT = t;
+    paint();
+  }
+  requestAnimationFrame(tick);
 
   paint();
 }

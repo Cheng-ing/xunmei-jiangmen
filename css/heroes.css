@@ -78,7 +78,7 @@
     rgba(22,32,46,.95) 0%, rgba(22,32,46,.66) 34%, rgba(22,32,46,.32) 68%, rgba(22,32,46,.34) 100%);
 }
 
-/* ---------- 3. 3D 环廊：11 位名人围成一圈，可拖动旋转 ----------
+/* ---------- 3. 3D 环廊：11 位名人围成一圈，自动旋转 + 可拖动 ----------
    舞台只管透视和高度；真正转的是 .ring；每张 .ring-card 的
    rotateY/translateZ 由 js/heroes.js 按等分角写在行内样式里。
    半径是算出来的（--ring-r），卡片宽度改这里、半径跟着自动变。 */
@@ -93,6 +93,16 @@
      左右裁掉；clip 比 hidden 好，不会把舞台变成滚动容器。 */
   overflow-x: clip;
 }
+/* 环廊底下的一团地光，像展厅打在地面上的灯 */
+.ring-stage::before {
+  content: "";
+  position: absolute; left: 50%; top: 58%;
+  width: 660px; height: 150px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse at center,
+    rgba(201,168,106,.16), rgba(201,168,106,.05) 55%, transparent 72%);
+  pointer-events: none;
+}
 .ring-stage:active { cursor: grabbing; }
 .ring-stage:focus-visible { box-shadow: 0 0 0 2px var(--gold); border-radius: var(--radius); }
 .ring {
@@ -101,9 +111,10 @@
   transform-style: preserve-3d;
   transition: transform .6s cubic-bezier(.22,.8,.3,1);
 }
-/* 舞台被按住跟手转时，环不能有过渡，否则会"拽不动"：
-   js 拖动开始时给舞台加 .dragging，松手摘掉。 */
-.ring-stage.dragging .ring { transition: none; }
+/* 舞台被按住跟手转、或自动旋转逐帧推进时，环不能有过渡：
+   .dragging 是按住拖动，.auto 是自转，都由 js 加在舞台上。 */
+.ring-stage.dragging .ring,
+.ring-stage.auto .ring { transition: none; }
 .ring-card {
   position: absolute;
   left: -90px; top: -170px;      /* 180×340 卡片的中心对中环心 */
@@ -119,11 +130,13 @@
   border: 1px solid rgba(201,168,106,.26);
   border-radius: var(--radius);
   backface-visibility: hidden;    /* 转到背面就藏起，环廊看着干净 */
-  opacity: .55; filter: saturate(.7);
-  transition: opacity .35s, filter .35s, border-color .35s, box-shadow .35s;
+  opacity: .55; filter: saturate(.7); transform: scale(.93);
+  transition: opacity .35s, filter .35s, transform .5s,
+              border-color .35s, box-shadow .35s;
 }
+/* 正对镜头的那张：放大、提亮、描金边，像被展厅的灯照亮 */
 .ring-card.is-front .ring-face {
-  opacity: 1; filter: none;
+  opacity: 1; filter: none; transform: scale(1.06);
   border-color: var(--gold);
   box-shadow: var(--shadow), 0 0 34px rgba(201,168,106,.18);
 }
@@ -230,6 +243,7 @@ body.modal-open { overflow: hidden; }   /* 弹出时锁住页面滚动 */
   .montage-track { gap: 10px; }
 
   .ring-stage { height: 300px; perspective: 900px; }
+  .ring-stage::before { width: 420px; height: 100px; }
   .ring-card { left: -59px; top: -118px; width: 118px; height: 236px; }
   .ring-face { padding: 8px; gap: 7px; }
   .ring-face h3 { font-size: 16px; letter-spacing: 1px; }
@@ -268,5 +282,6 @@ body.modal-open { overflow: hidden; }   /* 弹出时锁住页面滚动 */
    · 中间那层纱的深浅 → .hero-montage::after 的 rgba 数值
    · 环廊卡片大小   → .ring-card 的 width/height（left/top 要同步改成负半宽/半高）
    · 舞台高度/透视 → .ring-stage 的 height / perspective
+   · 自转快慢       → js/heroes.js renderRing 里的 AUTO_SPEED（度/秒，越大越快）
    · 弹层宽度/最高  → .modal-body 的 width 与 max-height
    ==================================================== */
