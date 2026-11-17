@@ -1,8 +1,9 @@
 /* ============================================================
-   heroes.js —— 首页"江门历代名人"英雄墙
+   heroes.js —— 首页"江门历代名人"：背景照片带 + 3D 环廊 + 点击弹介绍
    1) HEROES 数组：唯一需要修改的地方（照片文件名 + 介绍文案）
    2) 背景照片带：把同一批照片虚化后铺在地球后面
-   3) 英雄墙：首页下方的一排人物卡，点一下弹出完整介绍
+   3) 3D 环廊：11 位名人围成一圈，可拖动 / 按钮 / 方向键旋转
+   4) 点击弹出介绍
 
    照片怎么放：把真实照片按下面 file 字段的名字放进 images/照片/历代名人/
    例如 images/照片/历代名人/liang-qichao.jpg —— 文件名对上就自动显示，
@@ -121,9 +122,13 @@ const HEROES = [
 
 /* ---------- 配置：想改样式参数看这里 ---------- */
 const HERO_CFG = {
-  gridSelector: "#heroWall",       // 英雄墙容器（index.html 里）
   montageSelector: "#heroMontage", // 背景照片带容器
   modalSelector: "#heroModal",     // 点击后弹出介绍的浮层
+  stageSelector: "#ringStage",     // 3D 环廊舞台
+  ringSelector: "#heroRing",       // 3D 环廊的旋转环
+  countSelector: "#ringCount",     // “3 / 11”计数
+  prevSelector: "#ringPrev",       // 上一位
+  nextSelector: "#ringNext",       // 下一位
   montageRows: 3,                  // 背景铺几行照片（行越多越满，也更抢眼）
   driftSec: [150, 190, 230]        // 每行横移一圈用多少秒（数字越大越慢）
 };
@@ -179,23 +184,123 @@ function renderMontage() {
   }
 }
 
-/* ---------- 2. 英雄墙 ---------- */
-function renderWall() {
-  const grid = document.querySelector(HERO_CFG.gridSelector);
-  if (!grid) return;
+/* ---------- 2. 3D 环廊：人物围成一圈，可拖动 / 按钮 / 方向键旋转 ----------
+   结构：.ring-stage（透视） > .ring（preserve-3d，整体 rotateY） > 若干 .ring-card。
+   每张卡片先 rotateY(等分角) 再 translateZ(半径)，就像围着圆桌摆座位。
+   转到正对镜头的那张加 .is-front：放大提亮，计数同步成“3 / 11”。 */
+function renderRing() {
+  const stage = document.querySelector(HERO_CFG.stageSelector);
+  const ring = document.querySelector(HERO_CFG.ringSelector);
+  if (!stage || !ring) return;
+
+  const n = HEROES.length;
+  const step = 360 / n;
+  /* 半径按卡片实际宽度算：卡片半宽 + 侧缝，除以 tan(半张角) 正好相邻不重叠。
+     卡片宽度由 CSS 写死（桌面 180 / 手机 118），这里只量不算死。
+     窗口跨断点缩放（如手机横屏）会改卡片宽度，所以半径在 resize 时重算。 */
+  function measureRadius() {
+    const probe = document.createElement("div");
+    probe.className = "ring-card";
+    probe.style.cssText = "position:absolute;visibility:hidden;";
+    ring.append(probe);
+    const cardW = probe.getBoundingClientRect().width || 180;
+    probe.remove();
+    ring.style.setProperty("--ring-r",
+      Math.round((cardW / 2 + 26) / Math.tan(Math.PI / n)) + "px");
+  }
+  measureRadius();
+  window.addEventListener("resize", measureRadius);
+
   HEROES.forEach((h, i) => {
-    const card = document.createElement("button");
-    card.type = "button";
-    card.className = "hero-card reveal";
-    card.dataset.hero = h.id;
-    card.innerHTML =
+    const card = document.createElement("div");
+    card.className = "ring-card";
+    card.style.transform = `rotateY(${i * step}deg) translateZ(var(--ring-r))`;
+    const face = document.createElement("button");
+    face.type = "button";
+    face.className = "ring-face";
+    face.dataset.hero = h.id;
+    face.setAttribute("aria-label", `查看 ${h.name} 的介绍`);
+    face.innerHTML =
       `<span class="idx">${String(i + 1).padStart(2, "0")}</span>` +
       `<h3>${h.name}</h3>` +
-      `<p class="meta">${h.years} · ${h.place}</p>` +
-      `<p class="role">${h.role}</p>`;
-    card.prepend(makePhoto(h, `${h.name}（${h.years}）`));
-    grid.append(card);
+      `<p class="meta">${h.years} · ${h.place}</p>`;
+    face.prepend(makePhoto(h, `${h.name}（${h.years}）`));
+    card.append(face);
+    ring.append(card);
   });
+
+  /* —— 旋转状态 —— */
+  let angle = 0;              // 环当前角度（度，越大越向右转）
+  let front = 0;              // 正对镜头的人物下标
+  const cards = ring.querySelectorAll(".ring-card");
+  const count = document.querySelector(HERO_CFG.countSelector);
+
+  function paint() {
+    ring.style.transform = `rotateY(${angle}deg)`;
+    cards.forEach((card, i) => {
+      /* 这张牌相对镜头的角度：转到 ±半张角 以内就算正对 */
+      let rel = (i * step + angle) % 360;
+      if (rel > 180) rel -= 360;
+      if (rel < -180) rel += 360;
+      card.classList.toggle("is-front", Math.abs(rel) < step / 2);
+    });
+    if (count) count.textContent = `${front + 1} / ${n}`;
+  }
+
+  /* 转到第 i 张，走最近的方向 */
+  function goto(i) {
+    front = ((i % n) + n) % n;
+    const target = -front * step;
+    /* 把当前角度折到 target 附近 ±180 以内，避免倒转一大圈 */
+    let diff = (target - angle) % 360;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+    angle += diff;
+    paint();
+  }
+
+  document.querySelector(HERO_CFG.prevSelector)
+    ?.addEventListener("click", () => goto(front - 1));
+  document.querySelector(HERO_CFG.nextSelector)
+    ?.addEventListener("click", () => goto(front + 1));
+  stage.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") { e.preventDefault(); goto(front - 1); }
+    if (e.key === "ArrowRight") { e.preventDefault(); goto(front + 1); }
+  });
+
+  /* —— 拖动旋转：按下跟手，松手吸附到最近一张 ——
+     拖过 8px 就判定为拖动，松手那一次 click 会被拦掉，
+     否则会"转了一下又弹出介绍"。 */
+  let dragging = false, moved = false, startX = 0, startAngle = 0, radius = 0;
+  stage.addEventListener("pointerdown", (e) => {
+    dragging = true; moved = false;
+    startX = e.clientX; startAngle = angle;
+    radius = parseFloat(getComputedStyle(ring).getPropertyValue("--ring-r")) || 300;
+    stage.classList.add("dragging");   /* 按住时关掉过渡，环才跟手 */
+    stage.setPointerCapture(e.pointerId);
+  });
+  stage.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    if (Math.abs(dx) > 8) moved = true;
+    /* 整个环宽 2πr 对应 360°，横向拖 1px 转的角度 = 360 / (2πr) */
+    angle = startAngle + dx * 360 / (2 * Math.PI * radius);
+    paint();
+  });
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false;
+    stage.classList.remove("dragging");
+    /* 吸附：离镜头最近的一张成为正位 */
+    goto(Math.round(-angle / step));
+  }
+  stage.addEventListener("pointerup", endDrag);
+  stage.addEventListener("pointercancel", endDrag);
+  stage.addEventListener("click", (e) => {
+    if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; }
+  }, true);
+
+  paint();
 }
 
 /* ---------- 3. 点击弹出介绍 ---------- */
@@ -227,7 +332,7 @@ function closeModal() {
   if (lastFocus) lastFocus.focus();
 }
 
-/* 事件委托：背景照片和英雄卡共用一套点击逻辑 */
+/* 事件委托：背景照片和环廊卡片共用一套点击逻辑 */
 document.addEventListener("click", (e) => {
   const cell = e.target.closest("[data-hero]");
   if (cell) { openModal(cell.dataset.hero); return; }
@@ -238,23 +343,5 @@ document.addEventListener("click", (e) => {
 });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
 
-/* ---------- 4. 卡片滚动入场 ----------
-   .reveal 的样式在 css/base.css 里，这里自己观察：
-   首页没有引入 common.js，所以入场动画由本文件负责。 */
-function observeReveal() {
-  const cards = document.querySelectorAll("#heroWall .reveal");
-  if (!("IntersectionObserver" in window)) {
-    cards.forEach((el) => el.classList.add("in"));   // 老浏览器直接显示
-    return;
-  }
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((en) => {
-      if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
-    });
-  }, { threshold: 0.15 });
-  cards.forEach((el) => io.observe(el));
-}
-
 renderMontage();
-renderWall();
-observeReveal();
+renderRing();

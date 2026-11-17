@@ -1,5 +1,5 @@
 /* ============================================================
-   heroes.css —— 首页"江门历代名人"：背景照片带 + 英雄墙 + 点击弹介绍
+   heroes.css —— 首页"江门历代名人"：背景照片带 + 3D 环廊 + 点击弹介绍
    数据与文案在 js/heroes.js（改人名/介绍只动那里），本文件只管外观。
    配色全部沿用 css/base.css 里的 :root 变量。
    ============================================================ */
@@ -78,49 +78,91 @@
     rgba(22,32,46,.95) 0%, rgba(22,32,46,.66) 34%, rgba(22,32,46,.32) 68%, rgba(22,32,46,.34) 100%);
 }
 
-/* ---------- 3. 英雄墙：首页下方的人物卡片区 ---------- */
-.hero-wall-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
-  gap: clamp(14px, 2vw, 22px);
-  max-width: 1180px; margin: 0 auto;
+/* ---------- 3. 3D 环廊：11 位名人围成一圈，可拖动旋转 ----------
+   舞台只管透视和高度；真正转的是 .ring；每张 .ring-card 的
+   rotateY/translateZ 由 js/heroes.js 按等分角写在行内样式里。
+   半径是算出来的（--ring-r），卡片宽度改这里、半径跟着自动变。 */
+.ring-stage {
+  position: relative;
+  height: 420px;
+  max-width: 1180px; margin: 6px auto 0;
+  perspective: 1400px;
+  cursor: grab; touch-action: pan-y;   /* 横拖归环廊，竖拖留给页面滚动 */
+  outline: none;
+  /* 侧后方卡片经 3D 投影会探出舞台（390 宽屏实测多出 80px 横向滚动条），
+     左右裁掉；clip 比 hidden 好，不会把舞台变成滚动容器。 */
+  overflow-x: clip;
 }
-/* 照片墙下方的小字来源说明 */
-.photo-source-note {
-  margin: 22px auto 0; text-align: center;
-  font-size: 12px; letter-spacing: 1px; color: rgba(233, 226, 211, .45);
+.ring-stage:active { cursor: grabbing; }
+.ring-stage:focus-visible { box-shadow: 0 0 0 2px var(--gold); border-radius: var(--radius); }
+.ring {
+  position: absolute; left: 50%; top: 50%;
+  width: 0; height: 0;
+  transform-style: preserve-3d;
+  transition: transform .6s cubic-bezier(.22,.8,.3,1);
 }
-.hero-card {
-  position: relative;                /* 给右上角的序号做定位父级 */
-  display: flex; flex-direction: column; gap: 12px;
-  padding: 12px; text-align: left; color: var(--text-light);
-  background: rgba(246,239,226,.05);
+/* 舞台被按住跟手转时，环不能有过渡，否则会"拽不动"：
+   js 拖动开始时给舞台加 .dragging，松手摘掉。 */
+.ring-stage.dragging .ring { transition: none; }
+.ring-card {
+  position: absolute;
+  left: -90px; top: -170px;      /* 180×340 卡片的中心对中环心 */
+  width: 180px; height: 340px;
+  transform-style: preserve-3d;
+}
+.ring-face {
+  position: relative;               /* 给右上角序号牌做定位父级 */
+  display: flex; flex-direction: column; gap: 10px;
+  width: 100%; height: 100%; padding: 12px; text-align: left;
+  color: var(--text-light);
+  background: linear-gradient(180deg, rgba(246,239,226,.07), rgba(9,14,21,.55));
   border: 1px solid rgba(201,168,106,.26);
   border-radius: var(--radius);
-  transition: transform .3s, border-color .3s, background .3s, box-shadow .3s;
+  backface-visibility: hidden;    /* 转到背面就藏起，环廊看着干净 */
+  opacity: .55; filter: saturate(.7);
+  transition: opacity .35s, filter .35s, border-color .35s, box-shadow .35s;
 }
-.hero-card:hover,
-.hero-card:focus-visible {
-  transform: translateY(-6px);
+.ring-card.is-front .ring-face {
+  opacity: 1; filter: none;
   border-color: var(--gold);
-  background: rgba(201,168,106,.1);
-  box-shadow: var(--shadow);
-  outline: none;
+  box-shadow: var(--shadow), 0 0 34px rgba(201,168,106,.18);
 }
-.hero-card h3 {
+.ring-face:hover, .ring-face:focus-visible { outline: none; border-color: var(--gold); }
+.ring-face h3 {
   font-family: var(--font-title); font-size: 20px; font-weight: 400;
   letter-spacing: 3px; color: var(--paper);
 }
-.hero-card .meta { font-size: 12px; letter-spacing: 1px; color: rgba(201,168,106,.8); }
-.hero-card .role { font-size: 13px; line-height: 1.5; color: rgba(233,226,211,.66); }
+.ring-face .meta { font-size: 12px; letter-spacing: 1px; color: rgba(201,168,106,.8); }
 /* 序号做成照片右上角的小牌，像展签 */
-.hero-card .idx {
+.ring-face .idx {
   position: absolute; top: 20px; right: 20px; z-index: 2;
   padding: 2px 7px; border-radius: 3px;
   font-family: ui-monospace, Consolas, monospace; font-size: 11px;
   letter-spacing: 1px; color: var(--gold);
   background: rgba(9, 14, 21, .72);
   text-shadow: 0 1px 2px rgba(0,0,0,.8);
+}
+/* 环廊下方：左右转按钮 + 计数 */
+.ring-nav {
+  display: flex; align-items: center; justify-content: center; gap: 18px;
+  margin-top: 18px;
+}
+.ring-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  font-size: 22px; line-height: 1; color: var(--gold);
+  background: rgba(22,32,46,.8); border: 1px solid rgba(201,168,106,.5);
+  transition: background .25s, color .25s;
+}
+.ring-btn:hover { background: var(--gold); color: var(--ink); }
+.ring-count {
+  min-width: 64px; text-align: center;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 13px; letter-spacing: 2px; color: rgba(233,226,211,.65);
+}
+/* 环廊下方的小字来源说明 */
+.photo-source-note {
+  margin: 22px auto 0; text-align: center;
+  font-size: 12px; letter-spacing: 1px; color: rgba(233, 226, 211, .45);
 }
 
 /* ---------- 4. 点击后弹出的介绍浮层 ---------- */
@@ -176,10 +218,10 @@
 .modal-close:hover { background: var(--gold); color: var(--ink); }
 body.modal-open { overflow: hidden; }   /* 弹出时锁住页面滚动 */
 
-/* ---------- 5. 移动端（≤720px）：卡片排密一点、弹层做成整屏抽屉 ----------
-   实测依据（390×844）：原来 minmax(142px) 只排得下 2 列，一张卡 161×339，
-   11 位名人要滚 6 屏半；弹层居中浮在 638px 高，四周留黑边，手机上像半个窗体。
-   这里改成 3 列小卡（身份那一行藏掉，点开在弹层里还在），弹层直接铺满整屏。 */
+/* ---------- 5. 移动端（≤720px）：环廊整体缩小，弹层做成整屏抽屉 ----------
+   实测依据（390×844）：桌面那套 180×340 卡片、420 高舞台在手机上
+   会顶出横向滚动条，正位卡片也只露半张。这里卡片缩到 118×236、
+   舞台 300 高，半径由 js 按卡片实宽重算，不用在这里改数值。 */
 @media (max-width: 720px) {
   .hero-montage { filter: blur(1.2px) saturate(.6); padding: 14px 0; }
   .montage-cell { opacity: .28; width: 76px; }
@@ -187,17 +229,16 @@ body.modal-open { overflow: hidden; }   /* 弹出时锁住页面滚动 */
   .montage-row:nth-child(3) .montage-cell { width: 82px; }
   .montage-track { gap: 10px; }
 
-  .hero-wall-grid {
-    grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
-    gap: 12px;
-  }
-  .hero-card { padding: 8px; gap: 8px; }
-  .hero-card h3 { font-size: 16px; letter-spacing: 1px; }
-  .hero-card .meta { font-size: 11px; }
-  .hero-card .role { display: none; }        /* 小卡放不下身份行，弹层里有 */
-  .hero-card .idx { top: 14px; right: 12px; font-size: 10px; }
+  .ring-stage { height: 300px; perspective: 900px; }
+  .ring-card { left: -59px; top: -118px; width: 118px; height: 236px; }
+  .ring-face { padding: 8px; gap: 7px; }
+  .ring-face h3 { font-size: 16px; letter-spacing: 1px; }
+  .ring-face .meta { font-size: 10.5px; letter-spacing: 0; }
+  .ring-face .idx { top: 14px; right: 12px; font-size: 10px; }
   .photo-ph b { font-size: 17px; letter-spacing: 3px; }
   .photo-ph span { font-size: 10px; letter-spacing: 2px; }
+  .ring-nav { margin-top: 12px; gap: 14px; }
+  .ring-btn { width: 52px; height: 52px; }   /* 手指好按 */
 
   .hero-modal { padding: 0; }
   .modal-body,
@@ -216,7 +257,7 @@ body.modal-open { overflow: hidden; }   /* 弹出时锁住页面滚动 */
 /* ---------- 6. 无障碍：系统设置了"减少动效"时，背景不再横移 ---------- */
 @media (prefers-reduced-motion: reduce) {
   .montage-track { animation: none; }
-  .hero-card, .montage-cell { transition: none; }
+  .ring, .ring-face { transition: none; }
 }
 
 /* ---------- 7. 常用调整 ----------
@@ -225,6 +266,7 @@ body.modal-open { overflow: hidden; }   /* 弹出时锁住页面滚动 */
    · 背景清晰度     → .hero-montage 的 filter: blur()；浓淡 → .montage-cell 的 opacity
    · 每行照片大小   → .montage-row:nth-child(n) .montage-cell 的 width
    · 中间那层纱的深浅 → .hero-montage::after 的 rgba 数值
-   · 每行卡片多窄   → .hero-wall-grid 的 minmax() 第一个值
+   · 环廊卡片大小   → .ring-card 的 width/height（left/top 要同步改成负半宽/半高）
+   · 舞台高度/透视 → .ring-stage 的 height / perspective
    · 弹层宽度/最高  → .modal-body 的 width 与 max-height
    ==================================================== */

@@ -3,7 +3,7 @@
      index.html —— 入口页：随时间自转的真实地球，点击跳转"江门"
      样式：css/base.css + css/globe.css + css/heroes.css
      逻辑：js/jiangmen-boundary.js（边界数据）+ js/globe3d.js（渲染）
-           js/heroes.js（历代名人：背景照片墙 + 点击出介绍）
+           js/heroes.js（历代名人：背景照片带 + 3D 环廊 + 点击出介绍）
      ============================================================ -->
 <html lang="zh-CN">
 <head>
@@ -63,10 +63,10 @@
     <!-- 一句话说明这站讲什么：四个题材、十二封信、一条侨都精神线索 -->
     <p class="hero-lead">十二封信，读一座侨都的家国心</p>
 
-    <!-- 主入口：从第一封信开始读；想先逛江门的走 3D 沙盘。放在地球上方，首屏就能看到。 -->
+    <!-- 主入口：从第一封信开始读；想先看画卷与风物的走进江门总览页。放在地球上方，首屏就能看到。 -->
     <div class="hero-cta">
       <a class="btn primary" href="qiaobao.html">从一封信开始 →</a>
-      <a class="btn" href="jiangmen.html#city3d">漫游 3D 侨都 →</a>
+      <a class="btn" href="jiangmen.html">展开侨都画卷 →</a>
     </div>
 
     <!-- 左：旋转地球　右：江门真实行政边界详图（两块画布由 globe3d.js 同步绘制） -->
@@ -91,13 +91,20 @@
     <p class="readout" id="readout">正在载入地球影像…</p>
   </section>
 
-  <!-- ▼ 英雄墙：江门历代名人，卡片由 js/heroes.js 的 HEROES 数组生成，点一下弹出介绍 -->
+  <!-- ▼ 3D 人物环廊：卡片由 js/heroes.js 的 HEROES 数组生成，拖动或按钮旋转，点卡片弹出介绍 -->
   <section class="section" id="heroes">
     <h2 class="section-title">侨都人物志</h2>
     <div class="title-ornament"></div>
-    <p class="section-sub">从明代大儒到革命英烈 —— 点一个人物，看他的故事</p>
-    <div class="hero-wall-grid" id="heroWall"></div>
-    <!-- 11 位名人的照片取自公开网络资料，统一在照片墙下方说明，卡片上不再逐张标注 -->
+    <p class="section-sub">从明代大儒到革命英烈 —— 转一转环廊，点一位人物，看他的故事</p>
+    <div class="ring-stage" id="ringStage" tabindex="0" role="group" aria-label="3D 人物环廊，左右方向键旋转，点人物看介绍">
+      <div class="ring" id="heroRing"></div>
+    </div>
+    <div class="ring-nav">
+      <button class="ring-btn" id="ringPrev" type="button" aria-label="上一位人物">‹</button>
+      <span class="ring-count" id="ringCount" aria-live="polite"></span>
+      <button class="ring-btn" id="ringNext" type="button" aria-label="下一位人物">›</button>
+    </div>
+    <!-- 11 位名人的照片取自公开网络资料，统一在环廊下方说明，卡片上不再逐张标注 -->
     <p class="photo-source-note">人物照片来自公开网络资料</p>
   </section>
 

@@ -265,7 +265,7 @@
 @keyframes xinhuo-flow {
   from { opacity: 0; transform: translateY(14px); }
 }
-/* 弹窗打开时锁住页面滚动，和首页英雄墙弹层用同一个类名 */
+/* 弹窗打开时锁住页面滚动，和首页人物志弹层用同一个类名 */
 body.modal-open { overflow: hidden; }
 
 /* ---------- 7. 移动端（≤720px） ---------- */
