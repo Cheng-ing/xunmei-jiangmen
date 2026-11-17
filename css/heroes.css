@@ -84,7 +84,9 @@
    半径是算出来的（--ring-r），卡片宽度改这里、半径跟着自动变。 */
 .ring-stage {
   position: relative;
-  height: 420px;
+  /* 480 不是拍脑袋：正面卡片带 translateZ 投影会放大（桌面约 1.39 倍），
+     420 时卡片底会探出舞台压住下方的 ‹ › 按钮，480 正好收住 */
+  height: 480px;
   max-width: 1180px; margin: 6px auto 0;
   perspective: 1400px;
   cursor: grab; touch-action: pan-y;   /* 横拖归环廊，竖拖留给页面滚动 */
@@ -93,14 +95,15 @@
      左右裁掉；clip 比 hidden 好，不会把舞台变成滚动容器。 */
   overflow-x: clip;
 }
-/* 环廊底下的一团地光，像展厅打在地面上的灯 */
+/* 环廊底下的一团地光，像展厅打在地面上的灯。
+   位置压在环的下方（top 72%），从卡片脚底透出来，别横到按钮那里去 */
 .ring-stage::before {
   content: "";
-  position: absolute; left: 50%; top: 58%;
-  width: 660px; height: 150px;
+  position: absolute; left: 50%; top: 72%;
+  width: 660px; height: 160px;
   transform: translate(-50%, -50%);
   background: radial-gradient(ellipse at center,
-    rgba(201,168,106,.16), rgba(201,168,106,.05) 55%, transparent 72%);
+    rgba(201,168,106,.18), rgba(201,168,106,.06) 55%, transparent 72%);
   pointer-events: none;
 }
 .ring-stage:active { cursor: grabbing; }
@@ -158,7 +161,7 @@
 /* 环廊下方：左右转按钮 + 计数 */
 .ring-nav {
   display: flex; align-items: center; justify-content: center; gap: 18px;
-  margin-top: 18px;
+  margin-top: 22px;
 }
 .ring-btn {
   width: 44px; height: 44px; border-radius: 50%;
@@ -242,8 +245,9 @@ body.modal-open { overflow: hidden; }   /* 弹出时锁住页面滚动 */
   .montage-row:nth-child(3) .montage-cell { width: 82px; }
   .montage-track { gap: 10px; }
 
-  .ring-stage { height: 300px; perspective: 900px; }
-  .ring-stage::before { width: 420px; height: 100px; }
+  /* 手机同理：236 高的卡片实测投影 1.52 倍，300 会压住按钮，370 留出空隙 */
+  .ring-stage { height: 370px; perspective: 900px; }
+  .ring-stage::before { width: 420px; height: 110px; }
   .ring-card { left: -59px; top: -118px; width: 118px; height: 236px; }
   .ring-face { padding: 8px; gap: 7px; }
   .ring-face h3 { font-size: 16px; letter-spacing: 1px; }
