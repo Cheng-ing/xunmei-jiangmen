@@ -839,6 +839,9 @@ function renderCards() {
 
 /* ---------- 详情弹层 ---------- */
 let detailTrigger = null;
+let closeTimer = 0;
+/* 收场动画：加 .closing 让遮罩和面板先退场，0.22s 后再真正隐藏；开了"减少动效"就直接关 */
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 function openDetail(id) {
   const item = findFengwu(id);
   const modal = document.querySelector("#fwModal");
@@ -860,6 +863,8 @@ function openDetail(id) {
     `<button type="button" class="btn fw-checkin${checked ? " on" : ""}" data-checkin="${id}">${checked ? "已打卡 ✓" : "我去过"}</button>` +
     `<p class="fw-storage-note" role="status" hidden></p>`;
   bindSceneryImgs(body);
+  clearTimeout(closeTimer);              /* 退场途中又点开：取消收尾，直接恢复 */
+  modal.classList.remove("closing");
   modal.hidden = false;
   document.body.classList.add("modal-open");
   modal.querySelector(".modal-close").focus();
@@ -867,11 +872,17 @@ function openDetail(id) {
 
 function closeModal() {
   const modal = document.querySelector("#fwModal");
-  if (!modal || modal.hidden) return;
-  modal.hidden = true;
+  if (!modal || modal.hidden || modal.classList.contains("closing")) return;
   document.body.classList.remove("modal-open");
-  if (detailTrigger?.isConnected) detailTrigger.focus({ preventScroll: true });
-  detailTrigger = null;
+  const done = () => {
+    modal.hidden = true;
+    modal.classList.remove("closing");
+    if (detailTrigger?.isConnected) detailTrigger.focus({ preventScroll: true });
+    detailTrigger = null;
+  };
+  if (reduceMotion) { done(); return; }
+  modal.classList.add("closing");
+  closeTimer = setTimeout(done, 220);    /* 和 css/fengwu.css 里 0.2s 的退场对齐 */
 }
 
 /* ---------- 小测 ---------- */

@@ -63,13 +63,17 @@
   padding: 0; border: 1px solid rgba(201,168,106,.35); border-radius: 8px;
   background: none;
   pointer-events: auto;           /* 背景照片也能点，点了就出介绍 */
-  opacity: .45; transition: opacity .3s, transform .3s;
+  opacity: .45; transition: opacity .3s, transform .3s cubic-bezier(.2, .8, .25, 1);
 }
 /* 三行照片大小不同，看着不像表格；每行速度由 js/heroes.js 的 HERO_CFG.driftSec 决定 */
 .montage-row:nth-child(2) .montage-cell { width: clamp(76px, 10vw, 120px); }
 .montage-row:nth-child(3) .montage-cell { width: clamp(96px, 13vw, 152px); }
 .montage-cell:hover,
 .montage-cell:focus-visible { opacity: .95; transform: translateY(-4px); outline: none; }
+.montage-cell:active {
+  opacity: 1; transform: translateY(-1px) scale(.96);
+  transition-duration: .12s;
+}
 .montage-cell .photo { border-radius: 6px; }
 /* 中间压一层渐暗的纱：地球那一圈最暗，往边上逐渐放开，避免照片和地球抢视线 */
 .hero-montage::after {
@@ -112,7 +116,7 @@
   position: absolute; left: 50%; top: 50%;
   width: 0; height: 0;
   transform-style: preserve-3d;
-  transition: transform .6s cubic-bezier(.22,.8,.3,1);
+  transition: transform .6s cubic-bezier(.2, .85, .3, 1.02);   /* 末端 2% 轻微过冲，像转盘落位 */
 }
 /* 舞台被按住跟手转、或自动旋转逐帧推进时，环不能有过渡：
    .dragging 是按住拖动，.auto 是自转，都由 js 加在舞台上。 */
@@ -141,7 +145,7 @@
     0 30px 56px -22px rgba(0,0,0,.85);
   backface-visibility: hidden;    /* 转到背面就藏起，环廊看着干净 */
   opacity: .55; filter: saturate(.7); transform: scale(.93);
-  transition: opacity .35s, filter .35s, transform .5s,
+  transition: opacity .35s, filter .35s, transform .5s cubic-bezier(.2, .8, .25, 1),
               border-color .35s, box-shadow .35s;
 }
 /* 斜上方一层柔光扫过卡面，照片和文字被"打亮"，不至于死平 */
@@ -163,6 +167,26 @@
     0 0 96px rgba(201,168,106,.12);
 }
 .ring-face:hover, .ring-face:focus-visible { outline: none; border-color: var(--gold); }
+/* 按下：卡面立刻提亮、金边收紧，松手再按上面的过渡慢慢复原 */
+.ring-face:active {
+  border-color: #ecd9a8;
+  filter: brightness(1.18) saturate(.9);
+  transition-duration: .1s;
+  box-shadow:
+    inset 0 2px 10px rgba(0, 0, 0, .5),
+    0 1px 3px rgba(0, 0, 0, .55),
+    0 0 26px rgba(201, 168, 106, .4);
+}
+/* 正位那张按下时压一下再弹回，像被按进台面的展牌 */
+.ring-card.is-front .ring-face:active {
+  transform: scale(1.02);
+  filter: brightness(1.1);
+  box-shadow:
+    inset 0 2px 12px rgba(0, 0, 0, .5),
+    0 1px 4px rgba(0, 0, 0, .6),
+    0 0 34px rgba(201, 168, 106, .5),
+    0 0 80px rgba(201, 168, 106, .2);
+}
 .ring-face h3 {
   font-family: var(--font-title); font-size: 20px; font-weight: 400;
   letter-spacing: 3px; color: var(--paper);
@@ -197,7 +221,7 @@
     0 3px 6px rgba(0,0,0,.45),
     0 12px 20px -8px rgba(0,0,0,.85);
   text-shadow: 0 1px 2px rgba(0,0,0,.75);
-  transition: background .25s, color .25s, transform .18s,
+  transition: background .25s, color .25s, transform .26s cubic-bezier(.2, .8, .25, 1),
               box-shadow .25s, border-color .25s;
 }
 .ring-btn:hover {
@@ -215,10 +239,12 @@
   transform: translateY(-1px);
 }
 .ring-btn:active {
-  transform: translateY(1px);
+  transform: translateY(1px) scale(.94);
+  transition-duration: .09s;
   box-shadow:
-    inset 0 2px 6px rgba(0,0,0,.6),
-    0 2px 4px rgba(0,0,0,.45);
+    inset 0 2px 8px rgba(0, 0, 0, .6),
+    0 1px 3px rgba(0, 0, 0, .45),
+    0 0 20px rgba(201, 168, 106, .4);
 }
 .ring-btn:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ink), 0 0 0 4px var(--gold); }
 .ring-count {
@@ -242,6 +268,16 @@
 }
 /* flex 会盖掉 hidden 属性，必须显式关掉，否则初始就显示 */
 .hero-modal[hidden] { display: none; }
+/* 打开：遮罩淡进来，面板从下方浮起并微微放大；
+   关闭：加 .closing 先反向退场，js/heroes.js 等动画走完再真正隐藏 */
+.hero-modal { animation: hero-veil-in .3s ease-out both; }
+.hero-modal .modal-body { animation: hero-panel-in .42s cubic-bezier(.16, 1, .3, 1) both; }
+.hero-modal.closing { animation: hero-veil-out .2s ease-in both; pointer-events: none; }
+.hero-modal.closing .modal-body { animation: hero-panel-out .22s cubic-bezier(.4, 0, .9, .4) both; }
+@keyframes hero-veil-in { from { opacity: 0; } }
+@keyframes hero-panel-in { from { opacity: 0; transform: translateY(20px) scale(.96); } }
+@keyframes hero-veil-out { to { opacity: 0; } }
+@keyframes hero-panel-out { to { opacity: 0; transform: translateY(10px) scale(.98); } }
 .modal-body {
   width: min(660px, 100%);
   max-height: 86vh; overflow-y: auto;
@@ -280,9 +316,37 @@
   position: absolute; top: max(14px, 3vh); right: max(14px, 4vw);
   width: 42px; height: 42px; border-radius: 50%;
   font-size: 22px; line-height: 1; color: var(--gold);
-  background: rgba(22,32,46,.8); border: 1px solid rgba(201,168,106,.5);
+  background:
+    radial-gradient(130% 130% at 32% 20%, rgba(246, 239, 226, .14), transparent 48%),
+    linear-gradient(180deg, #26374e, #131c29 68%, #0b121b);
+  border: 1px solid rgba(201, 168, 106, .55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 246, 228, .2),
+    inset 0 -3px 5px rgba(0, 0, 0, .5),
+    0 3px 6px rgba(0, 0, 0, .45),
+    0 10px 20px -8px rgba(0, 0, 0, .8);
+  transition: background .25s, color .25s, border-color .25s,
+              box-shadow .25s, transform .26s cubic-bezier(.2, .8, .25, 1);
 }
-.modal-close:hover { background: var(--gold); color: var(--ink); }
+.modal-close:hover {
+  background:
+    radial-gradient(130% 130% at 32% 20%, #fff3d0, transparent 52%),
+    linear-gradient(180deg, #dcc087, #b8934e);
+  color: var(--ink); border-color: #ecd9a8;
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .6),
+    inset 0 -3px 5px rgba(120, 86, 30, .4),
+    0 4px 8px rgba(0, 0, 0, .45),
+    0 14px 24px -8px rgba(0, 0, 0, .8),
+    0 0 24px rgba(201, 168, 106, .35);
+}
+.modal-close:active {
+  transform: translateY(1px) scale(.94);
+  transition-duration: .09s;
+  box-shadow: inset 0 2px 7px rgba(0, 0, 0, .55), 0 1px 3px rgba(0, 0, 0, .4);
+}
+.modal-close:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ink), 0 0 0 4px var(--gold); }
 body.modal-open { overflow: hidden; }   /* 弹出时锁住页面滚动 */
 
 /* ---------- 5. 移动端（≤720px）：环廊整体缩小，弹层做成整屏抽屉 ----------
@@ -327,6 +391,7 @@ body.modal-open { overflow: hidden; }   /* 弹出时锁住页面滚动 */
 @media (prefers-reduced-motion: reduce) {
   .montage-track { animation: none; }
   .ring, .ring-face { transition: none; }
+  .hero-modal, .hero-modal .modal-body { animation: none; }
 }
 
 /* ---------- 7. 常用调整 ----------

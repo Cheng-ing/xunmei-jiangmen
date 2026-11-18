@@ -22,6 +22,9 @@ const xinhuoList = document.getElementById("xinhuoList");
 const xinhuoSubmit = xinhuoForm ? xinhuoForm.querySelector('button[type="submit"]') : null;
 
 let lastFocus = null;
+let closeTimer = 0;
+/* 收场动画：加 .closing 先退场，0.22s 后再真正隐藏；开了"减少动效"就直接关 */
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* 读出全部留言，最新的排在最前。旧版本只存过一句话（单个对象），这里一并认。 */
 function readEntries() {
@@ -86,6 +89,8 @@ function renderList(entries, newAt) {
 function openModal(entries, newAt) {
   renderList(entries, newAt);
   xinhuoModalSub.textContent = `这台设备上一共留下 ${entries.length} 句话。`;
+  clearTimeout(closeTimer);              /* 退场途中又点开：取消收尾，直接恢复 */
+  xinhuoModal.classList.remove("closing");
   lastFocus = document.activeElement;
   xinhuoModal.hidden = false;
   document.body.classList.add("modal-open");
@@ -94,11 +99,17 @@ function openModal(entries, newAt) {
 }
 
 function closeModal() {
-  if (xinhuoModal.hidden) return;
-  xinhuoModal.hidden = true;
+  if (xinhuoModal.hidden || xinhuoModal.classList.contains("closing")) return;
   document.body.classList.remove("modal-open");
-  const target = lastFocus && lastFocus !== document.body ? lastFocus : xinhuoView;
-  if (target && typeof target.focus === "function") target.focus();
+  const done = () => {
+    xinhuoModal.hidden = true;
+    xinhuoModal.classList.remove("closing");
+    const target = lastFocus && lastFocus !== document.body ? lastFocus : xinhuoView;
+    if (target && typeof target.focus === "function") target.focus();
+  };
+  if (reduceMotion) { done(); return; }
+  xinhuoModal.classList.add("closing");
+  closeTimer = setTimeout(done, 220);    /* 和 css/hooks.css 里 0.2s 的退场对齐 */
 }
 
 if (xinhuoForm) {

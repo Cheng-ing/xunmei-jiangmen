@@ -344,6 +344,10 @@ function renderRing() {
 function findHero(id) { return HEROES.find((h) => h.id === id); }
 
 let lastFocus = null;
+let closeTimer = 0;
+/* 收场动画：加 .closing 让遮罩和面板先退场，0.22s 后再真正隐藏；开了"减少动效"就直接关 */
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 function openModal(id) {
   const modal = document.querySelector(HERO_CFG.modalSelector);
   const h = findHero(id);
@@ -355,6 +359,8 @@ function openModal(id) {
     `<blockquote>「${h.quote}」</blockquote>` +
     `<p class="m-intro">${h.intro}</p>`;
   modal.querySelector(".m-photo").append(makePhoto(h, `${h.name}（${h.years}）`));
+  clearTimeout(closeTimer);              /* 退场途中又点开：取消收尾，直接恢复 */
+  modal.classList.remove("closing");
   lastFocus = document.activeElement;
   modal.hidden = false;
   document.body.classList.add("modal-open");
@@ -363,10 +369,16 @@ function openModal(id) {
 
 function closeModal() {
   const modal = document.querySelector(HERO_CFG.modalSelector);
-  if (!modal || modal.hidden) return;
-  modal.hidden = true;
+  if (!modal || modal.hidden || modal.classList.contains("closing")) return;
   document.body.classList.remove("modal-open");
-  if (lastFocus) lastFocus.focus();
+  const done = () => {
+    modal.hidden = true;
+    modal.classList.remove("closing");
+    if (lastFocus) lastFocus.focus();
+  };
+  if (reduceMotion) { done(); return; }
+  modal.classList.add("closing");
+  closeTimer = setTimeout(done, 220);    /* 和 css/heroes.css 里 0.2s 的退场对齐 */
 }
 
 /* 事件委托：背景照片和环廊卡片共用一套点击逻辑 */

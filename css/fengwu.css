@@ -21,17 +21,25 @@
 .fw-tab {
   padding: 9px 22px; border-radius: 999px; font-size: 15px; letter-spacing: 2px;
   color: var(--text-light); background: transparent;
-  border: 1px solid var(--line-soft); transition: all .25s;
+  border: 1px solid var(--line-soft);
+  transition: background .25s, color .25s, border-color .25s,
+              box-shadow .25s, transform .26s cubic-bezier(.2, .8, .25, 1);
 }
-.fw-tab:hover { border-color: var(--gold); }
+.fw-tab:hover { border-color: var(--gold); box-shadow: 0 0 16px rgba(201, 168, 106, .15); }
+.fw-tab:active { transform: scale(.95); transition-duration: .09s; }
 .fw-tab.on { background: var(--gold); color: var(--ink); border-color: var(--gold); font-weight: 700; }
 
 .fw-town-chip, .fw-day-chip, .fw-pref-chip, .fw-mode-chip {
   padding: 6px 14px; border-radius: 999px; font-size: 13px; letter-spacing: 1px;
   color: rgba(233, 226, 211, .78); background: transparent;
-  border: 1px solid var(--line-soft); transition: all .2s;
+  border: 1px solid var(--line-soft);
+  transition: background .2s, color .2s, border-color .2s,
+              box-shadow .2s, transform .24s cubic-bezier(.2, .8, .25, 1);
 }
 .fw-town-chip:hover, .fw-day-chip:hover, .fw-pref-chip:hover, .fw-mode-chip:hover { border-color: var(--gold); color: var(--paper); }
+.fw-town-chip:active, .fw-day-chip:active, .fw-pref-chip:active, .fw-mode-chip:active {
+  transform: scale(.94); transition-duration: .09s;
+}
 .fw-town-chip.on, .fw-day-chip.on, .fw-pref-chip.on, .fw-mode-chip.on {
   background: rgba(201, 168, 106, .22); border-color: var(--gold); color: var(--paper);
 }
@@ -59,11 +67,17 @@
   position: relative; display: flex; flex-direction: column; gap: 10px;
   padding: 12px; text-align: left; color: var(--text-light);
   background: var(--card-bg); border: 1px solid var(--line-soft);
-  border-radius: var(--radius); transition: transform .3s, border-color .3s, background .3s, box-shadow .3s;
+  border-radius: var(--radius);
+  transition: transform .3s cubic-bezier(.2, .8, .25, 1), border-color .3s, background .3s, box-shadow .3s;
 }
 .fw-card:hover, .fw-card:focus-visible {
   transform: translateY(-6px); border-color: var(--gold);
   background: var(--card-bg-hover); box-shadow: var(--shadow); outline: none;
+}
+/* 按下：从悬停的 -6px 落回 -2px 并收一点，松手弹回 */
+.fw-card:active {
+  transform: translateY(-2px) scale(.985);
+  transition-duration: .12s;
 }
 .fw-name {
   font-family: var(--font-title); font-weight: 400; font-size: 20px;
@@ -130,6 +144,15 @@
   padding: 5vh 5vw; background: rgba(9, 14, 21, .8); backdrop-filter: blur(6px);
 }
 .fw-modal[hidden] { display: none; }   /* flex 会盖掉 hidden，必须显式关掉 */
+/* 打开：遮罩淡入、面板浮起；关闭：加 .closing 先退场，js/fengwu.js 等动画走完再隐藏 */
+.fw-modal { animation: fw-veil-in .3s ease-out both; }
+.fw-modal-body { animation: fw-panel-in .42s cubic-bezier(.16, 1, .3, 1) both; }
+.fw-modal.closing { animation: fw-veil-out .2s ease-in both; pointer-events: none; }
+.fw-modal.closing .fw-modal-body { animation: fw-panel-out .22s cubic-bezier(.4, 0, .9, .4) both; }
+@keyframes fw-veil-in { from { opacity: 0; } }
+@keyframes fw-panel-in { from { opacity: 0; transform: translateY(20px) scale(.96); } }
+@keyframes fw-veil-out { to { opacity: 0; } }
+@keyframes fw-panel-out { to { opacity: 0; transform: translateY(10px) scale(.98); } }
 .fw-wrap.modal-open { overflow: hidden; }
 .fw-storage-note { margin-top: 12px; color: var(--gold); font-size: 13px; }
 .fw-modal-body {
@@ -166,9 +189,38 @@
 .fw-modal .modal-close {
   position: absolute; top: max(14px, 3vh); right: max(14px, 4vw);
   width: 42px; height: 42px; border-radius: 50%; font-size: 22px; line-height: 1;
-  color: var(--gold); background: rgba(22, 32, 46, .8); border: 1px solid rgba(201, 168, 106, .5);
+  color: var(--gold);
+  background:
+    radial-gradient(130% 130% at 32% 20%, rgba(246, 239, 226, .14), transparent 48%),
+    linear-gradient(180deg, #26374e, #131c29 68%, #0b121b);
+  border: 1px solid rgba(201, 168, 106, .55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 246, 228, .2),
+    inset 0 -3px 5px rgba(0, 0, 0, .5),
+    0 3px 6px rgba(0, 0, 0, .45),
+    0 10px 20px -8px rgba(0, 0, 0, .8);
+  transition: background .25s, color .25s, border-color .25s,
+              box-shadow .25s, transform .26s cubic-bezier(.2, .8, .25, 1);
 }
-.fw-modal .modal-close:hover { background: var(--gold); color: var(--ink); }
+.fw-modal .modal-close:hover {
+  background:
+    radial-gradient(130% 130% at 32% 20%, #fff3d0, transparent 52%),
+    linear-gradient(180deg, #dcc087, #b8934e);
+  color: var(--ink); border-color: #ecd9a8;
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .6),
+    inset 0 -3px 5px rgba(120, 86, 30, .4),
+    0 4px 8px rgba(0, 0, 0, .45),
+    0 14px 24px -8px rgba(0, 0, 0, .8),
+    0 0 24px rgba(201, 168, 106, .35);
+}
+.fw-modal .modal-close:active {
+  transform: translateY(1px) scale(.94);
+  transition-duration: .09s;
+  box-shadow: inset 0 2px 7px rgba(0, 0, 0, .55), 0 1px 3px rgba(0, 0, 0, .4);
+}
+.fw-modal .modal-close:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ink), 0 0 0 4px var(--gold); }
 
 /* ---------- 5. 小测：一题一张卡，答完就地显示对错和解析 ---------- */
 .quiz-box { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
@@ -185,9 +237,10 @@
 .q-opt {
   padding: 11px 14px; text-align: left; font-size: 14.5px; color: var(--text-light);
   background: rgba(9, 14, 21, .35); border: 1px solid var(--line-soft); border-radius: 9px;
-  transition: all .2s;
+  transition: background .2s, color .2s, border-color .2s, transform .22s cubic-bezier(.2, .8, .25, 1);
 }
 .q-opt:hover:not(:disabled) { border-color: var(--gold); color: var(--paper); }
+.q-opt:active:not(:disabled) { transform: scale(.985); transition-duration: .09s; }
 .q-opt:disabled { cursor: default; }
 .q-opt.right { background: rgba(79, 122, 91, .3); border-color: var(--jade); color: #dff0e4; }
 .q-opt.wrong { background: rgba(166, 58, 43, .28); border-color: var(--red); color: #f5ded9; }
@@ -240,9 +293,11 @@
 .rt-stop {
   display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px; text-align: left;
   background: var(--card-bg); border: 1px solid var(--line-soft); border-radius: 14px;
-  color: var(--text-light); transition: border-color .25s, background .25s;
+  color: var(--text-light);
+  transition: border-color .25s, background .25s, transform .26s cubic-bezier(.2, .8, .25, 1);
 }
 .rt-stop:hover { border-color: var(--gold); background: var(--card-bg-hover); }
+.rt-stop:active { transform: scale(.99); transition-duration: .1s; }
 .rt-stop.open { border-color: rgba(201, 168, 106, .7); }
 .rt-no {
   flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%; margin-top: 2px;
@@ -372,8 +427,9 @@
 
 /* ---------- 10. 无障碍：系统"减少动效"时卡片不再上浮 ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .fw-card, .rt-stop, .q-opt, .fw-town-chip, .fw-tab { transition: none; }
+  .fw-card, .rt-stop, .q-opt, .fw-town-chip, .fw-day-chip, .fw-pref-chip, .fw-mode-chip, .fw-tab { transition: none; }
   .reveal { transition: none; }
+  .fw-modal, .fw-modal-body { animation: none; }
 }
 
 /* ---------- 11. 常用调整 ----------

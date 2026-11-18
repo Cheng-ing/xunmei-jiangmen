@@ -17,10 +17,20 @@
   font-family: var(--font-title); font-size: clamp(15px, 1.9vw, 19px);
   letter-spacing: 3px; color: rgba(233, 226, 211, .82);
 }
-/* 首屏按钮组：第一个填色，作为"从一封信开始"的主入口 */
+/* 首屏按钮组：第一个填色，作为"从一封信开始"的主入口。
+   不在这里写 box-shadow/transform，按下与悬停的光效交给 .btn 的通用规则。 */
 .hero-cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
-.hero-cta .btn.primary { background: var(--gold); color: var(--ink); font-weight: 700; }
-.hero-cta .btn.primary:hover { background: #e2c78e; }
+.hero-cta .btn.primary {
+  background:
+    radial-gradient(130% 130% at 32% 18%, #fff3d0, transparent 55%),
+    linear-gradient(180deg, #dcc087, #b8934e);
+  color: var(--ink); font-weight: 700; border-color: #ecd9a8;
+}
+.hero-cta .btn.primary:hover {
+  background:
+    radial-gradient(130% 130% at 32% 18%, #fffaea, transparent 58%),
+    linear-gradient(180deg, #ecd7a4, #c9a45e);
+}
 .hero .hint { color: rgba(233, 226, 211, .6); font-size: 14px; letter-spacing: 2px; }
 /* 地球下方的小字读数：当前中央经线与江门是否可见，由 globe3d.js 写入 */
 .hero .readout {
@@ -54,6 +64,7 @@
     inset -18px -14px 44px rgba(0,0,0,.45),   /* 球体暗面（与 JS 的边缘压暗叠加） */
     0 0 0 1px rgba(201,168,106,.25),          /* 一圈细描边 */
     0 0 70px rgba(90,140,200,.28);           /* 大气辉光 */
+  transition: filter .3s, transform .5s cubic-bezier(.2, .8, .25, 1);
 }
 /* 大气层：贴球边缘的一圈蓝色光晕 */
 .globe-stage::after {
@@ -62,6 +73,7 @@
   box-shadow: inset 0 0 30px rgba(120,180,240,.35);
 }
 .globe-stage:hover #globeCanvas { filter: brightness(1.1); }  /* 提示可点击 */
+.globe-stage:active #globeCanvas { transform: scale(.985); transition-duration: .12s; }
 #globeCanvas:focus-visible { outline: 2px solid var(--gold); outline-offset: 6px; }
 
 /* ---------- 4. 江门标记：真实坐标定位，标签为 DOM 文字 ----------
@@ -107,8 +119,10 @@
   border: 1px solid rgba(201,168,106,.45);
   box-shadow: 0 0 0 4px rgba(16,29,44,.6), 0 14px 40px rgba(0,0,0,.5),
               inset 0 0 40px rgba(0,0,0,.5);
+  transition: border-color .25s, filter .3s, transform .5s cubic-bezier(.2, .8, .25, 1);
 }
 .jm-map canvas:hover { border-color: var(--gold); filter: brightness(1.08); }
+.jm-map canvas:active { transform: scale(.985); transition-duration: .12s; }
 .jm-map canvas:focus-visible { outline: 2px solid var(--gold); outline-offset: 5px; }
 .jm-map .map-note {
   margin-top: 10px; font-size: 11px; letter-spacing: 1px;
@@ -137,7 +151,12 @@
   .jm-pin::before { inset: -8px; }
 }
 
-/* ---------- 7. 常用调整 ----------
+/* ---------- 7. 无障碍：系统"减少动效"时两块画布不做按压缩放 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  #globeCanvas, .jm-map canvas { transition: none; }
+}
+
+/* ---------- 8. 常用调整 ----------
    · 自转周期 / 停留时长 / 视角纬度 / 提亮 → js/globe3d.js 顶部的 GLOBE 配置
    · 江门坐标 → 同上 GLOBE.lat / GLOBE.lon
    · 详图大小 → 上面 .jm-map canvas 的 width；清晰度 → globe3d.js 里 MAP.res

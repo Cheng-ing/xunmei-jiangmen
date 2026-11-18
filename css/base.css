@@ -21,7 +21,7 @@
 
 /* ---------- 2. 基础重置 ---------- */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }  /* 手机点按不闪系统灰块，反馈统一走下面的按下效果 */
 body {
   font-family: var(--font-body);
   color: var(--text);
@@ -64,7 +64,7 @@ button { font-family: inherit; cursor: pointer; }
     0 6px 12px -6px rgba(0, 0, 0, .55);
   text-shadow: 0 1px 1px rgba(0, 0, 0, .6);
   transition: background .25s, color .25s, border-color .25s,
-              box-shadow .25s, transform .18s;
+              box-shadow .25s, transform .26s cubic-bezier(.2, .8, .25, 1);
 }
 /* 灯照在标签顶部的反光带 */
 .site-nav a.nav-link::before {
@@ -81,8 +81,8 @@ button { font-family: inherit; cursor: pointer; }
   opacity: 0; pointer-events: none;
 }
 .site-nav a.nav-link:hover::after,
-.site-nav a.nav-link:focus-visible::after { animation: nav-sheen .8s ease-out; }
-@keyframes nav-sheen {
+.site-nav a.nav-link:focus-visible::after { animation: sheen .8s ease-out; }
+@keyframes sheen {
   0%   { opacity: 0; transform: translateX(0) skewX(-18deg); }
   12%  { opacity: 1; }
   100% { opacity: 0; transform: translateX(400%) skewX(-18deg); }
@@ -102,11 +102,15 @@ button { font-family: inherit; cursor: pointer; }
     0 0 34px rgba(201, 168, 106, .08);
   transform: translateY(-1px);
 }
+/* 按下：立刻收一下再沉下去（.09s 几乎跟手），松手按上面的 .26s 慢慢弹回 */
 .site-nav a.nav-link:active {
-  transform: translateY(1px);
+  transform: translateY(1px) scale(.96);
+  transition-duration: .09s;
   box-shadow:
-    inset 0 2px 4px rgba(0, 0, 0, .5),
-    0 1px 2px rgba(0, 0, 0, .4);
+    inset 0 2px 5px rgba(0, 0, 0, .55),
+    inset 0 -1px 0 rgba(255, 246, 228, .08),
+    0 1px 2px rgba(0, 0, 0, .4),
+    0 0 14px rgba(201, 168, 106, .28);
 }
 .site-nav a.nav-link:focus-visible {
   outline: none;
@@ -131,7 +135,8 @@ button { font-family: inherit; cursor: pointer; }
     0 0 38px rgba(201, 168, 106, .16);
 }
 @media (prefers-reduced-motion: reduce) {
-  .site-nav a.nav-link::after { animation: none; opacity: 0; }
+  .site-nav a.nav-link::after,
+  .btn::after { animation: none; opacity: 0; }
 }
 
 /* ---------- 4. 页脚 ---------- */
@@ -165,13 +170,63 @@ button { font-family: inherit; cursor: pointer; }
 .reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s ease, transform .7s ease; }
 .reveal.in { opacity: 1; transform: none; }
 
-/* ---------- 7. 通用按钮 ---------- */
+/* ---------- 7. 通用按钮 ----------
+   和导航胶囊同一套立体做法：顶面弧形高光、底缘内阴影、两层落影；
+   按下先快速收小，松手用回弹曲线复原，悬停/聚焦时扫一道斜光。 */
 .btn {
-  display: inline-block; padding: 12px 30px; border: 1px solid var(--gold);
-  border-radius: 999px; color: var(--gold); background: transparent;
-  font-size: 15px; letter-spacing: 2px; transition: all .3s;
+  position: relative; overflow: hidden;      /* 扫光只在这颗按钮里走 */
+  display: inline-block; padding: 12px 30px;
+  border: 1px solid rgba(201, 168, 106, .75);
+  border-radius: 999px; color: var(--gold);
+  background:
+    radial-gradient(120% 130% at 30% 16%, rgba(246, 239, 226, .1), transparent 52%),
+    linear-gradient(180deg, rgba(54, 70, 92, .85), rgba(14, 21, 32, .9));
+  font-size: 15px; letter-spacing: 2px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 246, 228, .18),
+    inset 0 -2px 4px rgba(0, 0, 0, .4),
+    0 2px 5px rgba(0, 0, 0, .35),
+    0 10px 20px -8px rgba(0, 0, 0, .7);
+  transition: background .28s, color .28s, border-color .28s,
+              box-shadow .28s, transform .28s cubic-bezier(.2, .8, .25, 1);
 }
-.btn:hover { background: var(--gold); color: var(--ink); }
+.btn::after {
+  content: ""; position: absolute; top: -40%; bottom: -40%; left: -65%;
+  width: 42%;
+  background: linear-gradient(105deg, transparent, rgba(255, 248, 226, .45), transparent);
+  transform: skewX(-18deg);
+  opacity: 0; pointer-events: none;
+}
+.btn:hover::after,
+.btn:focus-visible::after { animation: sheen .8s ease-out; }
+.btn:hover {
+  background:
+    radial-gradient(130% 130% at 32% 18%, #fff3d0, transparent 54%),
+    linear-gradient(180deg, #dcc087, #b8934e);
+  color: var(--ink); border-color: #ecd9a8;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .6),
+    inset 0 -2px 4px rgba(120, 86, 30, .4),
+    0 4px 8px rgba(0, 0, 0, .4),
+    0 14px 26px -10px rgba(0, 0, 0, .75),
+    0 0 22px rgba(201, 168, 106, .32);
+  transform: translateY(-1px);
+}
+.btn:active {
+  transform: translateY(1px) scale(.97);
+  transition-duration: .09s;
+  box-shadow:
+    inset 0 3px 7px rgba(0, 0, 0, .45),
+    inset 0 -1px 0 rgba(255, 246, 228, .12),
+    0 1px 3px rgba(0, 0, 0, .35),
+    0 0 18px rgba(201, 168, 106, .3);
+}
+.btn:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--ink), 0 0 0 4px var(--gold),
+    0 0 20px rgba(201, 168, 106, .35);
+}
 
 /* ---------- 8. 移动端适配（≤720px 是另一套用法，不是把桌面版缩小） ----------
    实测依据（390×844）：原来的竖排导航高 116px，吃掉首屏 14%；
