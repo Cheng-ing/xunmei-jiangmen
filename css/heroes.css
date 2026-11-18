@@ -132,16 +132,35 @@
   background: linear-gradient(180deg, rgba(246,239,226,.07), rgba(9,14,21,.55));
   border: 1px solid rgba(201,168,106,.26);
   border-radius: var(--radius);
+  /* 三层影子叠出立体感：贴边的一层收边、中景一层拉开层次、远景一层压出空间；
+     顶上再压一道极淡的内高光，像展柜玻璃边缘的反光 */
+  box-shadow:
+    inset 0 1px 0 rgba(255,246,228,.09),
+    0 2px 6px rgba(0,0,0,.55),
+    0 12px 24px -10px rgba(0,0,0,.75),
+    0 30px 56px -22px rgba(0,0,0,.85);
   backface-visibility: hidden;    /* 转到背面就藏起，环廊看着干净 */
   opacity: .55; filter: saturate(.7); transform: scale(.93);
   transition: opacity .35s, filter .35s, transform .5s,
               border-color .35s, box-shadow .35s;
 }
+/* 斜上方一层柔光扫过卡面，照片和文字被"打亮"，不至于死平 */
+.ring-face::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: linear-gradient(158deg, rgba(255,248,232,.10), rgba(255,248,232,.02) 34%, transparent 60%);
+  pointer-events: none;
+}
 /* 正对镜头的那张：放大、提亮、描金边，像被展厅的灯照亮 */
 .ring-card.is-front .ring-face {
   opacity: 1; filter: none; transform: scale(1.06);
   border-color: var(--gold);
-  box-shadow: var(--shadow), 0 0 34px rgba(201,168,106,.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255,246,228,.16),
+    0 2px 8px rgba(0,0,0,.6),
+    0 14px 28px -10px rgba(0,0,0,.8),
+    0 36px 64px -24px rgba(0,0,0,.9),
+    0 0 44px rgba(201,168,106,.3),
+    0 0 96px rgba(201,168,106,.12);
 }
 .ring-face:hover, .ring-face:focus-visible { outline: none; border-color: var(--gold); }
 .ring-face h3 {
@@ -166,10 +185,42 @@
 .ring-btn {
   width: 44px; height: 44px; border-radius: 50%;
   font-size: 22px; line-height: 1; color: var(--gold);
-  background: rgba(22,32,46,.8); border: 1px solid rgba(201,168,106,.5);
-  transition: background .25s, color .25s;
+  /* 立体旋钮：顶面一道弧形高光 + 底缘内阴影，再落两层投影，
+     看着像嵌在展台上的实体按键 */
+  background:
+    radial-gradient(130% 130% at 32% 20%, rgba(246,239,226,.17), transparent 48%),
+    linear-gradient(180deg, #26374e, #131c29 68%, #0b121b);
+  border: 1px solid rgba(201,168,106,.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255,246,228,.24),
+    inset 0 -3px 5px rgba(0,0,0,.55),
+    0 3px 6px rgba(0,0,0,.45),
+    0 12px 20px -8px rgba(0,0,0,.85);
+  text-shadow: 0 1px 2px rgba(0,0,0,.75);
+  transition: background .25s, color .25s, transform .18s,
+              box-shadow .25s, border-color .25s;
 }
-.ring-btn:hover { background: var(--gold); color: var(--ink); }
+.ring-btn:hover {
+  color: var(--ink);
+  background:
+    radial-gradient(130% 130% at 32% 20%, #fff3d0, transparent 52%),
+    linear-gradient(180deg, #dcc087, #b8934e);
+  border-color: #ecd9a8;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.6),
+    inset 0 -3px 5px rgba(120,86,30,.45),
+    0 4px 8px rgba(0,0,0,.45),
+    0 14px 24px -8px rgba(0,0,0,.8),
+    0 0 24px rgba(201,168,106,.35);
+  transform: translateY(-1px);
+}
+.ring-btn:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 2px 6px rgba(0,0,0,.6),
+    0 2px 4px rgba(0,0,0,.45);
+}
+.ring-btn:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ink), 0 0 0 4px var(--gold); }
 .ring-count {
   min-width: 64px; text-align: center;
   font-family: ui-monospace, Consolas, monospace;
@@ -287,5 +338,6 @@ body.modal-open { overflow: hidden; }   /* 弹出时锁住页面滚动 */
    · 环廊卡片大小   → .ring-card 的 width/height（left/top 要同步改成负半宽/半高）
    · 舞台高度/透视 → .ring-stage 的 height / perspective
    · 自转快慢       → js/heroes.js renderRing 里的 AUTO_SPEED（度/秒，越大越快）
+   · 卡片/按钮阴影  → .ring-face、.ring-btn 的 box-shadow（几层叠着写，越靠后越远）
    · 弹层宽度/最高  → .modal-body 的 width 与 max-height
    ==================================================== */

@@ -2,7 +2,7 @@
    heroes.js —— 首页"江门历代名人"：背景照片带 + 3D 环廊 + 点击弹介绍
    1) HEROES 数组：唯一需要修改的地方（照片文件名 + 介绍文案）
    2) 背景照片带：把同一批照片虚化后铺在地球后面
-   3) 3D 环廊：11 位名人围成一圈，自动旋转，可拖动 / 按钮 / 方向键
+   3) 3D 环廊：11 位名人围成一圈，自动旋转（悬停不停、按下暂停、移开立刻复原），可拖动 / 按钮 / 方向键
    4) 点击卡片：先转到正位，再弹出介绍
 
    照片怎么放：把真实照片按下面 file 字段的名字放进 images/照片/历代名人/
@@ -251,9 +251,10 @@ function renderRing() {
     if (count) count.textContent = `${front + 1} / ${n}`;
   }
 
-  /* 转到第 i 张，走最近的方向；手动操作后停一会儿再恢复自转 */
+  /* 转到第 i 张，走最近的方向；转完在正位停一下再恢复自转 */
   function goto(i) {
     idle();
+    snapEnd = performance.now() + 650;   // .6s 吸附过渡走完前 tick 不自转
     const target = -(((i % n) + n) % n) * step;
     /* 把当前角度折到 target 附近 ±180 以内，避免倒转一大圈 */
     let diff = (target - angle) % 360;
@@ -311,22 +312,23 @@ function renderRing() {
   }, true);
 
   /* —— 自动旋转：没人碰时环自己慢慢转 ——
-     鼠标悬停、按住拖动、介绍弹层打开时暂停，手动操作停 4 秒后继续；
-     系统开了"减弱动态效果"就不自转。 */
+     只有按下（点卡片 / 拖动）才暂停，悬停不停；鼠标一离开舞台就立刻恢复。
+     介绍弹层打开期间暂停；系统开了"减弱动态效果"就不自转。 */
   const AUTO_SPEED = 5;              // 度/秒，一圈约 72 秒
-  const AUTO_IDLE_MS = 4000;         // 手动操作后停多久恢复自转
+  const AUTO_IDLE_MS = 4000;         // 点按钮/方向键后停多久恢复自转
   const autoOK = !matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let hovering = false, resumeAt = 0, lastT = 0;
+  let resumeAt = 0, snapEnd = 0, lastT = 0;
   function idle(ms = AUTO_IDLE_MS) {
     resumeAt = performance.now() + ms;
     stage.classList.remove("auto");   /* 恢复 .6s 过渡，按钮/点击的旋转才有动画 */
   }
-  stage.addEventListener("pointerenter", () => { hovering = true; stage.classList.remove("auto"); });
-  stage.addEventListener("pointerleave", () => { hovering = false; idle(1500); });
+  stage.addEventListener("pointerleave", () => idle(0));   // 鼠标拿开马上转
   function tick(t) {
     requestAnimationFrame(tick);
-    if (!autoOK || hovering) { lastT = 0; return; }
-    if (dragging || (modalBox && !modalBox.hidden) || t < resumeAt) { lastT = 0; return; }
+    if (!autoOK) { lastT = 0; return; }
+    /* snapEnd：goto() 触发的 .6s 吸附动画没走完时别自转，
+       否则 .auto 一关过渡，环会直接跳到终点 */
+    if (dragging || (modalBox && !modalBox.hidden) || t < resumeAt || t < snapEnd) { lastT = 0; return; }
     if (!lastT) lastT = t;
     stage.classList.add("auto");      /* 自转时不要 .6s 过渡，否则环永远在追目标 */
     angle += AUTO_SPEED * (t - lastT) / 1000;
